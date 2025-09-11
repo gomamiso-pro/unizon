@@ -88,3 +88,99 @@
     .card{background:var(--card);border-radius:12px;padding:1rem;box-shadow:0 8px 26px rgba(0,0,0,0.12);margin-bottom:1rem;}
 
     .members-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
+      gap:1rem;
+    }
+    .member{
+      background:linear-gradient(180deg, rgba(77,166,255,0.15), rgba(0,64,128,0.05));
+      border-radius:12px;
+      padding:1rem;
+      text-align:center;
+      box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    }
+    .member img{
+      width:80px;
+      height:80px;
+      border-radius:50%;
+      object-fit:cover;
+      margin-bottom:0.5rem;
+    }
+    .member h3{margin:0;font-size:1rem;}
+    .member p{margin:0.2rem 0 0 0;font-size:0.85rem;color:var(--muted);}
+
+    footer{opacity:0.8;text-align:center;padding:1rem 0;font-size:0.86rem;color:var(--muted)}
+
+    @media (max-width: 375px){
+      body{padding:0.5rem}
+      .wrap{padding:0}
+      header{padding:0.5rem}
+      .brand img{width:40px;height:40px}
+      header h1{font-size:1rem}
+      .card{padding:0.85rem}
+      .members-grid{grid-template-columns:1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <img src="images/softball-logo.jpg" alt="ソフトボールチームロゴ">
+        <h1>ソフトボールチーム メンバー一覧</h1>
+      </div>
+      <button class="menu-toggle">☰</button>
+    </header>
+
+    <nav id="sideMenu">
+      <ul>
+        <li><a href="index.html">ホーム</a></li>
+        <li><a href="members.html" class="primary">メンバー一覧</a></li>
+        <li><a href="schedule.html">試合日程</a></li>
+        <li><a href="results.html">試合結果</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <section class="card">
+        <h2>メンバー紹介</h2>
+        <div class="members-grid">
+          <div class="member">
+            <img src="images/captain.jpg" alt="キャプテン">
+            <h3>田中 太郎</h3>
+            <p>キャプテン / 投手</p>
+          </div>
+          <div class="member">
+            <img src="images/batter.jpg" alt="メンバー2">
+            <h3>山田 花子</h3>
+            <p>クリーンナップ / 外野手</p>
+          </div>
+          <div class="member">
+            <img src="images/infielder.jpg" alt="メンバー3">
+            <h3>佐藤 次郎</h3>
+            <p>内野手</p>
+          </div>
+          <div class="member">
+            <img src="images/catcher.jpg" alt="メンバー4">
+            <h3>鈴木 真央</h3>
+            <p>捕手</p>
+          </div>
+          <!-- 必要に応じて追加 -->
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Blue Stars Softball Team</p>
+    </footer>
+  </div>
+
+  <script>
+    const toggleBtn = document.querySelector('.menu-toggle');
+    const sideMenu = document.getElementById('sideMenu');
+    toggleBtn.addEventListener('click', ()=>{
+      sideMenu.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
