@@ -3,13 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>チームホーム</title>
-  <!-- ブラウザのタブ用アイコン -->
+  <title>メンバー一覧</title>
   <link rel="icon" href="images/teams-b.jpg" type="image/jpg">
-  <!-- iOSのホーム画面用アイコン -->
   <link rel="apple-touch-icon" href="images/teams-r.jpg">
   <meta name="theme-color" content="#e6f5ff">
-  <!-- かわいいフォント（Google Fonts） -->
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -89,11 +86,28 @@
 
     main{margin-top:1rem}
     .card{background:var(--card);border-radius:12px;padding:1rem;box-shadow:0 8px 26px rgba(11,42,68,0.06);margin-bottom:1rem;}
-    .welcome h2{margin:0 0 0.4rem 0;font-size:1rem;}
-    .welcome p{margin:0;color:var(--muted)}
 
-    .menu ul{display:flex;flex-direction:row;gap:0.6rem;padding:0;margin:0;list-style:none}
-    .menu a{display:block;padding:0.6rem 0.8rem;border-radius:10px;background:linear-gradient(180deg, rgba(159,209,255,0.18), rgba(111,183,255,0.08));color:var(--text);text-decoration:none;font-weight:600;}
+    .members-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
+      gap:1rem;
+    }
+    .member{
+      background:linear-gradient(180deg, rgba(159,209,255,0.15), rgba(111,183,255,0.05));
+      border-radius:12px;
+      padding:1rem;
+      text-align:center;
+      box-shadow:0 4px 10px rgba(0,0,0,0.05);
+    }
+    .member img{
+      width:80px;
+      height:80px;
+      border-radius:50%;
+      object-fit:cover;
+      margin-bottom:0.5rem;
+    }
+    .member h3{margin:0;font-size:1rem;}
+    .member p{margin:0.2rem 0 0 0;font-size:0.85rem;color:var(--muted);}
 
     footer{opacity:0.8;text-align:center;padding:1rem 0;font-size:0.86rem;color:var(--muted)}
 
@@ -104,8 +118,7 @@
       .brand img{width:40px;height:40px}
       header h1{font-size:1rem}
       .card{padding:0.85rem}
-      .menu ul{flex-direction:column}
-      .menu a{width:100%}
+      .members-grid{grid-template-columns:1fr 1fr;}
     }
   </style>
 </head>
@@ -114,29 +127,39 @@
     <header>
       <div class="brand">
         <img src="images/teams-r.jpg" alt="チームアイコン">
-        <h1>チームホームページ</h1>
+        <h1>メンバー一覧</h1>
       </div>
       <button class="menu-toggle">☰</button>
     </header>
 
     <nav id="sideMenu">
       <ul>
-        <li><a href="index.html" class="primary">ホーム</a></li>
-        <li><a href="members.html">メンバー一覧</a></li>
+        <li><a href="index.html">ホーム</a></li>
+        <li><a href="members.html" class="primary">メンバー一覧</a></li>
       </ul>
     </nav>
 
     <main>
-      <section class="card welcome">
-        <h2>ようこそ！</h2>
-        <p>このサイトではチームメンバーや情報を紹介しています。スマホ（iPhone SE 等）でも見やすいようシンプルでおしゃれな淡いブルー配色にしています。</p>
-      </section>
-
-      <section class="card menu">
-        <h2>メニュー</h2>
-        <ul>
-          <li><a href="members.html">メンバー一覧</a></li>
-        </ul>
+      <section class="card">
+        <h2>メンバー紹介</h2>
+        <div class="members-grid">
+          <div class="member">
+            <img src="images/member1.jpg" alt="メンバー1">
+            <h3>田中 太郎</h3>
+            <p>キャプテン</p>
+          </div>
+          <div class="member">
+            <img src="images/member2.jpg" alt="メンバー2">
+            <h3>山田 花子</h3>
+            <p>フォワード</p>
+          </div>
+          <div class="member">
+            <img src="images/member3.jpg" alt="メンバー3">
+            <h3>佐藤 次郎</h3>
+            <p>ディフェンダー</p>
+          </div>
+          <!-- 必要に応じてメンバーを追加 -->
+        </div>
       </section>
     </main>
 
