@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>メンバー一覧</title>
-  <link rel="icon" href="images/teams-b.jpg" type="image/jpg">
-  <link rel="apple-touch-icon" href="images/teams-r.jpg">
-  <meta name="theme-color" content="#e6f5ff">
+  <title>ソフトボールチーム メンバー一覧</title>
+  <link rel="icon" href="images/softball-logo.jpg" type="image/jpg">
+  <link rel="apple-touch-icon" href="images/softball-logo.jpg">
+  <meta name="theme-color" content="#004080">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg: #f4fbff;
       --card: #ffffff;
-      --accent: #9fd1ff;
-      --accent-2:#6fb7ff;
+      --accent: #4da6ff;
+      --accent-2:#004080;
       --text: #0b2a43;
       --muted: #617d91;
       --radius: 14px;
@@ -23,7 +23,7 @@
     html,body{height:100%}
     body{
       margin:0;
-      font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      font-family: 'Fredoka', "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
       background: linear-gradient(180deg,var(--bg), #ffffff 60%);
       color:var(--text);
       line-height:1.5;
@@ -31,22 +31,22 @@
       overflow-x:hidden;
     }
 
-    .wrap{max-width:680px;margin:0 auto;background:transparent;}
+    .wrap{max-width:780px;margin:0 auto;}
 
     header{
       display:flex;
       align-items:center;
       gap:0.75rem;
-      background:rgba(255,255,255,0.8);
-      padding:0.6rem 0.9rem;
+      background-color:#004080;
+      color:white;
+      padding:0.8rem 1rem;
       border-radius:var(--radius);
-      box-shadow:0 6px 18px rgba(17,40,60,0.06);
-      backdrop-filter: blur(6px);
+      box-shadow:0 6px 18px rgba(0,0,0,0.2);
     }
 
     .brand {display:flex;align-items:center;gap:0.6rem;}
-    .brand img{width:44px;height:44px;border-radius:10px;object-fit:cover;box-shadow:0 6px 14px rgba(15,40,80,0.08);}
-    header h1{font-size:1.1rem;margin:0;letter-spacing:0.3px;font-weight:600;}
+    .brand img{width:46px;height:46px;border-radius:10px;object-fit:cover;box-shadow:0 6px 14px rgba(0,0,0,0.15);}
+    header h1{font-size:1.15rem;margin:0;letter-spacing:0.3px;font-weight:600;}
 
     /* ハンバーガーメニュー */
     .menu-toggle{
@@ -55,7 +55,7 @@
       border:none;
       font-size:1.6rem;
       cursor:pointer;
-      color:var(--text);
+      color:white;
     }
 
     nav{
@@ -65,7 +65,7 @@
       width:240px;
       height:100%;
       background:white;
-      box-shadow:4px 0 14px rgba(0,0,0,0.08);
+      box-shadow:4px 0 14px rgba(0,0,0,0.15);
       padding:2rem 1rem;
       transition: left 0.3s ease;
       z-index:1000;
@@ -80,100 +80,11 @@
       color:var(--text);
       font-weight:600;
       font-size:1rem;
-      background:linear-gradient(180deg, rgba(159,209,255,0.18), rgba(111,183,255,0.08));
+      background:linear-gradient(180deg, rgba(77,166,255,0.18), rgba(0,64,128,0.08));
     }
     nav a.primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:white;}
 
     main{margin-top:1rem}
-    .card{background:var(--card);border-radius:12px;padding:1rem;box-shadow:0 8px 26px rgba(11,42,68,0.06);margin-bottom:1rem;}
+    .card{background:var(--card);border-radius:12px;padding:1rem;box-shadow:0 8px 26px rgba(0,0,0,0.12);margin-bottom:1rem;}
 
     .members-grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
-      gap:1rem;
-    }
-    .member{
-      background:linear-gradient(180deg, rgba(159,209,255,0.15), rgba(111,183,255,0.05));
-      border-radius:12px;
-      padding:1rem;
-      text-align:center;
-      box-shadow:0 4px 10px rgba(0,0,0,0.05);
-    }
-    .member img{
-      width:80px;
-      height:80px;
-      border-radius:50%;
-      object-fit:cover;
-      margin-bottom:0.5rem;
-    }
-    .member h3{margin:0;font-size:1rem;}
-    .member p{margin:0.2rem 0 0 0;font-size:0.85rem;color:var(--muted);}
-
-    footer{opacity:0.8;text-align:center;padding:1rem 0;font-size:0.86rem;color:var(--muted)}
-
-    @media (max-width: 375px){
-      body{padding:0.5rem}
-      .wrap{padding:0}
-      header{padding:0.5rem}
-      .brand img{width:40px;height:40px}
-      header h1{font-size:1rem}
-      .card{padding:0.85rem}
-      .members-grid{grid-template-columns:1fr 1fr;}
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <img src="images/teams-r.jpg" alt="チームアイコン">
-        <h1>メンバー一覧</h1>
-      </div>
-      <button class="menu-toggle">☰</button>
-    </header>
-
-    <nav id="sideMenu">
-      <ul>
-        <li><a href="index.html">ホーム</a></li>
-        <li><a href="members.html" class="primary">メンバー一覧</a></li>
-      </ul>
-    </nav>
-
-    <main>
-      <section class="card">
-        <h2>メンバー紹介</h2>
-        <div class="members-grid">
-          <div class="member">
-            <img src="images/member1.jpg" alt="メンバー1">
-            <h3>田中 太郎</h3>
-            <p>キャプテン</p>
-          </div>
-          <div class="member">
-            <img src="images/member2.jpg" alt="メンバー2">
-            <h3>山田 花子</h3>
-            <p>フォワード</p>
-          </div>
-          <div class="member">
-            <img src="images/member3.jpg" alt="メンバー3">
-            <h3>佐藤 次郎</h3>
-            <p>ディフェンダー</p>
-          </div>
-          <!-- 必要に応じてメンバーを追加 -->
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <p>&copy; 2025 My Team</p>
-    </footer>
-  </div>
-
-  <script>
-    const toggleBtn = document.querySelector('.menu-toggle');
-    const sideMenu = document.getElementById('sideMenu');
-    toggleBtn.addEventListener('click', ()=>{
-      sideMenu.classList.toggle('active');
-    });
-  </script>
-</body>
-</html>
