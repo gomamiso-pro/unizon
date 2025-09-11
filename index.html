@@ -104,6 +104,129 @@
   </nav>
 
   <!-- オーバーレイ -->
+  <div id="overlay" class="overlay"></div>
+
+  <main>
+    <section>
+      <h2>チーム紹介</h2>
+      <p>
+        私たち「Blue Stars」は、地域で活動しているソフトボールチームです。  
+        チームワークを大切にし、毎週末の練習や大会に参加しています。  
+        経験者・初心者を問わず、ソフトボールが好きな仲間を募集しています！
+      </p>
+    </section>
+
+    <section>
+      <h2>最新情報</h2>
+      <ul>
+        <li>2025/09/01 秋季リーグ開幕！初戦は○○グラウンドで△△チームと対戦予定。</li>
+        <li>2025/08/20 夏合宿を無事終了しました。</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Softball Team</p>
+  </footer>
+
+  <script>
+    const sideMenu = document.getElementById("sideMenu");
+    const overlay = document.getElementById("overlay");
+    const menuBtn = document.querySelector(".menu-btn");
+
+    function toggleMenu(){
+      sideMenu.classList.toggle("active");
+      overlay.classList.toggle("active");
+    }
+
+    function closeMenu(){
+      sideMenu.classList.remove("active");
+      overlay.classList.remove("active");
+    }
+
+    // オーバーレイ押したら閉じる
+    overlay.addEventListener("click", closeMenu);
+
+    // 画面のどこかをクリック/タッチしたら閉じる
+    document.addEventListener("click", function(e){
+      if(sideMenu.classList.contains("active")){
+        if(!sideMenu.contains(e.target) && !menuBtn.contains(e.target)){
+          closeMenu();
+        }
+      }
+    });
+  </script>
+</body>
+</html>      cursor:pointer;
+      z-index:1101;
+    }
+
+    /* サイドメニュー */
+    nav{
+      position:fixed;
+      top:0;
+      left:-250px; /* 初期は隠す */
+      width:250px;
+      height:100%;
+      background:#004080;
+      color:#fff;
+      transition:left 0.3s ease;
+      padding-top:4rem;
+      z-index:1100;
+    }
+    nav.active{left:0;}
+
+    nav ul{
+      list-style:none;
+      margin:0;
+      padding:0;
+    }
+    nav li{margin:0;}
+    nav a{
+      display:block;
+      text-decoration:none;
+      font-weight:600;
+      color:#fff;
+      padding:1rem;
+    }
+    nav a:hover{background:#0066cc;}
+
+    /* オーバーレイ */
+    .overlay{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.4);
+      display:none;
+      z-index:1000;
+    }
+    .overlay.active{display:block;}
+
+    main{max-width:800px;margin:1.5rem auto;padding:0 1rem;}
+    section{margin-bottom:2rem;}
+    footer{text-align:center;padding:1rem;font-size:0.85rem;color:#617d91;}
+  </style>
+</head>
+<body>
+  <header>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <h1>UNIZON ソフトボールチーム</h1>
+  </header>
+
+  <!-- サイドメニュー -->
+  <nav id="sideMenu">
+    <ul>
+      <li><a href="index.html" class="active">ホーム</a></li>
+      <li><a href="members.html">メンバー一覧</a></li>
+      <li><a href="schedule.html">試合日程</a></li>
+      <li><a href="results.html">試合結果</a></li>
+      <li><a href="register.html">メンバー登録</a></li>
+    </ul>
+  </nav>
+
+  <!-- オーバーレイ -->
   <div id="overlay" class="overlay" onclick="closeMenu()"></div>
 
   <main>
