@@ -2,38 +2,185 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>チームホーム</title>
-  <link rel="stylesheet" href="css/style.css">
+  <!-- ブラウザのタブ用アイコン -->
   <link rel="icon" href="images/teams-b.png" type="image/png">
+  <!-- iOSのホーム画面用アイコン（左上に表示される） -->
+  <link rel="apple-touch-icon" href="images/teams-r.png">
+  <meta name="theme-color" content="#e6f5ff">
+  <style>
+    :root{
+      --bg: #f4fbff;      /* 淡い青背景 */
+      --card: #ffffff;    /* カード背景 */
+      --accent: #9fd1ff;  /* メイン淡ブルー */
+      --accent-2:#6fb7ff; /* 強めのアクセント */
+      --text: #0b2a43;    /* 文字色（紺に近い） */
+      --muted: #617d91;
+      --radius: 14px;
+    }
+
+    /* リセット */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,var(--bg), #ffffff 60%);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      padding:0.75rem;
+    }
+
+    /* コンテナ（中央寄せしつつスマホSE幅にもフィット） */
+    .wrap{
+      max-width:680px;
+      margin:0 auto;
+      background:transparent;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      gap:0.75rem;
+      background:rgba(255,255,255,0.8);
+      padding:0.6rem 0.9rem;
+      border-radius:var(--radius);
+      box-shadow:0 6px 18px rgba(17,40,60,0.06);
+      backdrop-filter: blur(6px);
+    }
+
+    /* 左上のアイコン */
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:0.6rem;
+    }
+    .brand img{
+      width:44px;
+      height:44px;
+      border-radius:10px;
+      object-fit:cover;
+      box-shadow:0 6px 14px rgba(15,40,80,0.08);
+    }
+    header h1{
+      font-size:1.05rem;
+      margin:0;
+      letter-spacing:0.2px;
+      font-weight:600;
+    }
+
+    nav{
+      margin-left:auto;
+    }
+    nav ul{
+      list-style:none;
+      display:flex;
+      gap:0.6rem;
+      margin:0;
+      padding:0;
+      align-items:center;
+    }
+    nav a{
+      display:inline-block;
+      padding:0.42rem 0.65rem;
+      border-radius:10px;
+      text-decoration:none;
+      color:var(--text);
+      font-weight:600;
+      font-size:0.92rem;
+    }
+    nav a.primary{
+      background:linear-gradient(180deg,var(--accent),var(--accent-2));
+      color:white;
+      box-shadow:0 6px 14px rgba(95,156,255,0.12);
+    }
+
+    main{margin-top:1rem}
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:1rem;
+      box-shadow:0 8px 26px rgba(11,42,68,0.06);
+      margin-bottom:1rem;
+    }
+
+    .welcome h2{
+      margin:0 0 0.4rem 0;
+      font-size:1rem;
+    }
+    .welcome p{margin:0;color:var(--muted)}
+
+    .menu ul{display:flex;flex-direction:row;gap:0.6rem;padding:0;margin:0;list-style:none}
+    .menu a{
+      display:block;
+      padding:0.6rem 0.8rem;
+      border-radius:10px;
+      background:linear-gradient(180deg, rgba(159,209,255,0.18), rgba(111,183,255,0.08));
+      color:var(--text);
+      text-decoration:none;
+      font-weight:600;
+    }
+
+    footer{opacity:0.8;text-align:center;padding:1rem 0;font-size:0.86rem;color:var(--muted)}
+
+    /* スマホSE向け微調整（幅375px以下=iPhone SEでもOK） */
+    @media (max-width: 375px){
+      body{padding:0.5rem}
+      .wrap{padding:0}
+      header{padding:0.5rem}
+      .brand img{width:40px;height:40px}
+      header h1{font-size:1rem}
+      nav ul{gap:0.4rem}
+      nav a{font-size:0.86rem;padding:0.36rem 0.5rem}
+      .card{padding:0.85rem}
+      .menu ul{flex-direction:column}
+      .menu a{width:100%}
+    }
+
+    /* より小さいデバイス向けの快適さ */
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none!important}
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>チームホームページ</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">ホーム</a></li>
-        <li><a href="members.html">メンバー一覧</a></li>
-      </ul>
-    </nav>
-  </header>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <!-- ホーム画面左上（apple-touch-icon と同じ画像） -->
+        <img src="images/teams-r.png" alt="チームアイコン">
+        <h1>チームホームページ</h1>
+      </div>
 
-  <main>
-    <section>
-      <h2>ようこそ！</h2>
-      <p>このサイトではチームメンバーや情報を紹介しています。</p>
-    </section>
+      <nav>
+        <ul>
+          <li><a href="index.html" class="primary">ホーム</a></li>
+          <li><a href="members.html">メンバー一覧</a></li>
+        </ul>
+      </nav>
+    </header>
 
-    <section>
-      <h2>メニュー</h2>
-      <ul>
-        <li><a href="members.html">メンバー一覧</a></li>
-        <!-- 将来的にスケジュールや試合結果など追加可 -->
-      </ul>
-    </section>
-  </main>
+    <main>
+      <section class="card welcome">
+        <h2>ようこそ！</h2>
+        <p>このサイトではチームメンバーや情報を紹介しています。スマホ（iPhone SE 等）でも見やすいようシンプルでおしゃれな淡いブルー配色にしています。</p>
+      </section>
 
-  <footer>
-    <p>&copy; 2025 My Team</p>
-  </footer>
+      <section class="card menu">
+        <h2>メニュー</h2>
+        <ul>
+          <li><a href="members.html">メンバー一覧</a></li>
+          <!-- 将来的にスケジュールや試合結果など追加可 -->
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 My Team</p>
+    </footer>
+  </div>
 </body>
 </html>
