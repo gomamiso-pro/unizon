@@ -20,25 +20,51 @@
       color:#fff;
       padding:1rem;
       text-align:center;
+      position:relative;
     }
     header h1{margin:0;font-size:1.4rem;}
+
+    /* ハンバーガーボタン */
+    .menu-btn{
+      position:absolute;
+      left:1rem;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:1.5rem;
+      background:none;
+      border:none;
+      color:#fff;
+      cursor:pointer;
+    }
+
+    nav{
+      position:fixed;
+      top:0;
+      left:-250px; /* 初期は隠す */
+      width:250px;
+      height:100%;
+      background:#004080;
+      color:#fff;
+      transition:left 0.3s ease;
+      padding-top:4rem;
+    }
+    nav.active{left:0;}
+
     nav ul{
-      display:flex;
-      justify-content:center;
-      gap:1rem;
       list-style:none;
       margin:0;
-      padding:0.5rem 0;
-      background:#e6f5ff;
+      padding:0;
     }
+    nav li{margin:0;}
     nav a{
+      display:block;
       text-decoration:none;
       font-weight:600;
-      color:#004080;
-      padding:0.4rem 0.8rem;
-      border-radius:8px;
+      color:#fff;
+      padding:1rem;
     }
-    nav a:hover{background:#cce7ff;}
+    nav a:hover{background:#0066cc;}
+
     main{max-width:800px;margin:1.5rem auto;padding:0 1rem;}
     section{margin-bottom:2rem;}
     footer{text-align:center;padding:1rem;font-size:0.85rem;color:#617d91;}
@@ -46,10 +72,11 @@
 </head>
 <body>
   <header>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
     <h1>UNIZON ソフトボールチーム</h1>
   </header>
 
-  <nav>
+  <nav id="sideMenu">
     <ul>
       <li><a href="index.html" class="active">ホーム</a></li>
       <li><a href="members.html">メンバー一覧</a></li>
@@ -69,6 +96,26 @@
       </p>
     </section>
 
+    <section>
+      <h2>最新情報</h2>
+      <ul>
+        <li>2025/09/01 秋季リーグ開幕！初戦は○○グラウンドで△△チームと対戦予定。</li>
+        <li>2025/08/20 夏合宿を無事終了しました。</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Softball Team</p>
+  </footer>
+
+  <script>
+    function toggleMenu(){
+      document.getElementById("sideMenu").classList.toggle("active");
+    }
+  </script>
+</body>
+</html>
     <section>
       <h2>最新情報</h2>
       <ul>
