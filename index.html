@@ -4,15 +4,18 @@
   <meta charset="UTF-8">
   <title>UNISON Softball Team</title>
   <style>
-    /* iPhone SE 幅を基準にする */
-    body {
+    /* ✅ 全体調整 */
+    html, body {
       margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 375px; /* iPhone SE基準 */
+      margin-left: auto;
+      margin-right: auto;
+      overflow-x: hidden; /* 横スクロール禁止 */
       font-family: 'Arial Rounded MT Bold', 'ヒラギノ丸ゴ Pro', sans-serif;
       background-color: #e6f0fa;
       color: #003366;
-      max-width: 375px;
-      margin-left: auto;
-      margin-right: auto;
     }
 
     header {
@@ -33,15 +36,14 @@
       position: relative;
     }
 
+    /* ✅ ハンバーガーボタン */
     .menu-btn {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       width: 30px;
       height: 25px;
       cursor: pointer;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      display: flex;
     }
 
     .menu-btn span {
@@ -53,6 +55,7 @@
       transition: 0.3s;
     }
 
+    /* ✅ メニューリスト */
     nav ul {
       list-style: none;
       padding: 0;
@@ -63,15 +66,18 @@
       position: absolute;
       top: 50px;
       right: 0;
-      width: 150px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      width: 200px;
+      border-radius: 10px;
       z-index: 10;
     }
 
     nav ul li {
-      padding: 10px;
-      text-align: right;
+      text-align: center; /* ⬅ 中央寄せ */
+      padding: 12px;
+      margin: 8px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* ⬅ 影 */
     }
 
     nav ul li a {
@@ -93,7 +99,7 @@
       margin-top: 0;
     }
 
-    /* テーブルラッパー */
+    /* ✅ テーブル */
     .table-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
