@@ -52,6 +52,12 @@
       margin-top: 0;
     }
 
+    /* テーブルラッパー */
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch; /* スマホで滑らかスクロール */
+    }
+
     /* メンバー一覧テーブル */
     table {
       width: 100%;
@@ -59,6 +65,7 @@
       background-color: #ffffff;
       border-radius: 10px;
       overflow: hidden;
+      min-width: 400px; /* 小さい画面でも横スクロールで見える */
     }
 
     th, td {
@@ -163,31 +170,33 @@
     <!-- メンバー一覧 -->
     <div id="members" class="page">
       <h1>メンバー一覧</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>ニックネーム</th>
-            <th>背番号</th>
-            <th>ポジション</th>
-            <th>画像</th>
-          </tr>
-        </thead>
-        <tbody id="memberTable">
-          <!-- JSでスプレッドシートから取得して追加 -->
-          <tr>
-            <td>Yamada</td>
-            <td>10</td>
-            <td>ピッチャー</td>
-            <td><img src="https://drive.google.com/uc?id=XXXXX" class="member-img" alt="Yamada"></td>
-          </tr>
-          <tr>
-            <td>Sato</td>
-            <td>25</td>
-            <td>キャッチャー</td>
-            <td><img src="https://drive.google.com/uc?id=YYYYY" class="member-img" alt="Sato"></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ニックネーム</th>
+              <th>背番号</th>
+              <th>ポジション</th>
+              <th>画像</th>
+            </tr>
+          </thead>
+          <tbody id="memberTable">
+            <!-- JSでスプレッドシートから取得して追加 -->
+            <tr>
+              <td>Yamada</td>
+              <td>10</td>
+              <td>ピッチャー</td>
+              <td><img src="https://drive.google.com/uc?id=XXXXX" class="member-img" alt="Yamada"></td>
+            </tr>
+            <tr>
+              <td>Sato</td>
+              <td>25</td>
+              <td>キャッチャー</td>
+              <td><img src="https://drive.google.com/uc?id=YYYYY" class="member-img" alt="Sato"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- メンバー登録 -->
