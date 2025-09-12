@@ -10,14 +10,20 @@
     }
 
     html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      overflow-x: hidden; /* 横スクロール禁止 */
-      font-family: 'Arial Rounded MT Bold', 'ヒラギノ丸ゴ Pro', sans-serif;
-      background-color: #e6f0fa;
-      color: #003366;
-    }
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* 横スクロール禁止 */
+}
+
+.page {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 375px;   /* iPhone SE 幅に収める */
+  margin: 0 auto;
+  padding: 16px;
+}
 
     header {
       display: flex;
