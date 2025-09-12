@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>UNISON Softball Team</title>
+  <style>
+    /* 全体 */
+    body {
+      margin: 0;
+      font-family: 'Arial Rounded MT Bold', 'ヒラギノ丸ゴ Pro', sans-serif;
+      background-color: #e6f0fa;
+      color: #003366;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #b3d1ff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    header img {
+      height: 50px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #003366;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #0055cc;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    /* メンバー一覧テーブル */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+    }
+
+    th {
+      background-color: #cce0ff;
+    }
+
+    img.member-img {
+      width: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #b3d1ff;
+      margin-top: 20px;
+    }
+
+    /* ページ切り替え非表示/表示 */
+    .page {
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="images/teams-r.jpg" alt="UNISONロゴ">
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#" onclick="showPage('home')">ホーム画面</a></li>
+        <li><a href="#" onclick="showPage('members')">メンバー一覧</a></li>
+        <li><a href="#" onclick="showPage('register')">メンバー登録</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ホーム画面 -->
+    <div id="home" class="page active">
+      <h1>UNISON Softball Team</h1>
+      <p>ようこそ！UNISONソフトボールチームの公式ページへ。</p>
+    </div>
+
+    <!-- メンバー一覧 -->
+    <div id="members" class="page">
+      <h1>メンバー一覧</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ニックネーム</th>
+            <th>背番号</th>
+            <th>ポジション</th>
+            <th>画像</th>
+          </tr>
+        </thead>
+        <tbody id="memberTable">
+          <!-- JSでスプレッドシートから取得して追加 -->
+          <tr>
+            <td>Yamada</td>
+            <td>10</td>
+            <td>ピッチャー</td>
+            <td><img src="https://drive.google.com/uc?id=XXXXX" class="member-img" alt="Yamada"></td>
+          </tr>
+          <tr>
+            <td>Sato</td>
+            <td>25</td>
+            <td>キャッチャー</td>
+            <td><img src="https://drive.google.com/uc?id=YYYYY" class="member-img" alt="Sato"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- メンバー登録 -->
+    <div id="register" class="page">
+      <h1>メンバー登録</h1>
+      <form id="registerForm">
+        <label>ニックネーム: <input type="text" name="nickname"></label><br><br>
+        <label>背番号: <input type="number" name="number"></label><br><br>
+        <label>ポジション: <input type="text" name="position"></label><br><br>
+        <label>画像URL: <input type="text" name="image"></label><br><br>
+        <button type="submit">登録</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 UNISON Softball Team
+  </footer>
+
+  <script>
+    // ページ切り替え
+    function showPage(id){
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // メンバー登録（仮: 表示だけ）
+    document.getElementById('registerForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      alert('メンバー登録機能はまだ実装されていません。');
+    });
+  </script>
+</body>
+</html>
