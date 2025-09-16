@@ -1,323 +1,227 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UNISON Softball Team</title>
   <style>
-    /* ✅ 全体 */
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
-      background: #f5f8ff;
       margin: 0;
-      padding: 0;
-      color: #003366;
+      font-family: "Segoe UI", sans-serif;
+      background: #f9fbff;
+      color: #333;
     }
 
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #4a90e2;
+      color: white;
       padding: 12px 16px;
-      background-color: #b3d1ff;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      position: relative;
     }
 
-    header img {
-      height: 40px;
-    }
-
-    /* ✅ ハンバーガーボタン */
-    .menu-btn {
+    nav {
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 28px;
-      height: 22px;
-      cursor: pointer;
-    }
-
-    .menu-btn span {
-      display: block;
-      height: 3px;
-      width: 100%;
-      background-color: #003366;
-      border-radius: 3px;
-      transition: 0.3s;
-    }
-
-    /* ✅ メニューリスト */
-    nav ul {
-      display: none;
-      flex-direction: column;
+      justify-content: space-around;
       background: #fff;
-      position: absolute;
-      top: 55px;
-      right: 10px;
-      width: 180px;
-      border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-      animation: slideDown 0.3s ease;
-      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
     }
-
-    nav ul li a {
-      display: block;
+    nav button {
+      flex: 1;
       padding: 12px;
-      color: #003366;
-      text-decoration: none;
-      font-weight: bold;
-      border-bottom: 1px solid #eee;
-      text-align: center;
-    }
-
-    nav ul li:last-child a {
-      border-bottom: none;
-    }
-
-    nav ul li a:hover {
-      background: #f0f6ff;
-    }
-
-    /* ✅ メイン */
-    main {
-      padding: 20px;
-      max-width: 600px;
-      margin: 0 auto;
-      animation: fadeIn 0.5s ease;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #003366;
-      font-size: 1.6em;
-    }
-
-    /* ✅ カード風レイアウト */
-    .page > *:not(h1) {
-      background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      animation: fadeInUp 0.5s ease;
-    }
-
-    /* ✅ フォーム */
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    form label {
-      display: flex;
-      flex-direction: column;
-      font-weight: bold;
-    }
-
-    form input {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      font-size: 16px;
-      transition: 0.3s;
-    }
-
-    form input:focus {
-      border-color: #0055cc;
-      outline: none;
-      box-shadow: 0 0 6px rgba(0,85,204,0.3);
-    }
-
-    form button {
-      padding: 12px;
-      background-color: #003366;
-      color: #fff;
       border: none;
-      border-radius: 12px;
-      font-size: 16px;
+      background: none;
+      font-weight: bold;
+      color: #4a90e2;
       cursor: pointer;
-      transition: transform 0.1s ease, background-color 0.3s;
-      max-width: 200px;
+      transition: background 0.3s;
     }
-
-    form button:active {
-      transform: scale(0.95);
-    }
-
-    form button:hover {
-      background-color: #0055cc;
-    }
-
-    /* ✅ テーブル */
-    .table-wrapper {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 300px;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #eee;
-    }
-
-    th {
+    nav button.active {
       background: #e6f0ff;
     }
 
-    img.member-img {
+    main {
+      padding: 16px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 12px;
+      text-align: center;
+      color: #4a90e2;
+    }
+
+    /* メンバー一覧 */
+    .member-card {
+      background: white;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: transform 0.2s;
+    }
+    .member-card:hover {
+      transform: scale(1.02);
+    }
+    .member-card img {
       width: 60px;
       height: 60px;
       border-radius: 50%;
+      object-fit: cover;
+    }
+    .member-info {
+      flex: 1;
+    }
+    .member-info div {
+      margin: 2px 0;
+    }
+
+    /* フォーム */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    label {
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+    button.submit-btn {
+      background: #4a90e2;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s;
+    }
+    button.submit-btn:hover {
+      background: #357ABD;
     }
 
     footer {
       text-align: center;
       padding: 10px;
-      background-color: #b3d1ff;
-      margin-top: 20px;
+      font-size: 0.8em;
+      color: #666;
     }
 
-    /* ✅ ページ切り替え */
-    .page {
-      display: none;
-    }
-
-    .active {
-      display: block;
-    }
-
-    /* ✅ アニメーション */
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    @keyframes fadeInUp {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    @keyframes slideDown {
-      from {opacity: 0; transform: translateY(-10px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
+    .page { display: none; }
+    .active-page { display: block; }
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <img src="images/teams-r.jpg" alt="UNISONロゴ">
-    </div>
-    <nav>
-      <div class="menu-btn" onclick="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-      <ul id="menuList">
-        <li><a href="#" onclick="showPage('home'); toggleMenu()">ホーム画面</a></li>
-        <li><a href="#" onclick="showPage('members'); toggleMenu()">メンバー一覧</a></li>
-        <li><a href="#" onclick="showPage('register'); toggleMenu()">メンバー登録</a></li>
-      </ul>
-    </nav>
-  </header>
+  <header>UNISON Softball Team</header>
+
+  <nav>
+    <button onclick="showPage('home')" id="tab-home" class="active">ホーム</button>
+    <button onclick="showPage('members')" id="tab-members">メンバー一覧</button>
+    <button onclick="showPage('register')" id="tab-register">登録</button>
+  </nav>
 
   <main>
-    <div id="home" class="page active">
-      <h1>UNISON Softball Team</h1>
-      <div>
-        <p>ようこそ！UNISONソフトボールチームの公式ページへ。</p>
-      </div>
+    <!-- ホーム -->
+    <div id="home" class="page active-page">
+      <h1>Welcome!</h1>
+      <p style="text-align:center;">UNISONソフトボールチームへようこそ！</p>
     </div>
 
+    <!-- メンバー一覧 -->
     <div id="members" class="page">
       <h1>メンバー一覧</h1>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>ニックネーム</th>
-              <th>背番号</th>
-              <th>ポジション</th>
-              <th>画像</th>
-            </tr>
-          </thead>
-          <tbody id="memberTable">
-            <tr>
-              <td>Yamada</td>
-              <td>10</td>
-              <td>ピッチャー</td>
-              <td><img src="https://drive.google.com/uc?id=XXXXX" class="member-img" alt="Yamada"></td>
-            </tr>
-            <tr>
-              <td>Sato</td>
-              <td>25</td>
-              <td>キャッチャー</td>
-              <td><img src="https://drive.google.com/uc?id=YYYYY" class="member-img" alt="Sato"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <div id="memberList"></div>
     </div>
 
+    <!-- 登録フォーム -->
     <div id="register" class="page">
       <h1>メンバー登録</h1>
-      <form id="registerForm">
-        <label>ニックネーム:
-          <input type="text" name="nickname">
-        </label>
-        <label>背番号:
-          <input type="number" name="number">
-        </label>
-        <label>ポジション:
-          <input type="text" name="position">
-        </label>
-        <label>画像URL:
-          <input type="text" name="image">
-        </label>
-        <button type="submit">登録</button>
+      <form id="registerForm" enctype="multipart/form-data">
+        <div>
+          <label>ニックネーム</label>
+          <input type="text" name="nickname" required>
+        </div>
+        <div>
+          <label>背番号</label>
+          <input type="number" name="number" required>
+        </div>
+        <div>
+          <label>ポジション</label>
+          <input type="text" name="position" required>
+        </div>
+        <div>
+          <label>画像</label>
+          <input type="file" name="file" accept="image/*" required>
+        </div>
+        <button type="submit" class="submit-btn">登録</button>
       </form>
     </div>
   </main>
 
-  <footer>
-    &copy; 2025 UNISON Softball Team
-  </footer>
+  <footer>&copy; 2025 UNISON Softball Team</footer>
 
   <script>
+    const API_URL = "<<<GASのWebアプリURL>>>"; // ★ここを差し替え
+
     // ページ切り替え
-    function showPage(id){
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
+    function showPage(id) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active-page"));
+      document.getElementById(id).classList.add("active-page");
+
+      document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+      document.getElementById("tab-" + id).classList.add("active");
+
+      if (id === "members") loadMembers();
     }
 
-    // メニューの表示/非表示
-    function toggleMenu() {
-      const menu = document.getElementById('menuList');
-      if(menu.style.display === 'flex'){
-        menu.style.display = 'none';
-      } else {
-        menu.style.display = 'flex';
-      }
+    // メンバー一覧を取得して表示
+    async function loadMembers() {
+      const res = await fetch(API_URL);
+      const members = await res.json();
+      const list = document.getElementById("memberList");
+      list.innerHTML = "";
+      members.forEach(m => {
+        const card = document.createElement("div");
+        card.className = "member-card";
+        card.innerHTML = `
+          <img src="${m.image}" alt="${m.nickname}">
+          <div class="member-info">
+            <div><b>${m.nickname}</b></div>
+            <div>#${m.number} / ${m.position}</div>
+          </div>
+        `;
+        list.appendChild(card);
+      });
     }
 
-    // メンバー登録（仮）
-    document.getElementById('registerForm').addEventListener('submit', function(e){
+    // 登録フォーム送信
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      alert('メンバー登録機能はまだ実装されていません。');
+      const formData = new FormData(e.target);
+      const res = await fetch(API_URL, { method: "POST", body: formData });
+      const text = await res.text();
+      alert(text);
+      e.target.reset();
+      showPage("members");
     });
   </script>
 </body>
