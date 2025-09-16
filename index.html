@@ -5,34 +5,26 @@
   <meta charset="UTF-8">
   <title>UNISON Softball Team</title>
   <style>
-    /* ✅ 全体調整 */
+    /* ✅ 全体 */
     * {
       box-sizing: border-box;
     }
 
-    html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  max-width: 100%;     /* スマホ幅にフィット */
-  overflow-x: hidden;  /* 横スクロール禁止 */
-  font-size: 16px;     /* 基本文字サイズ */
-}
-
-.page {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 16px;
-}
-    
+    body {
+      font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+      background: #f5f8ff;
+      margin: 0;
+      padding: 0;
+      color: #003366;
+    }
 
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 15px;
+      padding: 12px 16px;
       background-color: #b3d1ff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       position: relative;
     }
 
@@ -40,17 +32,13 @@
       height: 40px;
     }
 
-    nav {
-      position: relative;
-    }
-
     /* ✅ ハンバーガーボタン */
     .menu-btn {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      width: 30px;
-      height: 25px;
+      width: 28px;
+      height: 22px;
       cursor: pointer;
     }
 
@@ -65,78 +53,134 @@
 
     /* ✅ メニューリスト */
     nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: none; /* 初期非表示 */
+      display: none;
       flex-direction: column;
-      background-color: #b3d1ff;
+      background: #fff;
       position: absolute;
-      top: 50px;
-      right: 0;
-      width: 200px;
-      border-radius: 10px;
+      top: 55px;
+      right: 10px;
+      width: 180px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      animation: slideDown 0.3s ease;
       z-index: 10;
     }
 
-    nav ul li {
-      text-align: center; /* 中央寄せ */
+    nav ul li a {
+      display: block;
       padding: 12px;
-      margin: 8px;
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* 影 */
+      color: #003366;
+      text-decoration: none;
+      font-weight: bold;
+      border-bottom: 1px solid #eee;
+      text-align: center;
     }
 
-    nav ul li a {
-      text-decoration: none;
-      color: #003366;
-      font-weight: bold;
-      display: block;
+    nav ul li:last-child a {
+      border-bottom: none;
     }
 
     nav ul li a:hover {
-      color: #0055cc;
+      background: #f0f6ff;
     }
 
+    /* ✅ メイン */
     main {
-      padding: 15px;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      animation: fadeIn 0.5s ease;
     }
 
     h1 {
-      margin-top: 0;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #003366;
+      font-size: 1.6em;
+    }
+
+    /* ✅ カード風レイアウト */
+    .page > *:not(h1) {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      animation: fadeInUp 0.5s ease;
+    }
+
+    /* ✅ フォーム */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    form label {
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+    }
+
+    form input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    form input:focus {
+      border-color: #0055cc;
+      outline: none;
+      box-shadow: 0 0 6px rgba(0,85,204,0.3);
+    }
+
+    form button {
+      padding: 12px;
+      background-color: #003366;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.1s ease, background-color 0.3s;
+      max-width: 200px;
+    }
+
+    form button:active {
+      transform: scale(0.95);
+    }
+
+    form button:hover {
+      background-color: #0055cc;
     }
 
     /* ✅ テーブル */
     .table-wrapper {
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background-color: #ffffff;
-      border-radius: 10px;
-      overflow: hidden;
       min-width: 300px;
     }
 
     th, td {
-      padding: 10px;
+      padding: 12px;
       text-align: center;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #eee;
     }
 
     th {
-      background-color: #cce0ff;
+      background: #e6f0ff;
     }
 
     img.member-img {
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      object-fit: cover;
     }
 
     footer {
@@ -146,13 +190,29 @@
       margin-top: 20px;
     }
 
-    /* ページ切り替え非表示/表示 */
+    /* ✅ ページ切り替え */
     .page {
       display: none;
     }
 
     .active {
       display: block;
+    }
+
+    /* ✅ アニメーション */
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @keyframes fadeInUp {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes slideDown {
+      from {opacity: 0; transform: translateY(-10px);}
+      to {opacity: 1; transform: translateY(0);}
     }
   </style>
 </head>
@@ -178,7 +238,9 @@
   <main>
     <div id="home" class="page active">
       <h1>UNISON Softball Team</h1>
-      <p>ようこそ！UNISONソフトボールチームの公式ページへ。</p>
+      <div>
+        <p>ようこそ！UNISONソフトボールチームの公式ページへ。</p>
+      </div>
     </div>
 
     <div id="members" class="page">
@@ -214,10 +276,18 @@
     <div id="register" class="page">
       <h1>メンバー登録</h1>
       <form id="registerForm">
-        <label>ニックネーム: <input type="text" name="nickname"></label><br><br>
-        <label>背番号: <input type="number" name="number"></label><br><br>
-        <label>ポジション: <input type="text" name="position"></label><br><br>
-        <label>画像URL: <input type="text" name="image"></label><br><br>
+        <label>ニックネーム:
+          <input type="text" name="nickname">
+        </label>
+        <label>背番号:
+          <input type="number" name="number">
+        </label>
+        <label>ポジション:
+          <input type="text" name="position">
+        </label>
+        <label>画像URL:
+          <input type="text" name="image">
+        </label>
         <button type="submit">登録</button>
       </form>
     </div>
@@ -237,10 +307,10 @@
     // メニューの表示/非表示
     function toggleMenu() {
       const menu = document.getElementById('menuList');
-      if(menu.style.display === 'block'){
+      if(menu.style.display === 'flex'){
         menu.style.display = 'none';
       } else {
-        menu.style.display = 'block';
+        menu.style.display = 'flex';
       }
     }
 
