@@ -68,20 +68,20 @@ footer { text-align:center; padding:10px; background:#b3d1ff; margin-top:20px; }
 
   <div id="register" class="page">
     <h1>メンバー登録</h1>
-    <form id="registerForm" enctype="multipart/form-data">
+    <form id="registerForm">
       <label>番号:<input type="number" name="number" required></label>
       <label>ニックネーム:<input type="text" name="nickname" required></label>
       <label>ポジション:<input type="text" name="position" required></label>
-      <label>画像:<input type="file" name="file" accept="image/*" required></label>
+      <label>画像:<input type="file" id="fileInput" accept="image/*" required></label>
       <button type="submit">登録</button>
     </form>
   </div>
 </main>
 
-<footer>&copy; 2025 UNISON Softball Team 9</footer>
+<footer>&copy; 2025 UNISON Softball Team</footer>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwHibcswH6cQWtSeDg_psU1bMtjJOJn07HaBOcnD7fTb_gwDMEBr9nsnmkboCeVjtnZ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby2XY7j_GuuNYwQEEwn_E009z9dvU2STPKWdqCnhDdYb0A_o1ZWZH4Xz8NfevIEJ50s/exec";
 
 // ページ切り替え
 function showPage(id){
@@ -89,7 +89,7 @@ function showPage(id){
   document.getElementById(id).classList.add('active');
 }
 
-// メニューの表示/非表示
+// メニュー表示切替
 function toggleMenu() {
   const menu = document.getElementById('menuList');
   menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
@@ -98,17 +98,37 @@ function toggleMenu() {
 // 登録フォーム送信
 document.getElementById("registerForm").addEventListener("submit", async e => {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  try {
-    const res = await fetch(API_URL, { method: "POST", body: formData });
-    const text = await res.text();
-    alert(text);
-    e.target.reset();
-    showPage('members');
-    loadMembers();
-  } catch(err) {
-    alert("登録エラー: " + err);
-  }
+  const fileInput = document.getElementById("fileInput");
+  const file = fileInput.files[0];
+  if (!file) return alert("画像を選択してください");
+
+  const reader = new FileReader();
+  reader.onload = async function() {
+    const base64Data = reader.result.split(",")[1];
+    const payload = {
+      number: e.target.number.value,
+      nickname: e.target.nickname.value,
+      position: e.target.position.value,
+      fileName: file.name,
+      fileData: base64Data
+    };
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+      });
+      const text = await res.text();
+      alert(text);
+      e.target.reset();
+      showPage('members');
+      loadMembers();
+    } catch(err) {
+      alert("登録エラー: " + err);
+    }
+  };
+  reader.readAsDataURL(file);
 });
 
 // メンバー一覧取得
