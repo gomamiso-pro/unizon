@@ -78,10 +78,10 @@ footer { text-align:center; padding:10px; background:#b3d1ff; margin-top:20px; }
   </div>
 </main>
 
-<footer>&copy; 2025 UNISON Softball Team24</footer>
+<footer>&copy; 2025 UNISON Softball Team25</footer>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxDnZxXSCp6u5Ksbr3oOUThdYl_VIJMpRqvZN2zZRJeB86GXUL5HLCIFty9jzmru0tY/exec"; // デプロイ後の WebアプリURL
+const API_URL = "https://script.google.com/macros/s/AKfycbwv7NwgnJYNLdt2XD99wLr4T2GY7AhET3iXODIxeEXNu7055i73MhrxK4eQ9xhQAhhJ/exec"; // GAS デプロイ後 URL に置き換え
 
 // ページ切替 & メニュー操作
 function toggleMenu() {
@@ -106,8 +106,9 @@ document.getElementById('menuBtn').addEventListener('click', toggleMenu);
 // メンバー一覧取得
 async function loadMembers() {
   try {
-    const res = await fetch(API_URL);
-    const members = await res.json();
+    const res = await fetch(API_URL, { method: "GET", mode: "cors" });
+    const data = await res.json();
+    const members = data.members || [];
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = "";
     members.forEach(m => {
@@ -146,11 +147,12 @@ document.getElementById("registerForm").addEventListener("submit", e => {
     try {
       const res = await fetch(API_URL, {
         method: "POST",
+        mode: "cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-      const text = await res.text();
-      alert(text);
+      const data = await res.json();
+      alert(data.message || "登録完了");
       e.target.reset();
       showPage('members');
       loadMembers();
@@ -161,7 +163,7 @@ document.getElementById("registerForm").addEventListener("submit", e => {
   reader.readAsDataURL(file);
 });
 
-// 初回メンバー一覧
+// 初回メンバー一覧ロード
 loadMembers();
 </script>
 
