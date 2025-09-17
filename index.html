@@ -8,7 +8,7 @@
 * { box-sizing: border-box; }
 body { font-family: 'Segoe UI', sans-serif; background:#f5f8ff; margin:0; padding:0; color:#003366; }
 header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#b3d1ff; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
-header img { height:40px; width:auto; }
+header img { height:40px; }
 .menu-btn { display:flex; flex-direction:column; justify-content:space-between; width:28px; height:22px; cursor:pointer; }
 .menu-btn span { display:block; height:3px; width:100%; background-color:#003366; border-radius:3px; transition:0.3s; }
 nav ul { display:none; flex-direction:column; background:#fff; position:absolute; top:55px; right:10px; width:180px; border-radius:12px; box-shadow:0 6px 12px rgba(0,0,0,0.15); z-index:10; }
@@ -72,27 +72,28 @@ footer { text-align:center; padding:10px; background:#b3d1ff; margin-top:20px; }
       <label>番号:<input type="number" name="number" required></label>
       <label>ニックネーム:<input type="text" name="nickname" required></label>
       <label>ポジション:<input type="text" name="position" required></label>
-      <label>画像:<input type="file" name="file" accept="image/*" required></label>
+      <label>画像:<input type="file" name="file" accept="image/*"></label>
       <button type="submit">登録</button>
     </form>
   </div>
 </main>
 
-<footer>&copy; 2025 UNISON Softball Team17</footer>
+<footer>&copy; 2025 UNISON Softball Team<18/footer>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxcnmg56LaIurW6Yibwb4tHUWGIvksxpVAPCW2-qXcPtZXGc9jkjNi299vO31xSlaT3/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyze3SOv4AF5FnQ7ps2OihiPU4ggQ_OlA007i9ZqwCDxxuLF7Z8mN_d89ZCQu_scZzQ/exec";
 
+// ページ切り替え
 function showPage(id){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-
 function toggleMenu() {
   const menu = document.getElementById('menuList');
   menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
 }
 
+// メンバー一覧取得
 async function loadMembers() {
   try {
     const res = await fetch(API_URL);
@@ -114,11 +115,16 @@ async function loadMembers() {
   }
 }
 
+// 登録フォーム送信
 document.getElementById("registerForm").addEventListener("submit", async e => {
   e.preventDefault();
   const formData = new FormData(e.target);
+
   try {
-    const res = await fetch(API_URL, { method: "POST", body: formData });
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: formData
+    });
     const text = await res.text();
     alert(text);
     e.target.reset();
