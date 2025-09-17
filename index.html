@@ -7,7 +7,7 @@
 <style>
 * { box-sizing: border-box; }
 body { font-family: 'Segoe UI', sans-serif; background:#f5f8ff; margin:0; padding:0; color:#003366; }
-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#b3d1ff; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#b3d1ff; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
 header img { height:40px; }
 .menu-btn { display:flex; flex-direction:column; justify-content:space-between; width:28px; height:22px; cursor:pointer; }
 .menu-btn span { display:block; height:3px; width:100%; background:#003366; border-radius:3px; transition:0.3s; }
@@ -39,11 +39,11 @@ footer { text-align:center; padding:10px; background:#b3d1ff; margin-top:20px; }
 <header>
   <div class="logo"><img src="images/teams-r.jpg" alt="UNISONロゴ"></div>
   <nav>
-    <div class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    <div class="menu-btn" id="menuBtn"><span></span><span></span><span></span></div>
     <ul id="menuList">
-      <li><a href="#" onclick="showPage('home'); toggleMenu()">ホーム画面</a></li>
-      <li><a href="#" onclick="showPage('members'); toggleMenu()">メンバー一覧</a></li>
-      <li><a href="#" onclick="showPage('register'); toggleMenu()">メンバー登録</a></li>
+      <li><a href="#" data-page="home">ホーム画面</a></li>
+      <li><a href="#" data-page="members">メンバー一覧</a></li>
+      <li><a href="#" data-page="register">メンバー登録</a></li>
     </ul>
   </nav>
 </header>
@@ -78,21 +78,30 @@ footer { text-align:center; padding:10px; background:#b3d1ff; margin-top:20px; }
   </div>
 </main>
 
-<footer>&copy; 2025 UNISON Softball Team20</footer>
+<footer>&copy; 2025 UNISON Softball Team21</footer>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxdaxcAEO1uwnwW-jHDeo2Env3ZrPMw0d-1l2y0qyHE8ukKKlvRHElGdPuU8GpiY_H0/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxP0T7eCe9cZ55d0ESbYYhEdSVa9id94bYDmJvFd4pcXuL9iWuwABT2KyhNwuJ0_CN-/exec"; // デプロイ後の WebアプリURL
 
-// ページ切り替え
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
+// ページ切替 & メニュー操作
 function toggleMenu() {
   const menu = document.getElementById('menuList');
   menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
 }
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// メニュークリック時
+document.querySelectorAll('#menuList a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    showPage(a.dataset.page);
+    toggleMenu();
+  });
+});
+document.getElementById('menuBtn').addEventListener('click', toggleMenu);
 
 // メンバー一覧取得
 async function loadMembers() {
@@ -117,4 +126,44 @@ async function loadMembers() {
 }
 
 // 登録フォーム送信
-document.getElementById("registerForm").addEventListener("submit",
+document.getElementById("registerForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const fileInput = e.target.querySelector('input[name="file"]');
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+
+  reader.onload = async function() {
+    const base64File = reader.result.split(',')[1];
+    const payload = {
+      number: e.target.number.value,
+      nickname: e.target.nickname.value,
+      position: e.target.position.value,
+      file: base64File,
+      fileName: file.name,
+      fileType: file.type
+    };
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const text = await res.text();
+      alert(text);
+      e.target.reset();
+      showPage('members');
+      loadMembers();
+    } catch(err) {
+      alert("登録エラー: " + err);
+    }
+  };
+  reader.readAsDataURL(file);
+});
+
+// 初回メンバー一覧
+loadMembers();
+</script>
+
+</body>
+</html>
