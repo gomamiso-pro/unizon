@@ -7,21 +7,21 @@
 <style>
 * { box-sizing: border-box; }
 body { font-family: 'Segoe UI', sans-serif; background:#f5f8ff; margin:0; padding:0; color:#003366; }
-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#b3d1ff; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#b3d1ff; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
 header img { height:40px; }
 .menu-btn { display:flex; flex-direction:column; justify-content:space-between; width:28px; height:22px; cursor:pointer; }
-.menu-btn span { display:block; height:3px; width:100%; background-color:#003366; border-radius:3px; transition:0.3s; }
+.menu-btn span { display:block; height:3px; width:100%; background:#003366; border-radius:3px; transition:0.3s; }
 nav ul { display:none; flex-direction:column; background:#fff; position:absolute; top:55px; right:10px; width:180px; border-radius:12px; box-shadow:0 6px 12px rgba(0,0,0,0.15); z-index:10; }
 nav ul li a { display:block; padding:12px; color:#003366; text-decoration:none; font-weight:bold; border-bottom:1px solid #eee; text-align:center; }
 nav ul li:last-child a { border-bottom:none; }
 nav ul li a:hover { background:#f0f6ff; }
 main { padding:20px; max-width:600px; margin:0 auto; }
 h1 { text-align:center; margin-bottom:20px; }
-.page > *:not(h1) { background:#fff; border-radius:16px; padding:16px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+.page > *:not(h1) { background:#fff; border-radius:16px; padding:16px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
 form { display:flex; flex-direction:column; gap:16px; }
 form label { display:flex; flex-direction:column; font-weight:bold; }
 form input { padding:10px; border:1px solid #ccc; border-radius:12px; font-size:16px; }
-form button { padding:12px; background:#003366; color:#fff; border:none; border-radius:12px; font-size:16px; cursor:pointer; max-width:200px;}
+form button { padding:12px; background:#003366; color:#fff; border:none; border-radius:12px; font-size:16px; cursor:pointer; max-width:200px; }
 form button:hover { background:#0055cc; }
 form button:active { transform:scale(0.95); }
 .table-wrapper { overflow-x:auto; }
@@ -78,11 +78,12 @@ footer { text-align:center; padding:10px; background:#b3d1ff; margin-top:20px; }
   </div>
 </main>
 
-<footer>&copy; 2025 UNISON Softball Team</footer>
+<footer>&copy; 2025 UNISON Softball Team15-1</footer>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxhnYR239Oh3KklMp7JHzBu4ShjbabH0heaacXWjUHzc6oOsGLyopjWAsPylSsdWVPL/exec";
 
+// ページ切り替え
 function showPage(id){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -114,15 +115,15 @@ async function loadMembers() {
   }
 }
 
-// 登録フォーム送信
-document.getElementById("registerForm").addEventListener("submit", e => {
+// 登録フォーム送信（base64 送信対応）
+document.getElementById("registerForm").addEventListener("submit", async e => {
   e.preventDefault();
   const fileInput = e.target.querySelector('input[name="file"]');
   const file = fileInput.files[0];
 
   const reader = new FileReader();
   reader.onload = async function() {
-    const base64File = reader.result.split(',')[1]; 
+    const base64File = reader.result.split(',')[1]; // base64のみ抽出
     const payload = {
       number: e.target.number.value,
       nickname: e.target.nickname.value,
@@ -143,14 +144,14 @@ document.getElementById("registerForm").addEventListener("submit", e => {
       e.target.reset();
       showPage('members');
       loadMembers();
-    } catch(err) {
+    } catch (err) {
       alert("登録エラー: " + err);
     }
   };
   reader.readAsDataURL(file);
 });
 
-// 初回読み込み
+// 初回一覧読み込み
 loadMembers();
 </script>
 
