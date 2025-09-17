@@ -1,205 +1,140 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UNISON Softball Team</title>
-<style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f5f8ff;
-  margin: 0;
-  padding: 0;
-  color: #003366;
-}
-header, footer {
-  padding: 12px;
-  background: #4d88ff;
-  text-align: center;
-  color: white;
-}
-header h1 { margin: 0; }
-nav { margin-top: 8px; }
-nav button {
-  margin: 0 5px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  background: white;
-  color: #4d88ff;
-  cursor: pointer;
-  font-weight: bold;
-}
-nav button:hover { background: #e6f0ff; }
-main {
-  padding: 20px;
-  max-width: 700px;
-  margin: 20px auto;
-}
-.page { display: none; }
-.active { display: block; }
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-}
-table th, table td { padding: 10px; text-align: center; }
-table thead { background: #cce0ff; }
-img.member-img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-/* --- フォームデザイン --- */
-form {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-}
-form label {
-  display: block;
-  margin-bottom: 15px;
-  font-weight: bold;
-}
-form input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
-form button {
-  margin-top: 15px;
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #4d88ff;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  font-weight: bold;
-}
-form button:hover { background: #3366cc; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>メンバー登録</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f8ff;
+      color: #003366;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      background: #0066cc;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #004999;
+    }
+    .preview {
+      margin-top: 15px;
+      text-align: center;
+    }
+    .preview img {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+  </style>
 </head>
 <body>
+  <h1>メンバー登録フォーム</h1>
+  <form id="memberForm">
+    <label for="number">背番号</label>
+    <input type="text" id="number" name="number" required>
 
-<header>
-  <h1>UNISON Softball Team</h1>
-  <nav>
-    <button onclick="showPage('home')">ホーム</button>
-    <button onclick="showPage('members')">メンバー一覧</button>
-    <button onclick="showPage('register')">メンバー登録</button>
-  </nav>
-</header>
+    <label for="nickname">名前</label>
+    <input type="text" id="nickname" name="nickname" required>
 
-<main>
-  <div id="home" class="page active">
-    <p>ようこそ！UNISONソフトボールチームの公式ページへ。</p>
-  </div>
+    <label for="position">メインポジション</label>
+    <input type="text" id="position" name="position" required>
 
-  <div id="members" class="page">
-    <h2>メンバー一覧</h2>
-    <table>
-      <thead><tr><th>番号</th><th>ニックネーム</th><th>ポジション</th><th>画像</th></tr></thead>
-      <tbody id="memberTable"></tbody>
-    </table>
-  </div>
+    <label for="fileInput">プロフィール画像</label>
+    <input type="file" id="fileInput" accept="image/*" required>
 
-  <div id="register" class="page">
-    <h2>メンバー登録</h2>
-    <form id="registerForm">
-      <label>番号:
-        <input type="number" name="number" required>
-      </label>
-      <label>ニックネーム:
-        <input type="text" name="nickname" required>
-      </label>
-      <label>ポジション:
-        <input type="text" name="position" required>
-      </label>
-      <label>画像:
-        <input type="file" id="fileInput" accept="image/*" required>
-      </label>
-      <button type="submit">登録</button>
-    </form>
-  </div>
-</main>
+    <div class="preview" id="preview"></div>
 
-<footer>&copy; 2025 UNISON Softball Team28</footer>
+    <button type="button" onclick="uploadMember()">登録する</button>
+  </form>
 
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwnGXu8_PxtdK0__G4p_0TYkQVSIyvk3suXTiKgF4mQi-BZP1bNaemhqrZcLf1mHXEa/exec";
+  <script>
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzpLI_z6kMGVecx2Fl9gcLWGme9aVkDoff2FA7zFyNbTEBOFvkav9oai2MeGhrjrJ1n/exec"; // ← GASのデプロイURLに置き換え
 
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-// メンバー一覧取得
-async function loadMembers(){
-  try{
-    const res = await fetch(API_URL);
-    const members = await res.json();
-    const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = "";
-    members.forEach(m=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${m.number}</td>
-        <td>${m.nickname}</td>
-        <td>${m.position}</td>
-        <td>${m.image ? `<img src="${m.image}" class="member-img">` : ""}</td>
-      `;
-      tbody.appendChild(tr);
+    // プレビュー表示
+    document.getElementById("fileInput").addEventListener("change", function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById("preview").innerHTML =
+            '<img src="' + e.target.result + '" alt="preview">';
+        };
+        reader.readAsDataURL(file);
+      }
     });
-  } catch(err){
-    console.error("メンバー取得エラー:", err);
-  }
-}
 
-// 登録フォーム送信
-document.getElementById("registerForm").addEventListener("submit", async e=>{
-  e.preventDefault();
-  const number = e.target.number.value;
-  const nickname = e.target.nickname.value;
-  const position = e.target.position.value;
-  const file = document.getElementById("fileInput").files[0];
+    // メンバー送信処理
+    async function uploadMember() {
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("画像を選択してください");
+        return;
+      }
 
-  const reader = new FileReader();
-  reader.onload = async function(){
-    const base64Data = reader.result.split(",")[1];
-    const formData = new FormData();
-    formData.append("number", number);
-    formData.append("nickname", nickname);
-    formData.append("position", position);
-    formData.append("fileData", base64Data);
-    formData.append("fileName", file.name);
-    formData.append("fileType", file.type); // ← MIMEタイプも送信
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const base64Data = e.target.result.split(",")[1];
 
-    try{
-      const res = await fetch(API_URL, {method:"POST", body:formData});
-      const text = await res.text();
-      alert(text);
-      e.target.reset();
-      showPage('members');
-      loadMembers();
-    } catch(err){
-      alert("登録エラー: "+err);
+        const formData = new FormData();
+        formData.append("number", document.getElementById("number").value);
+        formData.append("nickname", document.getElementById("nickname").value);
+        formData.append("position", document.getElementById("position").value);
+        formData.append("fileData", base64Data);
+        formData.append("fileName", file.name);
+        formData.append("fileType", file.type); // MIMEタイプを渡す
+
+        try {
+          const response = await fetch(WEBAPP_URL, {
+            method: "POST",
+            body: formData
+          });
+          const result = await response.json();
+          if (result.status === "success") {
+            alert("登録成功！画像URL: " + result.url);
+          } else {
+            alert("エラー: " + result.message);
+          }
+        } catch (err) {
+          alert("通信エラー: " + err.message);
+        }
+      };
+      reader.readAsDataURL(file);
     }
-  };
-  reader.readAsDataURL(file);
-});
-
-// 初回一覧取得
-loadMembers();
-</script>
-
+  </script>
 </body>
 </html>
