@@ -5,103 +5,81 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UNISON Softball Team</title>
 <style>
-* { box-sizing: border-box; }
-body { font-family: 'Segoe UI', sans-serif; background:#f5f8ff; margin:0; padding:0; color:#003366; }
-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#b3d1ff; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
-header img { height:40px; }
-.menu-btn { display:flex; flex-direction:column; justify-content:space-between; width:28px; height:22px; cursor:pointer; }
-.menu-btn span { display:block; height:3px; width:100%; background:#003366; border-radius:3px; transition:0.3s; }
-nav ul { display:none; flex-direction:column; background:#fff; position:absolute; top:55px; right:10px; width:180px; border-radius:12px; box-shadow:0 6px 12px rgba(0,0,0,0.15); z-index:10; }
-nav ul li a { display:block; padding:12px; color:#003366; text-decoration:none; font-weight:bold; border-bottom:1px solid #eee; text-align:center; }
-nav ul li:last-child a { border-bottom:none; }
-nav ul li a:hover { background:#f0f6ff; }
-main { padding:20px; max-width:600px; margin:0 auto; }
-h1 { text-align:center; margin-bottom:20px; }
-.page > *:not(h1) { background:#fff; border-radius:16px; padding:16px; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
-form { display:flex; flex-direction:column; gap:16px; }
-form label { display:flex; flex-direction:column; font-weight:bold; }
-form input { padding:10px; border:1px solid #ccc; border-radius:12px; font-size:16px; }
-form button { padding:12px; background:#003366; color:#fff; border:none; border-radius:12px; font-size:16px; cursor:pointer; max-width:200px; }
-form button:hover { background:#0055cc; }
-form button:active { transform:scale(0.95); }
-.table-wrapper { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; min-width:300px; }
-th, td { padding:12px; text-align:center; border-bottom:1px solid #eee; }
-th { background:#e6f0ff; }
-img.member-img { width:60px; height:60px; border-radius:50%; }
-.page { display:none; }
-.active { display:block; }
-footer { text-align:center; padding:10px; background:#b3d1ff; margin-top:20px; }
+body { font-family:'Segoe UI',sans-serif; background:#f5f8ff; color:#003366; margin:0; padding:0;}
+header {display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#b3d1ff;}
+.menu-btn{cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; width:28px; height:22px;}
+.menu-btn span{height:3px; background:#003366; border-radius:3px;}
+nav ul{display:none; position:absolute; top:55px; right:10px; flex-direction:column; background:#fff; border-radius:12px;}
+.page{display:none; padding:20px; max-width:600px; margin:0 auto;}
+.page.active{display:block;}
+table{width:100%; border-collapse:collapse;}
+th,td{padding:12px; text-align:center; border-bottom:1px solid #eee;}
+img.member-img{width:60px;height:60px;border-radius:50%;}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo"><img src="images/teams-r.jpg" alt="UNISONロゴ"></div>
+  <div class="logo"><img src="images/teams-r.jpg" alt="ロゴ" height="40"></div>
   <nav>
     <div class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
     <ul id="menuList">
-      <li><a href="#" onclick="showPage('home'); toggleMenu()">ホーム画面</a></li>
-      <li><a href="#" onclick="showPage('members'); toggleMenu()">メンバー一覧</a></li>
-      <li><a href="#" onclick="showPage('register'); toggleMenu()">メンバー登録</a></li>
+      <li><a href="#" onclick="showPage('home');toggleMenu()">ホーム</a></li>
+      <li><a href="#" onclick="showPage('members');toggleMenu()">メンバー一覧</a></li>
+      <li><a href="#" onclick="showPage('register');toggleMenu()">メンバー登録</a></li>
     </ul>
   </nav>
 </header>
 
-<main>
-  <div id="home" class="page active">
-    <h1>UNISON Softball Team</h1>
-    <p>ようこそ！UNISONソフトボールチームの公式ページへ。</p>
-  </div>
+<div id="home" class="page active">
+  <h1>UNISON Softball Team</h1>
+  <p>ようこそ！</p>
+</div>
 
-  <div id="members" class="page">
-    <h1>メンバー一覧</h1>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr><th>番号</th><th>ニックネーム</th><th>ポジション</th><th>画像</th></tr>
-        </thead>
-        <tbody id="memberTable"></tbody>
-      </table>
-    </div>
-  </div>
+<div id="members" class="page">
+  <h1>メンバー一覧</h1>
+  <table>
+    <thead>
+      <tr><th>番号</th><th>ニックネーム</th><th>ポジション</th><th>画像</th></tr>
+    </thead>
+    <tbody id="memberTable"></tbody>
+  </table>
+</div>
 
-  <div id="register" class="page">
-    <h1>メンバー登録</h1>
-    <form id="registerForm">
-      <label>番号:<input type="number" name="number" required></label>
-      <label>ニックネーム:<input type="text" name="nickname" required></label>
-      <label>ポジション:<input type="text" name="position" required></label>
-      <label>画像:<input type="file" name="file" accept="image/*" required></label>
-      <button type="submit">登録</button>
-    </form>
-  </div>
-</main>
+<div id="register" class="page">
+  <h1>メンバー登録</h1>
+  <form id="registerForm">
+    <label>番号:<input type="number" name="number" required></label>
+    <label>ニックネーム:<input type="text" name="nickname" required></label>
+    <label>ポジション:<input type="text" name="position" required></label>
+    <label>画像:<input type="file" name="file" accept="image/*" required></label>
+    <button type="submit">登録</button>
+  </form>
+</div>
 
-<footer>&copy; 2025 UNISON Softball Team14</footer>
+<footer>&copy; 2025 UNISON Softball Team15</footer>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzRmSNcDKfHMJNSvvNsomloGodNM-YN_oDu2O4Mmg7SrOJJH78wtjkSMELRNEz-xOR0/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxhnYR239Oh3KklMp7JHzBu4ShjbabH0heaacXWjUHzc6oOsGLyopjWAsPylSsdWVPL/exec";
 
-// ページ切り替え
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-function toggleMenu() {
+function toggleMenu(){
   const menu = document.getElementById('menuList');
-  menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+  menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
 }
 
-// メンバー一覧取得
-async function loadMembers() {
+// メンバー取得
+async function loadMembers(){
   try {
     const res = await fetch(API_URL);
     const members = await res.json();
-    const tbody = document.getElementById("memberTable");
+    const tbody = document.getElementById('memberTable');
     tbody.innerHTML = "";
-    members.forEach(m => {
-      const tr = document.createElement("tr");
+    members.forEach(m=>{
+      const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${m.number}</td>
         <td>${m.nickname}</td>
@@ -110,48 +88,46 @@ async function loadMembers() {
       `;
       tbody.appendChild(tr);
     });
-  } catch(err) {
-    console.error("メンバー取得エラー:", err);
+  } catch(err){
+    console.error(err);
   }
 }
 
-// 登録フォーム送信（base64 送信対応）
-document.getElementById("registerForm").addEventListener("submit", async e => {
+// 登録フォーム送信
+document.getElementById('registerForm').addEventListener('submit', e=>{
   e.preventDefault();
-  const fileInput = e.target.querySelector('input[name="file"]');
-  const file = fileInput.files[0];
-
+  const form = e.target;
+  const file = form.file.files[0];
   const reader = new FileReader();
-  reader.onload = async function() {
-    const base64File = reader.result.split(',')[1]; // base64のみ抽出
+  reader.onload = async function(){
+    const base64 = reader.result.split(',')[1];
     const payload = {
-      number: e.target.number.value,
-      nickname: e.target.nickname.value,
-      position: e.target.position.value,
-      file: base64File,
+      number: form.number.value,
+      nickname: form.nickname.value,
+      position: form.position.value,
+      file: base64,
       fileName: file.name,
       fileType: file.type
     };
-
     try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+      const res = await fetch(API_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
       });
       const text = await res.text();
       alert(text);
-      e.target.reset();
+      form.reset();
       showPage('members');
       loadMembers();
-    } catch (err) {
-      alert("登録エラー: " + err);
+    } catch(err){
+      alert("登録エラー: "+err);
     }
   };
   reader.readAsDataURL(file);
 });
 
-// 初回一覧読み込み
+// 初回読み込み
 loadMembers();
 </script>
 
