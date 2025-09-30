@@ -1,41 +1,59 @@
-// ログイン処理
-document.getElementById("loginForm").addEventListener("submit", async function(e){
+
+// ログイン処理（ニックネームと背番号で認証）
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
   e.preventDefault();
-  const id = e.target.login_nickname.value;
-  const pw = e.target.login_number.value;
+  
+  // 入力値を取得
+  const nickname = e.target.login_nickname.value;
+  const number = e.target.login_number.value;
+  const messageElement = document.getElementById("loginMessage");
+
+  // 1. GASへ送るための FormData を作成
+  const formData = new FormData();
+  formData.append("action", "login"); // GAS側で処理を振り分けるための必須項目
+  formData.append("nickname", nickname);
+  formData.append("number", number);
+  
+  messageElement.textContent = "認証中...";
 
   try {
+    // 2. fetchでPOST送信
     const res = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname: id, number: pw })
+      body: formData // FormDataをそのまま送信（Content-Typeは自動設定）
     });
 
     const text = await res.text();
-    console.log("レスポンス:", text);
+    console.log("GASからの応答:", text);
 
+    // 応答をJSONとしてパース
     let data = {};
     try { data = JSON.parse(text); } 
     catch { 
-      document.getElementById("loginMessage").textContent = "サーバーから不正なレスポンス"; 
+      messageElement.textContent = `サーバーから不正な応答がありました。`; 
       return; 
     }
 
-    if(data.success){
+    // 3. 認証結果の判定
+    if (data.status === "success") {
+      messageElement.textContent = "ログイン成功！";
+      e.target.reset(); // フォームをリセット
+
+      // ★ 成功時の処理 ★
+      // 例: ログイン画面を非表示にし、ホーム画面を表示
       document.getElementById("login").classList.remove("active");
       document.getElementById("home").classList.add("active");
-      document.getElementById("hamburger").style.display = "block";
-      document.getElementById("loginMessage").textContent = "";
-      document.getElementById("menuRegister").style.display = "none"; // 全員 user
-      localStorage.setItem("loggedIn","true");
-      localStorage.setItem("role","user");
+      // 例: メニューボタンを表示
+      // document.getElementById("hamburger").style.display = "block";
+
     } else {
-      document.getElementById("loginMessage").textContent = "ログインIDまたはパスワードが違います。";
+      // 失敗時の処理
+      messageElement.textContent = data.message || "ログインIDまたはパスワードが違います。";
     }
 
-  } catch(err){
-    document.getElementById("loginMessage").textContent = "通信エラーが発生しました。";
-    console.error(err);
+  } catch (err) {
+    messageElement.textContent = "通信エラーが発生しました。";
+    console.error("fetchエラー:", err);
   }
 });
 
