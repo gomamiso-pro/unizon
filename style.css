@@ -15,11 +15,11 @@ body {
 }
 
 /* --- ヘッダーとナビゲーション --- */
-header {
+#app header { /* ★ ここを修正 ★ */
   display: flex;
   align-items: center;
   padding: 10px 15px;
-  background: var(--navy);
+  background: var(--navy); /* これで上書きされずに反映されるはず */
   color: white;
   position: sticky;
   top: 0;
