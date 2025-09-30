@@ -13,13 +13,14 @@
   <button id="menuHome" class="menu-item" onclick="navigate('home')">HOME</button>
   <button id="menuMembers" class="menu-item" onclick="navigate('members')">メンバーリスト</button>
   <button id="menuLogout" class="menu-item" onclick="logout()">ログアウト</button>
+    <button id="menuRegister" class="menu-item" onclick="navigate('register')" style="display: none;">メンバー登録</button>
 </nav>
 
 <div id="overlay" onclick="closeMenu()"></div>
 
 <div id="app">
   <header>
-    <button id="hamburger" onclick="toggleMenu()">
+    <button id="hamburger" onclick="toggleMenu()" style="display: none;">
       <div class="bar"></div>
       <div class="bar"></div>
       <div class="bar"></div>
@@ -55,7 +56,7 @@
       </table>
     </div>
 
-        <div id="register" class="page" style="display: none;">
+        <div id="register" class="page">
       <h2>メンバー登録</h2>
       <form id="registerForm" class="form-container">
         <label>番号:
@@ -79,8 +80,8 @@
 <footer>&copy; 2025 UNISON Softball Team</footer>
 
 <script>
-// API_URLはそのまま
-const API_URL = "https://script.google.com/macros/s/AKfycbwY7P8bH3tZ2-0DIlKFl9T9dFunf-0RncXNmva9zm04A-FqzGMQYghlKlDE5Rrdyol5/exec";
+// ★ Google Apps Scriptのデプロイ後のURLに置き換えてください！
+const API_URL = "https://script.google.com/macros/s/AKfycbzpLI_z6kMGVecx2Fl9gcLWGme9aVkDoff2FA7zFyNbTEBOFvkav9oai2MeGhrjrJ1n/exec";
 </script>
 
 <script src="script.js"></script>
