@@ -1,260 +1,116 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-  --navy: #001f3f;     /* メインカラー (濃いネイビー) */
-  --red-accent: #ff4136; /* アクセントカラー (明るい赤) */
-  --soft-white: #f8f8f8; /* 背景色 */
-  --text-dark: #333333;  /* 文字色 */
-}
-
+/* 全体 */
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: var(--soft-white);
-  margin: 0;
-  padding: 0;
-  color: var(--text-dark);
-  overflow-x: hidden; 
+  margin: 0;
+  font-family: "Segoe UI", "Hiragino Sans", sans-serif;
+  background: #f5f5f5;
+  color: #333;
 }
 
-/* --- ヘッダーとナビゲーション --- */
-#app header { /* ★ ここを修正 ★ */
-  display: flex;
-  align-items: center;
-  padding: 10px 15px;
-   background: var(--navy) !important; /* ★ !importantを一時的に追加 ★ */
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* ヘッダー */
+header {
+  background: #222;
+  color: #fff;
+  padding: 10px;
+  display: flex;
+  align-items: center;
 }
-
 header h1 {
-  margin: 0;
-  font-size: 1.2em;
-  flex-grow: 1;
-  text-align: center;
+  flex: 1;
+  margin: 0;
+  font-size: 18px;
 }
-
-/* ハンバーガーアイコン */
 #hamburger {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  width: 30px;
-  height: 24px;
-  position: relative;
-  z-index: 101; 
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
 }
-.bar {
-  display: block;
-  width: 100%;
-  height: 3px;
-  background-color: white;
-  margin: 5px 0;
-  transition: 0.4s;
-  border-radius: 2px;
+#hamburger .bar {
+  width: 25px;
+  height: 3px;
+  background: #fff;
+  margin: 4px 0;
 }
 
-/* --- サイドメニュー (ハンバーガーメニュー本体) --- */
+/* サイドメニュー */
 #sideMenu {
-  position: fixed;
-  top: 0;
-  left: -250px; 
-  width: 250px;
-  height: 100%;
-  background: white;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-  transition: left 0.3s ease;
-  z-index: 100;
-  padding-top: 20px;
+  position: fixed;
+  left: -250px;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  background: #444;
+  color: #fff;
+  padding: 20px;
+  transition: 0.3s;
+  z-index: 1000;
 }
 #sideMenu.open {
-  left: 0;
+  left: 0;
 }
-#sideMenu h2 {
-  color: var(--navy);
-  padding: 0 20px 15px;
-  margin-top: 0;
-  border-bottom: 1px solid #eee;
+#overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 900;
+}
+#overlay.show {
+  display: block;
 }
 .menu-item {
-  display: block;
-  width: 100%;
-  padding: 15px 20px;
-  text-align: left;
-  border: none;
-  background: none;
-  border-bottom: 1px solid #eee;
-  color: var(--text-dark);
-  font-size: 1.1em;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.menu-item:hover {
-  background: #f0f0f0;
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  background: #666;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
 }
 
-/* オーバーレイ */
-#overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 99;
-  display: none;
+/* ページ */
+.page {
+  display: none;
+  padding: 20px;
 }
-#overlay.visible {
-  display: block;
+.page.active {
+  display: block;
 }
 
-/* --- メインコンテンツ --- */
-main {
-  padding: 20px;
-  max-width: 700px;
-  margin: 0 auto;
-}
-.page { display: none; }
-.active { display: block; }
-h2 {
-  color: var(--red-accent);
-  border-bottom: 2px solid var(--red-accent);
-  padding-bottom: 5px;
-  margin-bottom: 20px;
-}
-
-/* フォームとテーブル共通の柔らかいスタイル */
-.form-container, table {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-.form-container label {
-  display: block;
-  margin-bottom: 15px;
-  font-weight: bold;
+/* フォーム */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
 }
 .form-container input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1em;
-  box-sizing: border-box;
+  padding: 8px;
 }
-
-/* ボタンデザイン */
 .form-container button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: var(--red-accent); 
-  color: white;
-  font-size: 1.1em;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
+  padding: 10px;
+  background: #0077cc;
+  color: #fff;
+  border: none;
+  cursor: pointer;
 }
-.form-container button:hover { background: #cc372d; }
-.error-message { color: var(--red-accent); font-weight: bold; }
-
-/* テーブルデザイン */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  overflow: hidden;
+.form-container button:hover {
+  background: #005fa3;
 }
-table th, table td { 
-  padding: 12px; 
-  text-align: center; 
-  border-bottom: 1px solid #eee;
-}
-table thead { 
-  background: var(--navy); 
-  color: white;
-}
-table tr:last-child td {
-  border-bottom: none;
-}
-
-img.member-img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--navy);
+.error-message {
+  color: red;
+  font-size: 14px;
 }
 
 /* フッター */
 footer {
-  padding: 10px;
-  background: var(--navy);
-  text-align: center;
-  color: white;
-  font-size: 0.8em;
-  margin-top: 30px;
-}
-
-/* ---------------------------------------------------------------------- */
-/* ## モバイル向け調整 */
-/* ---------------------------------------------------------------------- */
-@media (max-width: 600px) {
-  main {
-    padding: 10px; 
-  }
-  .form-container input {
-    font-size: 16px; 
-  }
-
-  /* テーブル全体をスクロール可能にする */
-  #members table {
-    display: block;
-    width: 100%;
-    overflow-x: auto; 
-    white-space: nowrap; 
-  }
-
-  /* ヘッダーとセルは幅を固定して見やすくする */
-  #members th, 
-  #members td {
-    min-width: 80px; 
-    box-sizing: border-box;
-    padding: 8px 5px; 
-    font-size: 0.9em;
-  }
-
-  /* 画像セルは特に幅を調整 */
-  #members td:last-child {
-    min-width: 90px;
-  }
-  img.member-img {
-    width: 50px;
-    height: 50px;
-  }
-}
-/* ---------------------------------------------------------------------- */
-/* ## ハンバーガーメニューのスマホでの視認性向上 */
-/* ---------------------------------------------------------------------- */
-@media (max-width: 480px) {
-  header h1 {
-    font-size: 1.1em; 
-  }
-  #sideMenu {
-    width: 200px; 
-    left: -200px;
-  }
-  #sideMenu.open {
-    left: 0;
-  }
+  text-align: center;
+  padding: 10px;
+  background: #eee;
+  margin-top: 20px;
 }
