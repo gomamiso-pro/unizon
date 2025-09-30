@@ -5,25 +5,38 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   const pw = e.target.login_number.value;
 
   try {
-    // GAS に認証リクエスト
-  
-const res = await fetch(API_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ nickname: id, number: pw })
-});
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nickname: id, number: pw })
+    });
 
-// デバッグ用にまずは text で確認
-const text = await res.text();
-console.log("レスポンス:", res.status, text);
+    const text = await res.text();
+    console.log("レスポンス:", text);
 
-let data = {};
-try {
-  data = JSON.parse(text);
-} catch(e) {
-  document.getElementById("loginMessage").textContent = "サーバーから不正なレスポンス: " + text;
-  return;
-}
+    let data = {};
+    try { data = JSON.parse(text); } 
+    catch { 
+      document.getElementById("loginMessage").textContent = "サーバーから不正なレスポンス"; 
+      return; 
+    }
+
+    if(data.success){
+      document.getElementById("login").classList.remove("active");
+      document.getElementById("home").classList.add("active");
+      document.getElementById("hamburger").style.display = "block";
+      document.getElementById("loginMessage").textContent = "";
+      document.getElementById("menuRegister").style.display = "none"; // 全員 user
+      localStorage.setItem("loggedIn","true");
+      localStorage.setItem("role","user");
+    } else {
+      document.getElementById("loginMessage").textContent = "ログインIDまたはパスワードが違います。";
+    }
+
+  } catch(err){
+    document.getElementById("loginMessage").textContent = "通信エラーが発生しました。";
+    console.error(err);
+  }
 });
 
 // ページ切り替え
@@ -57,9 +70,6 @@ window.addEventListener("load", () => {
     document.getElementById("login").classList.remove("active");
     document.getElementById("home").classList.add("active");
     document.getElementById("hamburger").style.display = "block";
-
-    if(localStorage.getItem("role") === "admin"){
-      document.getElementById("menuRegister").style.display = "block";
-    }
+    document.getElementById("menuRegister").style.display = "none"; // 全員 user
   }
 });
