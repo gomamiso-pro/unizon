@@ -6,36 +6,24 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
   try {
     // GAS に認証リクエスト
-    const res = await fetch(API_URL + "?action=login", {
-      method: "POST",
-      body: JSON.stringify({ nickname: id, number: pw }),
-    });
-    const data = await res.json();
+  
+const res = await fetch(API_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ nickname: id, number: pw })
+});
 
-    if(data.success){
-      // ログイン成功
-      document.getElementById("login").classList.remove("active");
-      document.getElementById("home").classList.add("active");
-      document.getElementById("hamburger").style.display = "block";
-      document.getElementById("loginMessage").textContent = "";
+// デバッグ用にまずは text で確認
+const text = await res.text();
+console.log("レスポンス:", res.status, text);
 
-      // 管理者なら「メンバー登録」表示
-      if(data.role === "admin"){
-        document.getElementById("menuRegister").style.display = "block";
-      } else {
-        document.getElementById("menuRegister").style.display = "none";
-      }
-
-      // ローカルにログイン状態を保持
-      localStorage.setItem("loggedIn", "true");
-      localStorage.setItem("role", data.role || "user");
-    } else {
-      document.getElementById("loginMessage").textContent = "ログインIDまたはパスワードが違います。";
-    }
-  } catch(err){
-    document.getElementById("loginMessage").textContent = "通信エラーが発生しました。";
-    console.error(err);
-  }
+let data = {};
+try {
+  data = JSON.parse(text);
+} catch(e) {
+  document.getElementById("loginMessage").textContent = "サーバーから不正なレスポンス: " + text;
+  return;
+}
 });
 
 // ページ切り替え
