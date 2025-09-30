@@ -36,21 +36,16 @@ function updateMenuVisibility(loggedIn) {
   const membersBtn = document.getElementById('menuMembers');
   const logoutBtn = document.getElementById('menuLogout');
   const homeBtn = document.getElementById('menuHome');
-  const loginPage = document.getElementById('login');
-
-  if (loggedIn) {
-    membersBtn.style.display = 'block';
-    logoutBtn.style.display = 'block';
-    homeBtn.style.display = 'block';
-    document.getElementById('hamburger').style.display = 'block';
-    loginPage.style.display = 'none';
-  } else {
-    membersBtn.style.display = 'none';
-    logoutBtn.style.display = 'none';
-    homeBtn.style.display = 'none';
-    document.getElementById('hamburger').style.display = 'none';
-    loginPage.style.display = 'block';
-  }
+  const hamburger = document.getElementById('hamburger');
+  
+  // ハンバーガーメニューとメニュー項目全体の表示/非表示を切り替え
+  hamburger.style.display = loggedIn ? 'block' : 'none';
+  membersBtn.style.display = loggedIn ? 'block' : 'none';
+  logoutBtn.style.display = loggedIn ? 'block' : 'none';
+  homeBtn.style.display = loggedIn ? 'block' : 'none';
+  
+  // 登録ボタンは開発用として常に非表示（必要なら'block'に変更）
+  // document.getElementById('menuRegister').style.display = loggedIn ? 'block' : 'none';
 }
 
 // 💡 ログイン処理
@@ -71,13 +66,13 @@ document.getElementById("loginForm").addEventListener("submit", async e => {
     const result = await res.json();
 
     if (result.status === "success") {
-      messageElement.innerText = "ログイン成功！ HOME画面へ移動します。";
+      messageElement.innerText = "ログイン成功！";
       e.target.reset();
       
-      isLoggedIn = true; // 状態を更新
-      updateMenuVisibility(true); // メニュー表示を更新
-      navigate('home');   // HOME画面へ遷移
-      loadMembers();    // メンバー一覧データを取得
+      isLoggedIn = true; 
+      updateMenuVisibility(true); 
+      navigate('home');   
+      loadMembers();    
     } else {
       messageElement.innerText = "ログインIDまたはパスワードが間違っています。";
     }
@@ -96,41 +91,84 @@ function logout() {
   alert("ログアウトしました。");
 }
 
-// メンバー一覧取得 (以前のロジックを維持)
+// メンバー一覧取得
 async function loadMembers(){
   try{
     const res = await fetch(API_URL);
     const members = await res.json();
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = "";
-    members.forEach(m=>{
-      // ファイル名はニックネーム + ".jpg" と仮定
-      const imagePath = `/images/${m.nickname}.jpg`; 
-      
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${m.number}</td>
-        <td>${m.nickname}</td>
-        <td>${m.position}</td>
-        <td><img src="${imagePath}" class="member-img" alt="${m.nickname}"></td>
-      `;
-      tbody.appendChild(tr);
-    });
+
+    // データが配列か確認
+    if (Array.isArray(members)) {
+      members.forEach(m=>{
+        // 画像パスは/images/{nickname}.jpgと仮定
+        const imagePath = `/images/${m.nickname}.jpg`; 
+        
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.number || ''}</td>
+          <td>${m.nickname || ''}</td>
+          <td>${m.position || ''}</td>
+          <td><img src="${imagePath}" class="member-img" alt="${m.nickname || '画像'}"></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      // エラーオブジェクトが返された場合
+      console.error("メンバー取得エラー（GAS側）:", members.message);
+      tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
+    }
   } catch(err){
-    console.error("メンバー取得エラー:", err);
+    console.error("メンバー取得通信エラー:", err);
+    const tbody = document.getElementById("memberTable");
+    tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
 }
 
 
-// 登録フォーム送信 (以前のロジックを維持)
+// 登録フォーム送信
 document.getElementById("registerForm").addEventListener("submit", async e=>{
   e.preventDefault();
-  // ... (登録処理ロジックは省略 - 前の回答を参照) ...
-  alert("登録機能のロジックは前の回答を参照し、Apps Script側で実装してください。");
+  
+  const number = e.target.number.value;
+  const nickname = e.target.nickname.value;
+  const position = e.target.position.value;
+  const file = document.getElementById("fileInput").files[0];
+
+  if (!file) {
+    alert("画像ファイルを選択してください。");
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = async function(){
+    const base64Data = reader.result.split(",")[1];
+    const formData = new FormData();
+    formData.append("action", "register"); 
+    formData.append("number", number);
+    formData.append("nickname", nickname);
+    formData.append("position", position);
+    formData.append("fileData", base64Data);
+    formData.append("fileName", file.name);
+    formData.append("fileType", file.type); 
+
+    try{
+      const res = await fetch(API_URL, {method:"POST", body:formData});
+      const text = await res.text();
+      alert(text);
+      e.target.reset();
+      showPage('members');
+      loadMembers();
+    } catch(err){
+      alert("登録エラー: "+err);
+    }
+  };
+  reader.readAsDataURL(file);
 });
 
 // 初回起動時
 document.addEventListener("DOMContentLoaded", () => {
-  updateMenuVisibility(false); // 初期はログアウト状態 (ログイン画面のみ表示)
-  showPage('login');
+  updateMenuVisibility(false); // 初期はログアウト状態
+  showPage('login'); // ログイン画面を表示
 });
