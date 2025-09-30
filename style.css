@@ -19,7 +19,7 @@ body {
   display: flex;
   align-items: center;
   padding: 10px 15px;
-  background: var(--navy); /* これで上書きされずに反映されるはず */
+   background: var(--navy) !important; /* ★ !importantを一時的に追加 ★ */
   color: white;
   position: sticky;
   top: 0;
