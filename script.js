@@ -6,54 +6,56 @@ let isLoggedIn = false;
 
 // ログイン処理（ニックネームと背番号で認証）
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
-  
-  // API_URLが未定義の場合、ここでエラーになる可能性があります。HTMLから移動してください。
-  const api_url = typeof API_URL !== 'undefined' ? API_URL : 'URL_NOT_DEFINED'; 
-  
-  const nickname = e.target.login_nickname.value;
-  const number = e.target.login_number.value;
-  const messageElement = document.getElementById("loginMessage");
+  e.preventDefault();
+  
+  // API_URLが未定義の場合、ここでエラーになる可能性があります。HTMLから移動してください。
+  const api_url = typeof API_URL !== 'undefined' ? API_URL : 'URL_NOT_DEFINED'; 
+  
+  const nickname = e.target.login_nickname.value;
+  const number = e.target.login_number.value;
+  const messageElement = document.getElementById("loginMessage");
 
-  const formData = new FormData();
-  formData.append("action", "login"); 
-  formData.append("nickname", nickname);
-  formData.append("number", number);
-  
-  messageElement.textContent = "認証中...";
+  const formData = new FormData();
+  formData.append("action", "login"); 
+  formData.append("nickname", nickname);
+  formData.append("number", number);
+  
+  messageElement.textContent = "認証中...";
 
-  try {
-    const res = await fetch(api_url, {
-      method: "POST",
-      body: formData
-    });
+  try {
+    const res = await fetch(api_url, {
+      method: "POST",
+      body: formData
+    });
 
-    const text = await res.text();
-    console.log("GASからの応答:", text);
+    const text = await res.text();
+    console.log("GASからの応答:", text);
 
-    let data = {};
-    try { data = JSON.parse(text); } 
-    catch { 
-      messageElement.textContent = `サーバーから不正な応答がありました。`; 
-      return; 
-    }
+    let data = {};
+    try { data = JSON.parse(text); } 
+    catch { 
+      messageElement.textContent = `サーバーから不正な応答がありました。`; 
+      return; 
+    }
 
-    if (data.status === "success") {
-      messageElement.textContent = "ログイン成功！";
-      e.target.reset();
-      
-      document.getElementById("login").classList.remove("active");
-      document.getElementById("home").classList.add("active");
-      document.getElementById("hamburger").style.display = "block";
-      
-    } else {
-      messageElement.textContent = data.message || "ログインIDまたはパスワードが違います。";
-    }
+    if (data.status === "success") {
+      messageElement.textContent = "ログイン成功！";
+      e.target.reset();
+      
+      // 画面遷移とUIの切り替え
+      document.getElementById("hamburger").style.display = "flex"; // ハンバーガーメニューを表示 (style.cssでflex指定のため)
+      document.getElementById("menuRegister").style.display = "block"; // 登録ボタンを表示（必要に応じて権限チェックを追加してください）
+      // ★修正ポイント: navigate関数を呼び出して'home'画面へ遷移
+      navigate('home'); 
+      
+    } else {
+      messageElement.textContent = data.message || "ログインIDまたはパスワードが違います。";
+    }
 
-  } catch (err) {
-    messageElement.textContent = "通信エラーが発生しました。";
-    console.error("fetchエラー:", err);
-  }
+  } catch (err) {
+    messageElement.textContent = "通信エラーが発生しました。";
+    console.error("fetchエラー:", err);
+  }
 });
 
 // メンバー一覧取得
