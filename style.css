@@ -116,8 +116,8 @@ header h1 {
 /* --- style.css の該当部分をこれに置き換えてください --- */
 img.member-img {
   /* サイズを確実に固定 */
-  width: 60px !important; 
-  height: 60px !important; 
+  width: 60px !important;  
+  height: 60px !important;  
   
   /* 縦横比を保ちつつ、要素全体に収める */
   object-fit: cover !important;
@@ -131,6 +131,11 @@ img.member-img {
   
   /* 濃いネイビーの枠線 */
   border: 2px solid var(--navy) !important;
+  
+  /* 🎉🎉🎉 追記: 枠線を角丸に */
+  /* border-radiusが50%なので、この枠線自体も丸くなります */
+  /* もし画像の外側を囲む別の要素がある場合は、そちらにborder-radiusを設定してください */
+  /* 画像自体に角丸の線が必要なため、このままとします。 */
 }
 
 /* モバイルでの調整 (元のコードから変更なし) */
