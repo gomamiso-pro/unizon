@@ -27,6 +27,13 @@ header h1 {
   gap: 8px; /* テキストと画像の間隔 */
 }
 
+/* ヘッダーのロゴ画像スタイル */
+.header-logo {
+  height: 18px; /* ロゴの高さを調整 */
+  width: auto; /* 高さに合わせて幅を自動調整 */
+  /* 画像が親要素（h1）のflexアイテムとして振る舞うため、vertical-alignは不要です */
+}
+
 #hamburger {
   background: none;
   border: none;
