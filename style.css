@@ -1,152 +1,376 @@
-// Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
-const API_URL = "https://script.google.com/macros/s/AKfycbz4DdRaX8u7PYwQxMnHYc7VYd8YHTWdd3D2hLGuaZ_B2osJ5WA0dulRISg9R17C3k5U/exec";
+/*
+ * UNIZON Softball Team - style.css (最終調整版)
+ * サイドメニュー開閉機能対応
+ */
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
 
-// ログイン状態を管理するための変数 (実際はlocalStorageを使うため、この変数は必須ではない)
-let isLoggedIn = false;
-
-// ログイン処理（ニックネームと背番号で認証）
-document.getElementById("loginForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
-  
-  const api_url = API_URL; 
-  
-  const nickname = e.target.login_nickname.value;
-  const number = e.target.login_number.value;
-  const messageElement = document.getElementById("loginMessage");
-
-  const formData = new FormData();
-  formData.append("action", "login"); 
-  formData.append("nickname", nickname);
-  formData.append("number", number);
-  
-  messageElement.textContent = "認証中...";
-
-  try {
-    const res = await fetch(api_url, {
-      method: "POST",
-      body: formData
-    });
-
-    const text = await res.text();
-    console.log("GASからの応答:", text);
-
-    let data = {};
-    try { data = JSON.parse(text); } 
-    catch { 
-      messageElement.textContent = `サーバーから不正な応答がありました。`; 
-      return; 
-    }
-
-    if (data.status === "success") {
-      messageElement.textContent = "ログイン成功！";
-      e.target.reset();
-      
-      // ログイン成功時のUI更新: ハンバーガーと登録メニューを表示
-      document.getElementById("hamburger").style.display = "block"; 
-      document.getElementById("menuRegister").style.display = "block"; 
-      
-      navigate("home"); // ホーム画面へ遷移
-      localStorage.setItem("loggedIn", "true"); // ログイン状態を保存
-      
-    } else {
-      messageElement.textContent = data.message || "ログインIDまたはパスワードが違います。";
-    }
-
-  } catch (err) {
-    messageElement.textContent = "通信エラーが発生しました。";
-    console.error("fetchエラー:", err);
-  }
-});
-
-// メンバー一覧取得
-async function loadMembers(){
-  const api_url = API_URL; 
-  
-  try{
-    const res = await fetch(api_url);
-    const members = await res.json();
-    const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = ""; 
-
-    const DEFAULT_IMAGE_PATH = 'images/member/00.png';
-
-    if (Array.isArray(members)) {
-      members.forEach(m=>{
-        const memberNumber = m.number || '00'; 
-        const primaryImagePath = `images/member/${memberNumber}.png`;
-        
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${m.number || ''}</td>
-          <td>${m.nickname || ''}</td>
-          <td>${m.position || ''}</td>
-          <td>
-            <img src="${primaryImagePath}" 
-                 class="member-img" 
-                 alt="${m.nickname || '画像'}"
-                 onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}';" 
-            >
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    } else {
-      console.error("メンバー取得エラー（GAS側）:", members.message);
-      tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
-    }
-  } catch(err){
-    console.error("メンバー取得通信エラー:", err);
-    const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
-  }
+:root {
+    /* カラーパレット */
+    --primary-color: #001f44; /* ネイビー */
+    --secondary-color: #ffffff; /* 白 */
+    --accent-color: #e74c3c; /* 赤 */
+    --light-gray: #f4f4f4; /* 背景用の薄いグレー */
+    --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-// ページ切り替え
-function navigate(page){
-    // 全ページの active クラスを削除
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    // 選択されたページに active クラスを付与
-    document.getElementById(page).classList.add("active");
-    if (page === 'members') {
-        loadMembers();
-    }
-    // ページ遷移時にもメニューを閉じる
-    closeMenu(); 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-// メニュー開閉操作 (CSSの 'open' クラスと連動)
-function toggleMenu(){
-  document.getElementById("sideMenu").classList.toggle("open");
-  document.getElementById("overlay").classList.toggle("open"); 
-}
-function closeMenu(){
-  document.getElementById("sideMenu").classList.remove("open");
-  document.getElementById("overlay").classList.remove("open"); 
-}
-
-// ログアウト
-function logout(){
-  navigate("login"); // ログイン画面へ遷移
-  // ハンバーガーメニューと登録ボタンを非表示
-  document.getElementById("hamburger").style.display = "none";
-  document.getElementById("menuRegister").style.display = "none"; 
-  localStorage.removeItem("loggedIn"); // 状態をクリア
-  localStorage.removeItem("role");
+body {
+    font-family: 'M PLUS Rounded 1c', sans-serif; /* 丸文字系のフォント */
+    line-height: 1.6;
+    background-color: var(--light-gray);
+    color: var(--primary-color);
+    transition: background-color 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-// ページロード時にログイン状態確認
-window.addEventListener("load", () => {
-  if(localStorage.getItem("loggedIn") === "true"){
-    // ログイン済みなら直接ホーム画面を表示
-    document.getElementById("login").classList.remove("active");
-    document.getElementById("home").classList.add("active");
-    // ハンバーガーメニューと登録ボタンを表示
-    document.getElementById("hamburger").style.display = "block";
-    document.getElementById("menuRegister").style.display = "block";
-  } else {
-    // 未ログインならログイン画面を active に設定
-    document.getElementById("login").classList.add("active");
-    document.getElementById("home").classList.remove("active"); 
-    // ハンバーガーメニューは非表示のまま
-  }
-});
+/*
+ * ヘッダーとロゴ
+ */
+header {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 15px 0; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 6px var(--shadow-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    /* ハンバーガーボタンと被らないようパディングを調整 */
+    padding-left: 65px; 
+}
+
+.header-logo {
+    height: 35px; /* ロゴの高さ */
+    margin-left: 10px;
+    border-radius: 5px;
+}
+
+/*
+ * ハンバーガーメニューボタン 
+ */
+#hamburger {
+    /* メニュー開閉に対応するため、画面に固定し、z-indexを高く設定 */
+    position: fixed !important; 
+    top: 15px; 
+    left: 15px; 
+    z-index: 210; 
+    
+    background: none;
+    border: none;
+    padding: 0;
+    width: 30px;
+    height: 35px; 
+    display: flex; 
+    flex-direction: column;
+    justify-content: space-around;
+    cursor: pointer;
+}
+
+.bar {
+    width: 100%;
+    height: 3px;
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+/*
+ * メインコンテンツエリア
+ */
+#app {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+main {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.page {
+    background-color: var(--secondary-color);
+    padding: 25px;
+    border-radius: 12px; 
+    box-shadow: 0 4px 10px var(--shadow-color);
+    margin-bottom: 20px;
+    display: none; /* activeがないページは非表示 */
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.page.active {
+    display: flex; /* activeがあるページを表示 */
+}
+
+.page h2 {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* ログイン画面の個別調整 */
+#login {
+    justify-content: center; 
+    align-items: center;
+    padding: 0; 
+    box-shadow: none; 
+    background-color: transparent; 
+}
+#login .form-container {
+    margin: 10px auto 50px auto; 
+    background-color: var(--secondary-color);
+    box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+/*
+ * フォームの共通スタイル
+ */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    padding: 20px;
+    border: 1px solid var(--light-gray);
+    border-radius: 10px;
+    width: 100%;
+}
+
+label {
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="file"] {
+    padding: 12px;
+    border: 2px solid var(--light-gray);
+    border-radius: 8px; 
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+/*
+ * ボタンの共通スタイル
+ */
+button[type="submit"],
+.menu-item {
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px; 
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: background-color 0.3s, transform 0.1s;
+    text-align: center;
+}
+
+button[type="submit"]:hover,
+.menu-item:hover {
+    background-color: #c0392b; 
+    transform: translateY(-1px);
+}
+
+/*
+ * サイドメニュー (ナビゲーション) - 開閉ロジックの核となる部分
+ */
+#sideMenu {
+    position: fixed;
+    top: 0;
+    left: -250px; /* 初期状態: 画面外に隠す */
+    width: 250px;
+    height: 100%;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    box-shadow: 4px 0 10px var(--shadow-color);
+    padding: 20px;
+    transition: left 0.3s ease; /* スライドアニメーション */
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* JavaScriptで 'open' クラスが付いた時にメニューを表示 */
+#sideMenu.open {
+    left: 0; 
+}
+
+#sideMenu h2 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+#sideMenu .menu-item {
+    width: 100%;
+    background-color: transparent;
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 10px;
+    text-align: left;
+}
+
+#sideMenu .menu-item:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+/*
+ * オーバーレイ
+ */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 190;
+    display: none; /* 初期状態: 非表示 */
+}
+
+/* JavaScriptで 'open' クラスが付いた時にオーバーレイを表示 */
+#overlay.open {
+    display: block; 
+}
+
+/*
+ * メンバーリストのテーブル
+ */
+#members table {
+    width: 100%;
+    border-collapse: separate; 
+    border-spacing: 0 10px; 
+    table-layout: fixed; 
+}
+
+#members th,
+#members td {
+    padding: 12px;
+    text-align: center; 
+    vertical-align: middle; 
+    border: none; 
+    word-wrap: break-word; 
+}
+
+/* 列幅の調整 */
+#members thead th:nth-child(1),
+#members tbody td:nth-child(1) {
+    width: 15%; /* 背番号 */
+}
+
+#members thead th:nth-child(2),
+#members tbody td:nth-child(2) {
+    width: 35%; /* NAME */
+}
+
+#members thead th:nth-child(3),
+#members tbody td:nth-child(3) {
+    width: 25%; /* 守備 */
+}
+
+#members thead th:nth-child(4),
+#members tbody td:nth-child(4) {
+    width: 25%; /* 画像 */
+}
+
+#members thead th {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-weight: 700;
+    border-radius: 5px 5px 0 0; 
+    position: sticky;
+    top: 60px; 
+    z-index: 50;
+}
+
+#members tbody tr {
+    background-color: var(--light-gray);
+    transition: background-color 0.2s;
+    border-radius: 8px;
+    overflow: hidden; 
+}
+
+#members tbody tr:hover {
+    background-color: #e0e0e0;
+}
+
+#members tbody tr td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+#members tbody tr td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* 画像を丸くする */
+#members img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%; /* 真円 */
+    border: 2px solid var(--accent-color);
+    display: block; 
+    margin: 0 auto; 
+}
+
+/*
+ * メッセージ表示
+ */
+.error-message {
+    color: var(--accent-color);
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+/*
+ * フッター
+ */
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
