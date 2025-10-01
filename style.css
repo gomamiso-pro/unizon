@@ -109,27 +109,34 @@ header h1 {
 /* ==================================== */
 /* メンバーリストの画像サイズ調整 */
 /* ==================================== */
-.member-img {
-    /* 画像の最大幅を制限 (例: 80ピクセル) */
-    max-width: 80px; 
+/* --- style.css の該当部分をこれに置き換えてください --- */
+img.member-img {
+    /* サイズを確実に固定 */
+    width: 60px !important; 
+    height: 60px !important; 
     
-    /* 高さを自動にし、縦横比を維持 */
-    height: auto; 
+    /* 縦横比を保ちつつ、要素全体に収める */
+    object-fit: cover !important;
     
-    /* テーブルセル内で見栄えを良くするため、丸い画像にするオプション */
-    /* border-radius: 50%; */
+    /* 丸い画像にする元の設定も強制 */
+    border-radius: 50% !important;
     
-    /* 画像がテーブルセルの中央に来るようにする */
+    /* 中央寄せ */
     display: block;
     margin: 0 auto;
+    
+    /* 濃いネイビーの枠線 */
+    border: 2px solid var(--navy) !important;
 }
 
-/* ★ モバイルでの調整 (小さくしたい場合) */
+/* モバイルでの調整 (元のコードから変更なし) */
 @media (max-width: 600px) {
-    .member-img {
-        max-width: 50px; /* スマートフォンではさらに小さく */
+    img.member-img {
+        width: 50px !important;
+        height: 50px !important;
     }
 }
+
 
 /* フッター */
 footer {
