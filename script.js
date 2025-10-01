@@ -74,18 +74,19 @@ async function loadMembers(){
       members.forEach(m=>{
         const memberNumber = m.number || '00'; 
         const imagePathJPG = `images/member/${memberNumber}.jpg`; 
-        const imagePathPNG = `images/member/${memberNumber}.png`; 
-        
+        const primaryImagePath = `images/member/${memberNumber}.png`;
+        
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${m.number || ''}</td>
           <td>${m.nickname || ''}</td>
           <td>${m.position || ''}</td>
           <td>
-            <img src="${imagePathJPG}" 
+            <img src="${primaryImagePath}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
-                 onerror="this.onerror=function(){this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}'}; this.src='${imagePathPNG}';" 
+                 /* ★修正: .png失敗時は、直接デフォルト画像にフォールバック */
+                 onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}';" 
             >
           </td>
         `;
