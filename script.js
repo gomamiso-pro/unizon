@@ -63,47 +63,49 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
 // メンバー一覧取得（画像パスを/images/member/に変更し、GitHub Pages対応済み）
 async function loadMembers(){
-  try{
-    // GASからメンバーデータを取得
-    const res = await fetch(API_URL);
-    const members = await res.json();
-    const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = ""; // tbodyをクリア
+  try{
+    // GASからメンバーデータを取得
+    const res = await fetch(API_URL);
+    const members = await res.json();
+    const tbody = document.getElementById("memberTable");
+    tbody.innerHTML = ""; // tbodyをクリア
 
-    if (Array.isArray(members)) {
-      members.forEach(m=>{
-        // 画像パスを「images/member/背番号.拡張子」として構築
-        const memberNumber = m.number || '00'; 
-        
-        // ★★★ 最終修正箇所：パスの先頭の「/」を削除 ★★★
-        const imagePathJPG = `images/member/${memberNumber}.jpg`; 
-        const imagePathPNG = `images/member/${memberNumber}.png`; 
-        
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${m.number || ''}</td>
-          <td>${m.nickname || ''}</td>
-          <td>${m.position || ''}</td>
-          <td>
-            <img src="${imagePathJPG}" 
-                 class="member-img" 
-                 alt="${m.nickname || '画像'}"
-                 // ★★★ onerror内のパスも「/」を削除 ★★★
-                 onerror="this.onerror=null; this.src='${imagePathPNG}';" 
-            >
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    } else {
-      console.error("メンバー取得エラー（GAS側）:", members.message);
-      tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
-    }
-  } catch(err){
-    console.error("メンバー取得通信エラー:", err);
-    const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
-  }
+    // ★ デフォルト画像のパスを定数として定義 ★
+    const DEFAULT_IMAGE_PATH = 'images/member/00.png';
+
+    if (Array.isArray(members)) {
+      members.forEach(m=>{
+        // 画像パスを「images/member/背番号.拡張子」として構築
+        const memberNumber = m.number || '00'; 
+        
+        const imagePathJPG = `images/member/${memberNumber}.jpg`; 
+        const imagePathPNG = `images/member/${memberNumber}.png`; 
+        
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.number || ''}</td>
+          <td>${m.nickname || ''}</td>
+          <td>${m.position || ''}</td>
+          <td>
+            <img src="${imagePathJPG}" 
+                 class="member-img" 
+                 alt="${m.nickname || '画像'}"
+                 // ★★★ 修正箇所：onerrorで.pngも失敗したらDEFAULT_IMAGE_PATHをセット ★★★
+                 onerror="this.onerror=null; this.src='${imagePathPNG}'; this.onerror=function(){this.src='${DEFAULT_IMAGE_PATH}'};" 
+            >
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      console.error("メンバー取得エラー（GAS側）:", members.message);
+      tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
+    }
+  } catch(err){
+    console.error("メンバー取得通信エラー:", err);
+    const tbody = document.getElementById("memberTable");
+    tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
+  }
 }
 
 // ページ切り替え
