@@ -1,6 +1,5 @@
 /*
- * UNIZON Softball Team - style.css
- * ネイビー、白、赤を基調としたシンプルで丸みのあるデザイン
+ * UNIZON Softball Team - style.css (スマホ対応ログイン画面修正版)
  */
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
 
@@ -25,6 +24,10 @@ body {
     background-color: var(--light-gray);
     color: var(--primary-color);
     transition: background-color 0.3s ease;
+    /* ★修正: ビューポート全体を使う設定 */
+    min-height: 100vh;
+    display: flex; /* header, app, footerを縦に並べるため */
+    flex-direction: column;
 }
 
 /*
@@ -33,7 +36,6 @@ body {
 header {
     background-color: var(--primary-color);
     color: var(--secondary-color);
-    /* 修正済み: 左右のpaddingを0にし、画面端から開始 */
     padding: 15px 0; 
     display: flex;
     align-items: center;
@@ -42,6 +44,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 100;
+    flex-shrink: 0; /* 縮小させない */
 }
 
 header h1 {
@@ -49,7 +52,6 @@ header h1 {
     display: flex;
     align-items: center;
     font-weight: 700;
-    /* 左端の余白 */
     padding-left: 20px; 
 }
 
@@ -73,7 +75,6 @@ header h1 {
     justify-content: space-around;
     cursor: pointer;
     z-index: 150;
-    /* 修正済み: 右端の余白を設定 */
     padding-right: 20px; 
 }
 
@@ -86,24 +87,37 @@ header h1 {
 }
 
 /*
- * メインコンテンツエリア
+ * メインコンテンツエリア (ログイン画面対応)
  */
+#app {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* ★修正: 残りのスペースを全て使う */
+}
+
 main {
     padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .page {
     background-color: var(--secondary-color);
     padding: 25px;
-    border-radius: 12px; /* 全体的な丸み */
+    border-radius: 12px; 
     box-shadow: 0 4px 10px var(--shadow-color);
     margin-bottom: 20px;
-    display: none; /* 初期状態では非表示 */
-    min-height: 60vh;
+    display: none; 
+    flex-grow: 1; /* ★修正: pageも縦いっぱいに広がる */
+    
+    /* ログイン画面の配置調整用設定 */
+    display: flex;
+    flex-direction: column;
 }
 
 .page.active {
-    display: block; /* アクティブなページのみ表示 */
+    display: flex; /* アクティブなページのみ表示 */
 }
 
 .page h2 {
@@ -113,6 +127,7 @@ main {
     margin-bottom: 20px;
     font-size: 1.8rem;
     font-weight: 700;
+    text-align: center; /* ログイン画面の見出しを中央に */
 }
 
 /*
@@ -123,11 +138,36 @@ main {
     flex-direction: column;
     gap: 15px;
     max-width: 400px;
-    margin: 0 auto;
+    /* 修正: login画面でフォームを上下中央に配置するため、margin-top: autoとmargin-bottom: autoを使用 */
+    margin: auto; 
     padding: 20px;
     border: 1px solid var(--light-gray);
     border-radius: 10px;
+    width: 100%; /* スマホで横幅いっぱいに */
 }
+
+/* ★ ログイン画面 (login) の個別調整 */
+#login {
+    /* ログイン画面だけは上下中央に配置するためflex-grow: 1とmargin: auto;が必須 */
+    justify-content: center; 
+    align-items: center;
+    padding: 0; /* 画面全体を使うためにpaddingをリセット */
+    box-shadow: none; /* ログイン画面では影を消して背景と一体化させる */
+    background-color: transparent; /* 背景色も透明にしてbodyの背景色を使う */
+}
+
+#login h2 {
+    /* ログイン画面ではh2は上部固定で、フォームは中央にしたいので、h2はフォーム外へ */
+    /* index.htmlの構造上、h2はpageの中にあるため、ここではフォーム中央配置に影響しないよう調整 */
+    margin-top: 20px;
+}
+#login .form-container {
+    margin-top: 10px; /* フォームを少し上に */
+    margin-bottom: 50px;
+    background-color: var(--secondary-color); /* フォーム自体は白くする */
+    box-shadow: 0 4px 10px var(--shadow-color);
+}
+
 
 label {
     font-weight: 700;
@@ -142,7 +182,7 @@ input[type="number"],
 input[type="file"] {
     padding: 12px;
     border: 2px solid var(--light-gray);
-    border-radius: 8px; /* 入力欄にも丸み */
+    border-radius: 8px; 
     font-size: 1rem;
     transition: border-color 0.3s;
 }
@@ -161,7 +201,7 @@ button[type="submit"],
     color: var(--secondary-color);
     border: none;
     padding: 12px 20px;
-    border-radius: 8px; /* ボタンにも丸み */
+    border-radius: 8px; 
     cursor: pointer;
     font-size: 1rem;
     font-weight: 700;
@@ -171,7 +211,7 @@ button[type="submit"],
 
 button[type="submit"]:hover,
 .menu-item:hover {
-    background-color: #c0392b; /* 少し暗めの赤 */
+    background-color: #c0392b; 
     transform: translateY(-1px);
 }
 
@@ -181,7 +221,7 @@ button[type="submit"]:hover,
 #sideMenu {
     position: fixed;
     top: 0;
-    left: -250px; /* 画面外に隠す */
+    left: -250px; 
     width: 250px;
     height: 100%;
     background-color: var(--primary-color);
@@ -196,7 +236,7 @@ button[type="submit"]:hover,
 }
 
 #sideMenu.open {
-    left: 0; /* 表示 */
+    left: 0; 
 }
 
 #sideMenu h2 {
@@ -230,17 +270,17 @@ button[type="submit"]:hover,
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 190;
-    display: none; /* 初期状態は非表示 */
+    display: none; 
 }
 
 /*
- * メンバーリストのテーブル (修正済み)
+ * メンバーリストのテーブル
  */
 #members table {
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0 10px; 
-    table-layout: fixed; /* ★列幅を揃えるために必須 */
+    table-layout: fixed; 
 }
 
 #members th,
@@ -251,7 +291,7 @@ button[type="submit"]:hover,
     word-wrap: break-word; 
 }
 
-/* ★列幅の調整: 見出しとデータの幅を揃える */
+/* 列幅の調整 */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
     width: 15%; /* 背番号 */
@@ -331,5 +371,6 @@ footer {
     background-color: var(--primary-color);
     color: var(--secondary-color);
     font-size: 0.8rem;
-    margin-top: 20px;
+    /* 修正: 縮小させず、画面下部に固定配置 */
+    flex-shrink: 0;
 }
