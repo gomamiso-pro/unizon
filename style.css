@@ -30,7 +30,7 @@ header h1 {
 /* ヘッダーのロゴ画像スタイル */
 header h1 .header-logo {
   /* 親要素 h1 と一緒に指定することで詳細度を上げ、確実性を高める */
-  height: 16px !important; 
+  height: 20px !important; 
   width: auto !important;  
   /* 縦横比を保ちつつ、要素全体に収める */
   object-fit: cover !important;
