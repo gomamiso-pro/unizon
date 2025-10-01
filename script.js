@@ -98,4 +98,48 @@ window.addEventListener("load", () => {
     document.getElementById("hamburger").style.display = "block";
     document.getElementById("menuRegister").style.display = "none"; // 全員 user
   }
+
+  // メンバー一覧取得（画像パスを背番号ベースにし、jpg/pngのフォールバックに対応）
+async function loadMembers(){
+  try{
+    const res = await fetch(API_URL);
+    const members = await res.json();
+    const tbody = document.getElementById("memberTable");
+    tbody.innerHTML = "";
+
+    if (Array.isArray(members)) {
+      members.forEach(m=>{
+        // 画像パスを「/member/背番号.拡張子」として構築
+        const memberNumber = m.number || '00'; // 番号がない場合のフォールバック
+
+        // HTML要素として画像パスを埋め込む際は、単純に.jpgを指定します。
+        // ブラウザ側で画像が見つからない場合にonerrorで.pngを試す処理を追加します。
+        const imagePath = `/member/${memberNumber}.jpg`; 
+        
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.number || ''}</td>
+          <td>${m.nickname || ''}</td>
+          <td>${m.position || ''}</td>
+          <td>
+            <img src="${imagePath}" 
+                 class="member-img" 
+                 alt="${m.nickname || '画像'}"
+                 onerror="this.onerror=null; this.src='/member/${memberNumber}.png';" 
+            >
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      console.error("メンバー取得エラー（GAS側）:", members.message);
+      tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
+    }
+  } catch(err){
+    console.error("メンバー取得通信エラー:", err);
+    const tbody = document.getElementById("memberTable");
+    tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
+  }
+}
+
 });
