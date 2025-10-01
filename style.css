@@ -1,347 +1,303 @@
-/* ============================================ */
-/* 🛠️ おしゃれな黄色ベースの面白いレイアウトCSS */
-/* ============================================ */
+/*
+ * 全体のリセットと基本設定
+ */
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
 
-/* --- カスタムプロパティ (色の一元管理) --- */
 :root {
-  --primary-yellow: #FFC107; /* 鮮やかすぎないおしゃれなマスタードイエロー */
-  --accent-navy: #3f51b5;   /* 深いブルーで引き締め */
-  --text-dark: #333333;    /* 濃いチャコールグレー */
-  --bg-light: #FFF8E1;     /* 黄色に合わせたクリーミーな背景 */
-  --border-light: #FFECB3; /* 明るい黄色のボーダー */
+    /* カラーパレット */
+    --primary-color: #001f44; /* ネイビー */
+    --secondary-color: #ffffff; /* 白 */
+    --accent-color: #e74c3c; /* 赤 */
+    --light-gray: #f4f4f4; /* 背景用の薄いグレー */
+    --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-/* --- グローバル設定 --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-  margin: 0;
-  font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo UI", "Segoe UI", sans-serif;
-  background: var(--bg-light); /* クリーミーな黄色系の背景 */
-  color: var(--text-dark);
-  line-height: 1.7; /* 行間を広げて読みやすく */
-  overflow-x: hidden; /* 横スクロールバーを非表示に */
+    font-family: 'M PLUS Rounded 1c', sans-serif; /* 丸文字系のフォント */
+    line-height: 1.6;
+    background-color: var(--light-gray);
+    color: var(--primary-color);
+    transition: background-color 0.3s ease;
 }
 
-/* --- ヘッダー（際立つ黄色とネイビーの組み合わせ） --- */
+/*
+ * ヘッダーとロゴ
+ */
 header {
-  background: var(--primary-yellow); /* おしゃれな黄色 */
-  color: var(--text-dark);
-  padding: 15px 25px; /* パディングを少し多めに */
-  display: flex;
-  align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* 強めの影で浮き上がる印象 */
-  border-bottom: 3px solid var(--accent-navy); /* ネイビーのアクセントライン */
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 6px var(--shadow-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 header h1 {
-  flex: 1; 
-  margin: 0;
-  font-size: 24px; /* 目立つサイズ */
-  font-family: 'Comic Sans MS', cursive, sans-serif; /* 少し遊び心のあるフォント */
-  display: flex; 
-  align-items: center; 
-  gap: 12px; /* 間隔を少し広く */
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* テキストに軽い影 */
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
 }
 
 .header-logo {
-  height: 30px !important; /* ロゴを少し大きく */
-  width: auto !important;
-  border-radius: 50%; /* ロゴも丸く */
-  box-shadow: 0 0 5px rgba(0,0,0,0.2); /* ロゴに影 */
+    height: 35px; /* ロゴの高さ */
+    margin-left: 10px;
+    border-radius: 5px; /* 丸み */
 }
 
-/* --- ハンバーガーメニュー (ネイビーの棒) --- */
-#hamburger {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px; /* タッチエリアを広げる */
-  margin-right: 15px; /* ヘッダーとの間隔 */
-}
-#hamburger .bar {
-  width: 30px; /* 棒を少し長く */
-  height: 4px; /* 棒を少し太く */
-  background: var(--accent-navy); /* ネイビーの棒 */
-  margin: 5px 0;
-  border-radius: 2px;
+/*
+ * メインコンテンツエリア
+ */
+main {
+    padding: 20px;
 }
 
-/* --- サイドメニューとオーバーレイ --- */
-#sideMenu {
-  position: fixed;
-  left: -280px; /* 少し幅を広く */
-  top: 0;
-  width: 250px;
-  height: 100%;
-  background: var(--accent-navy); /* サイドメニューはネイビー */
-  color: #ffffff;
-  padding: 30px 0; /* 上下のパディングを多めに */
-  transition: left 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* 弾むようなアニメーション */
-  z-index: 1000;
-  box-shadow: 3px 0 10px rgba(0,0,0,0.3);
-}
-#sideMenu.open {
-  left: 0;
-}
-#sideMenu h2 {
-    margin: 0 25px 30px; /* パディングを増やす */
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.3); /* 薄い区切り線 */
-    font-size: 22px;
-    color: var(--primary-yellow); /* 黄色のタイトル */
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-}
-#overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  z-index: 900;
-  transition: opacity 0.3s ease;
-}
-#overlay.show {
-  display: block;
-  opacity: 1;
-}
-.menu-item {
-  display: block;
-  width: 100%;
-  padding: 15px 25px; /* パディングを多めに */
-  background: none;
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-  text-align: left;
-  font-size: 18px; /* 文字を大きく */
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
-.menu-item:hover {
-    background: rgba(255,255,255,0.1); /* ホバー時にうっすらハイライト */
-    color: var(--primary-yellow); /* 黄色の文字に */
-    transform: translateX(5px); /* 少し右にスライド */
-}
-
-/* --- ページとコンテンツの配置 --- */
 .page {
-  display: none;
-  padding: 30px 20px; /* パディングを多めに */
-  max-width: 900px; /* 最大幅を設定 */
-  margin: 30px auto; /* 中央寄せ */
-  background: #ffffff; /* 白い背景 */
-  border-radius: 15px; /* 角を大きく丸く */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* 強い影 */
-}
-.page.active {
-  display: block;
-}
-.page h2 {
-    font-size: 28px; /* タイトルを大きく */
-    color: var(--accent-navy); /* ネイビーのタイトル */
-    border-bottom: 3px solid var(--primary-yellow); /* 黄色のアンダーライン */
-    padding-bottom: 10px;
-    margin-bottom: 30px;
-    text-align: center; /* タイトルを中央寄せ */
+    background-color: var(--secondary-color);
+    padding: 25px;
+    border-radius: 12px; /* 全体的な丸み */
+    box-shadow: 0 4px 10px var(--shadow-color);
+    margin-bottom: 20px;
+    display: none; /* 初期状態では非表示 */
+    min-height: 60vh;
 }
 
-/* --- フォームコンテナ (黄色とネイビーの枠) --- */
+.page.active {
+    display: block; /* アクティブなページのみ表示 */
+}
+
+.page h2 {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/*
+ * フォームの共通スタイル
+ */
 .form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* 間隔を広く */
-  max-width: 400px; /* 幅を広げる */
-  margin: 30px auto; /* 中央寄せ */
-  padding: 30px;
-  background: var(--bg-light); /* 背景を明るい黄色系 */
-  border-radius: 10px; /* 角を丸く */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border: 2px solid var(--primary-yellow); /* 黄色の枠線 */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid var(--light-gray);
+    border-radius: 10px;
 }
-.form-container label {
-    font-weight: bold;
-    color: var(--text-dark);
+
+label {
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
-.form-container input {
-  padding: 12px;
-  border: 1px solid var(--border-light); /* 黄色系の枠線 */
-  border-radius: 8px; /* 角を丸く */
-  background: #ffffff;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="file"] {
+    padding: 12px;
+    border: 2px solid var(--light-gray);
+    border-radius: 8px; /* 入力欄にも丸み */
+    font-size: 1rem;
+    transition: border-color 0.3s;
 }
-.form-container input:focus {
-    border-color: var(--primary-yellow); /* フォーカス時に黄色 */
-    box-shadow: 0 0 5px rgba(255,193,7,0.5); /* 黄色の影 */
+
+input:focus {
+    border-color: var(--accent-color);
     outline: none;
 }
-.form-container button {
-  padding: 15px;
-  background: var(--accent-navy); /* ボタンはネイビー */
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 18px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-.form-container button:hover {
-  background: darken(var(--accent-navy), 10%); /* ホバーで少し暗く */
-  transform: translateY(-2px); /* 少し上に浮き上がる */
-}
-.error-message {
-  color: #dc3545; /* 赤系のエラーメッセージ */
-  font-size: 15px;
-  text-align: center;
+
+/*
+ * ボタンの共通スタイル
+ */
+button[type="submit"],
+.menu-item {
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px; /* ボタンにも丸み */
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: background-color 0.3s, transform 0.1s;
+    text-align: center;
 }
 
-/* --- メンバーリストの画像とテーブル --- */
-img.member-img {
-  width: 80px !important; /* 画像を少し大きく */
-  height: 80px !important; 
-  object-fit: cover !important;
-  border-radius: 50% !important;
-  border: 4px solid var(--primary-yellow) !important; /* 黄色の太い枠線 */
-  display: block;
-  margin: 0 auto;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 画像にも影 */
+button[type="submit"]:hover,
+.menu-item:hover {
+    background-color: #c0392b; /* 少し暗めの赤 */
+    transform: translateY(-1px);
 }
+
+#hamburger {
+    background: none;
+    border: none;
+    padding: 0;
+    width: 30px;
+    height: 25px;
+    display: flex; /* JavaScriptで表示を制御 */
+    flex-direction: column;
+    justify-content: space-around;
+    cursor: pointer;
+    z-index: 150;
+}
+
+.bar {
+    width: 100%;
+    height: 3px;
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+/*
+ * サイドメニュー (ナビゲーション)
+ */
+#sideMenu {
+    position: fixed;
+    top: 0;
+    left: -250px; /* 画面外に隠す */
+    width: 250px;
+    height: 100%;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    box-shadow: 4px 0 10px var(--shadow-color);
+    padding: 20px;
+    transition: left 0.3s ease;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#sideMenu.open {
+    left: 0; /* 表示 */
+}
+
+#sideMenu h2 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+#sideMenu .menu-item {
+    width: 100%;
+    background-color: transparent;
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 10px;
+}
+
+#sideMenu .menu-item:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+/*
+ * オーバーレイ
+ */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 190;
+    display: none; /* 初期状態は非表示 */
+}
+
+/*
+ * メンバーリストのテーブル
+ */
 #members table {
     width: 100%;
-    border-collapse: separate; /* border-spacingを使用するため */
-    border-spacing: 0 10px; /* 行の間にスペース */
-    margin-top: 25px;
-    background: #ffffff;
-    border-radius: 15px; /* 大きく丸く */
-    overflow: hidden; 
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-collapse: separate; /* border-radiusを使うために分離 */
+    border-spacing: 0 10px; /* 行間にスペース */
 }
-#members th, #members td {
-    padding: 15px 10px; /* パディングを多めに */
-    text-align: left;
-    vertical-align: middle;
-}
-#members th {
-    background: var(--primary-yellow); /* 黄色の見出し */
-    color: var(--text-dark);
-    font-weight: bold;
-    font-size: 18px;
-    border-bottom: none; /* 下線をなくす */
-}
-/* ヘッダーの角を丸く */
-#members thead th:first-child { border-top-left-radius: 15px; }
-#members thead th:last-child { border-top-right-radius: 15px; }
 
-#members tr {
-    background: #ffffff; /* 行の背景色 */
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    border-radius: 8px;
-    overflow: hidden;
-}
-#members tr:nth-child(even) {
-    background: #fffbe6; /* 縞模様 (少し黄色がかった白) */
-}
-#members tr:hover {
-    background: var(--border-light); /* ホバーで明るい黄色 */
-    transform: scale(1.01); /* 少し拡大 */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-/* テーブルセルごとのボーダーは削除して、行間のボーダーのみにする */
+#members th,
 #members td {
-    border-bottom: 1px solid #eeeeee;
-}
-#members tr:last-child td {
-    border-bottom: none;
+    padding: 12px;
+    text-align: center;
+    border: none; /* 枠線を削除 */
 }
 
+#members thead th {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-weight: 700;
+    border-radius: 5px 5px 0 0; /* ヘッダーの上部に丸み */
+    position: sticky;
+    top: 60px; /* ヘッダーの下に固定 */
+    z-index: 50;
+}
 
-/* --- フッター --- */
+#members tbody tr {
+    background-color: var(--light-gray);
+    transition: background-color 0.2s;
+    border-radius: 8px;
+    overflow: hidden; /* 子要素の角を丸く見せるための設定 */
+}
+
+#members tbody tr:hover {
+    background-color: #e0e0e0;
+}
+
+#members tbody tr td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+#members tbody tr td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* 画像を丸くする */
+#members img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%; /* 真円 */
+    border: 2px solid var(--accent-color);
+}
+
+/*
+ * メッセージ表示
+ */
+.error-message {
+    color: var(--accent-color);
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+/*
+ * フッター
+ */
 footer {
-  text-align: center;
-  padding: 20px;
-  background: var(--accent-navy); /* フッターもネイビー */
-  color: #ffffff;
-  margin-top: 50px;
-  font-size: 15px;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* --- モバイルでの調整 --- */
-@media (max-width: 600px) {
-  header {
-    padding: 10px 15px;
-  }
-  header h1 {
-    font-size: 20px;
-  }
-  .header-logo {
-    height: 25px !important;
-  }
-  #hamburger {
-    margin-right: 10px;
-  }
-  #hamburger .bar {
-    width: 25px;
-    height: 3px;
-    margin: 4px 0;
-  }
-  #sideMenu {
-    width: 220px;
-    left: -240px;
-    padding: 20px 0;
-  }
-  #sideMenu h2 {
-    font-size: 20px;
-    margin: 0 20px 20px;
-  }
-  .menu-item {
-    font-size: 16px;
-    padding: 12px 20px;
-  }
-  .page {
-    padding: 20px 15px;
-    margin: 20px auto;
-    border-radius: 10px;
-  }
-  .page h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  .form-container {
-    padding: 20px;
-    margin: 20px auto;
-    gap: 15px;
-  }
-  .form-container input, .form-container button {
-    padding: 10px;
-    font-size: 16px;
-  }
-  img.member-img {
-    width: 60px !important;
-    height: 60px !important;
-    border-width: 3px !important;
-  }
-  #members th, #members td {
-    padding: 12px 5px;
-    font-size: 14px;
-  }
-  #members th:nth-child(2), #members td:nth-child(2) { /* NAME列は中央 */
-      text-align: center;
-  }
-  #members th:nth-child(3), #members td:nth-child(3) { /* 守備列は中央 */
-      text-align: center;
-  }
-  footer {
+    text-align: center;
     padding: 15px;
-    margin-top: 30px;
-    font-size: 13px;
-  }
-}
-
-/* Sassの darken 関数はCSSでは直接使えないため、手動で色を調整します */
-/* .form-container button:hover の darken(var(--accent-navy), 10%) は #2a3a8a に相当 */
-.form-container button:hover {
-  background: #2a3a8a; 
-  transform: translateY(-2px);
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    margin-top: 20px;
 }
