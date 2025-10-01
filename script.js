@@ -74,7 +74,7 @@ async function loadMembers(){
       members.forEach(m=>{
         // 画像パスを「/member/背番号.拡張子」として構築
         const memberNumber = m.number || '00'; 
-        const imagePath = `/member/${memberNumber}.jpg`; 
+        const imagePath = `/images/member/${memberNumber}.jpg`; 
         
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -85,7 +85,7 @@ async function loadMembers(){
             <img src="${imagePath}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
-                 onerror="this.onerror=null; this.src='/member/${memberNumber}.png';" 
+                 onerror="this.onerror=null; this.src='/images/member/${memberNumber}.png';" 
             >
           </td>
         `;
