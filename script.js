@@ -1,4 +1,4 @@
-// ★ Google Apps Script のURLをHTMLからこちらに移動することを推奨
+// Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
 const API_URL = "https://script.google.com/macros/s/AKfycbz4DdRaX8u7PYwQxMnHYc7VYd8YHTWdd3D2hLGuaZ_B2osJ5WA0dulRISg9R17C3k5U/exec";
 
 // ログイン状態を管理するための変数
@@ -8,7 +8,6 @@ let isLoggedIn = false;
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   
-  // API_URLを定数から取得
   const api_url = API_URL; 
   
   const nickname = e.target.login_nickname.value;
@@ -44,12 +43,10 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       
       // ログイン成功時のUI更新
       document.getElementById("hamburger").style.display = "block"; // ハンバーガーメニューを表示
-      document.getElementById("menuRegister").style.display = "block"; // (追記：登録メニューも表示する想定)
+      document.getElementById("menuRegister").style.display = "block"; // 登録メニューも表示
       
-      navigate("home"); // ★ログイン成功でホーム画面へ遷移
-      
-      // ログイン状態をlocalStorageに保存（今回はログイン処理で利用しないためコメントアウト）
-      // localStorage.setItem("loggedIn", "true");
+      navigate("home"); // ログイン成功でホーム画面へ遷移
+      localStorage.setItem("loggedIn", "true"); // ログイン状態を保存
       
     } else {
       messageElement.textContent = data.message || "ログインIDまたはパスワードが違います。";
@@ -72,13 +69,11 @@ async function loadMembers(){
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = ""; 
 
-    // デフォルト画像のパスを定数として定義
     const DEFAULT_IMAGE_PATH = 'images/member/00.png';
 
     if (Array.isArray(members)) {
       members.forEach(m=>{
         const memberNumber = m.number || '00'; 
-        // JPGのフォールバックは省略し、PNGとデフォルト画像のみを考慮
         const primaryImagePath = `images/member/${memberNumber}.png`;
         
         const tr = document.createElement("tr");
@@ -114,38 +109,37 @@ function navigate(page){
     if (page === 'members') {
         loadMembers();
     }
-    // ★ ページ遷移時にもメニューを閉じる
+    // ページ遷移時にもメニューを閉じる
     closeMenu(); 
 }
 
 // ------------------------------------
-// ★ メニュー開閉操作 (CSSの 'open' クラスと連動)
+// メニュー開閉操作 (CSSの 'open' クラスと連動)
 // ------------------------------------
 function toggleMenu(){
   document.getElementById("sideMenu").classList.toggle("open");
-  document.getElementById("overlay").classList.toggle("open"); // ★ クラス名を 'show' から 'open' に統一
+  document.getElementById("overlay").classList.toggle("open"); 
 }
 function closeMenu(){
   document.getElementById("sideMenu").classList.remove("open");
-  document.getElementById("overlay").classList.remove("open"); // ★ クラス名を 'show' から 'open' に統一
+  document.getElementById("overlay").classList.remove("open"); 
 }
 
 // ログアウト
 function logout(){
   navigate("login");
   document.getElementById("hamburger").style.display = "none";
-  document.getElementById("menuRegister").style.display = "none"; // ログアウト時、登録メニューを非表示
+  document.getElementById("menuRegister").style.display = "none"; 
   localStorage.removeItem("loggedIn");
   localStorage.removeItem("role");
 }
 
 // ページロード時にログイン状態確認
 window.addEventListener("load", () => {
-  // localStorageの確認は残しますが、HTMLの初期表示はログイン画面がactiveです
   if(localStorage.getItem("loggedIn") === "true"){
     document.getElementById("login").classList.remove("active");
     document.getElementById("home").classList.add("active");
     document.getElementById("hamburger").style.display = "block";
-    document.getElementById("menuRegister").style.display = "block"; // 登録メニューを表示する設定に修正（ログイン成功時と同様）
+    document.getElementById("menuRegister").style.display = "block";
   }
 });
