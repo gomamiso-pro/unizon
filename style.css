@@ -62,14 +62,15 @@ header h1 {
 }
 
 /*
- * ハンバーガーメニューボタン
+ * ハンバーガーメニューボタン (修正箇所)
  */
 #hamburger {
     background: none;
     border: none;
     padding: 0;
     width: 30px;
-    height: 25px;
+    /* ★修正: 高さを調整し、上下の余白を取ることで中央に収まりやすくする */
+    height: 35px; 
     display: flex; 
     flex-direction: column;
     justify-content: space-around;
@@ -80,6 +81,7 @@ header h1 {
 
 .bar {
     width: 100%;
+    /* barの高さはそのまま */
     height: 3px;
     background-color: var(--secondary-color);
     border-radius: 5px;
