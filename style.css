@@ -113,14 +113,13 @@ main {
     border-radius: 12px; 
     box-shadow: 0 4px 10px var(--shadow-color);
     margin-bottom: 20px;
-    display: none; 
+    display: none; /* activeがないページは非表示 */
     flex-grow: 1;
-    display: flex;
     flex-direction: column;
 }
 
 .page.active {
-    display: flex; 
+    display: flex; /* activeがあるページを表示 */
 }
 
 .page h2 {
@@ -142,8 +141,7 @@ main {
     background-color: transparent; 
 }
 #login .form-container {
-    margin-top: 10px; 
-    margin-bottom: 50px;
+    margin: 10px auto 50px auto; 
     background-color: var(--secondary-color);
     box-shadow: 0 4px 10px var(--shadow-color);
 }
@@ -156,7 +154,6 @@ main {
     flex-direction: column;
     gap: 15px;
     max-width: 400px;
-    margin: auto; 
     padding: 20px;
     border: 1px solid var(--light-gray);
     border-radius: 10px;
