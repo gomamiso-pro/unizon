@@ -1,6 +1,9 @@
 // ログイン状態を管理するための変数
 let isLoggedIn = false;
 
+// ★ Google Apps Script のURLはHTMLに記載されているため、ここでは省略 ★
+// const API_URL = "https://script.google.com/macros/s/AKfycbz4DdRaX8u7PYwQxMnHYc7VYd8YHTWdd3D2hLGuaZ_B2osJ5WA0dulRISg9R17C3k5U/exec";
+
 // ログイン処理（ニックネームと背番号で認証）
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
   e.preventDefault();
@@ -47,8 +50,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       document.getElementById("home").classList.add("active");
       document.getElementById("hamburger").style.display = "block";
       
-      // メンバーリストの読み込み
-      loadMembers(); 
+      // 【修正点1】ログイン成功時（Home表示時）の loadMembers() 呼び出しを削除
 
     } else {
       // 失敗時の処理
@@ -90,8 +92,8 @@ async function loadMembers(){
             <img src="${imagePathJPG}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
-                 // ★★★ 修正箇所：onerrorで.pngも失敗したらDEFAULT_IMAGE_PATHをセット ★★★
-                 onerror="this.onerror=null; this.src='${imagePathPNG}'; this.onerror=function(){this.src='${DEFAULT_IMAGE_PATH}'};" 
+                 // 【修正点2】onerrorを簡略化し、JPG→PNG→デフォルトの順で画像を試行する
+                 onerror="this.onerror=function(){this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}'}; this.src='${imagePathPNG}';" 
             >
           </td>
         `;
@@ -147,7 +149,9 @@ window.addEventListener("load", () => {
     document.getElementById("hamburger").style.display = "block";
     document.getElementById("menuRegister").style.display = "none";
     
-    // ページロード時にもメンバーリストを読み込む
+    // 【修正点1に関連】ページロード時（Home表示時）もロードは不要のまま
     // loadMembers(); 
+  }
+});
   }
 });
