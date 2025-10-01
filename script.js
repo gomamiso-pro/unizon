@@ -39,12 +39,20 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       messageElement.textContent = "ログイン成功！";
       e.target.reset(); // フォームをリセット
 
-      // ★ 成功時の処理 ★
-      // 例: ログイン画面を非表示にし、ホーム画面を表示
-      document.getElementById("login").classList.remove("active");
-      document.getElementById("home").classList.add("active");
-      // 例: メニューボタンを表示
-      // document.getElementById("hamburger").style.display = "block";
+
+         // ★ 成功時の処理 ★
+    // ログイン画面を非表示にし、ホーム画面を表示
+    document.getElementById("login").classList.remove("active");
+    document.getElementById("home").classList.add("active");
+    
+    // 【✅ 修正箇所】ハンバーガーメニューを表示に切り替える
+    document.getElementById("hamburger").style.display = "block";
+    
+    // 【✅ 追加推奨】メンバーリストもここで読み込みましょう
+    loadMembers(); 
+    
+    // 【✅ 追加推奨】サイドメニュー内の項目も表示に切り替える
+    // (loadMembers関数と一緒に、ここでメニュー内の表示を更新する関数も実行推奨)
 
     } else {
       // 失敗時の処理
