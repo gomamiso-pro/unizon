@@ -108,9 +108,13 @@ async function loadMembers(){
 
 // ページ切り替え
 function navigate(page){
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(page).classList.add("active");
-  closeMenu();
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(page).classList.add("active");
+    // ★ 修正 ★：MEMBERページに切り替えるときだけデータを読み込む
+    if (page === 'members') {
+        loadMembers();
+    }
+    closeMenu();
 }
 
 // ハンバーガーメニュー操作
@@ -142,6 +146,6 @@ window.addEventListener("load", () => {
     document.getElementById("menuRegister").style.display = "none";
     
     // ページロード時にもメンバーリストを読み込む
-    loadMembers(); 
+    // loadMembers(); 
   }
 });
