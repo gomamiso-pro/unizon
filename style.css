@@ -20,9 +20,13 @@ header h1 {
   margin: 0;
   font-size: 18px;
   /* ヘッダータイトルを筆記体（例：cursive）に設定 */
-  /* 端末にインストールされている筆記体フォントを優先します */
-  font-family: cursive, "Segoe Script", sans-serif; 
+  font-family: cursive, "Segoe Script", sans-serif;
+  /* ★ 追加: h1内の要素を横並びにするためにflexboxを使用 */
+  display: flex; 
+  align-items: center; /* 垂直方向の中央揃え */
+  gap: 8px; /* テキストと画像の間隔 */
 }
+
 #hamburger {
   background: none;
   border: none;
