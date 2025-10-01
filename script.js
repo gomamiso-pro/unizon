@@ -42,11 +42,13 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       messageElement.textContent = "ログイン成功！";
       e.target.reset();
       
-      // 画面遷移とUIの切り替え
-      document.getElementById("hamburger").style.display = "flex"; // ハンバーガーメニューを表示 (style.cssでflex指定のため)
-      document.getElementById("menuRegister").style.display = "block"; // 登録ボタンを表示（必要に応じて権限チェックを追加してください）
-      // ★修正ポイント: navigate関数を呼び出して'home'画面へ遷移
-      navigate('home'); 
+      // ★修正ポイント: navigate関数に画面遷移を任せる
+      // document.getElementById("login").classList.remove("active"); // ← navigateが実行
+      // document.getElementById("home").classList.add("active"); // ← navigateが実行
+      document.getElementById("hamburger").style.display = "block"; // ハンバーガーメニューを表示
+      document.getElementById("menuRegister").style.display = "block"; // (追記：登録メニューも表示する想定)
+      
+      navigate("home"); // ★ログイン成功でホーム画面へ遷移
       
     } else {
       messageElement.textContent = data.message || "ログインIDまたはパスワードが違います。";
