@@ -1,19 +1,20 @@
+// ★ Google Apps Script のURLをHTMLからこちらに移動することを推奨
+// const API_URL = "https://script.google.com/macros/s/AKfycbz4DdRaX8u7PYwQxMnHYc7VYd8YHTWdd3D2hLGuaZ_B2osJ5WA0dulRISg9R17C3k5U/exec";
+
 // ログイン状態を管理するための変数
 let isLoggedIn = false;
-
-// ★ Google Apps Script のURLはHTMLに記載されているため、ここでは省略 ★
-// const API_URL = "https://script.google.com/macros/s/AKfycbz4DdRaX8u7PYwQxMnHYc7VYd8YHTWdd3D2hLGuaZ_B2osJ5WA0dulRISg9R17C3k5U/exec";
 
 // ログイン処理（ニックネームと背番号で認証）
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
   e.preventDefault();
   
-  // 入力値を取得
+  // API_URLが未定義の場合、ここでエラーになる可能性があります。HTMLから移動してください。
+  const api_url = typeof API_URL !== 'undefined' ? API_URL : 'URL_NOT_DEFINED'; 
+  
   const nickname = e.target.login_nickname.value;
   const number = e.target.login_number.value;
   const messageElement = document.getElementById("loginMessage");
 
-  // 1. GASへ送るための FormData を作成
   const formData = new FormData();
   formData.append("action", "login"); 
   formData.append("nickname", nickname);
@@ -22,8 +23,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   messageElement.textContent = "認証中...";
 
   try {
-    // 2. fetchでPOST送信
-    const res = await fetch(API_URL, {
+    const res = await fetch(api_url, {
       method: "POST",
       body: formData
     });
@@ -31,7 +31,6 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     const text = await res.text();
     console.log("GASからの応答:", text);
 
-    // 応答をJSONとしてパース
     let data = {};
     try { data = JSON.parse(text); } 
     catch { 
@@ -39,21 +38,15 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       return; 
     }
 
-    // 3. 認証結果の判定
     if (data.status === "success") {
       messageElement.textContent = "ログイン成功！";
-      e.target.reset(); // フォームをリセット
+      e.target.reset();
       
-      // ★ 成功時の処理 ★
-      // 画面切り替えとハンバーガーメニュー表示
       document.getElementById("login").classList.remove("active");
       document.getElementById("home").classList.add("active");
       document.getElementById("hamburger").style.display = "block";
       
-      // 【修正点1】ログイン成功時（Home表示時）の loadMembers() 呼び出しを削除
-
     } else {
-      // 失敗時の処理
       messageElement.textContent = data.message || "ログインIDまたはパスワードが違います。";
     }
 
@@ -63,23 +56,23 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   }
 });
 
-// メンバー一覧取得（画像パスを/images/member/に変更し、GitHub Pages対応済み）
+// メンバー一覧取得
 async function loadMembers(){
+  const api_url = typeof API_URL !== 'undefined' ? API_URL : 'URL_NOT_DEFINED'; 
+  
   try{
     // GASからメンバーデータを取得
-    const res = await fetch(API_URL);
+    const res = await fetch(api_url);
     const members = await res.json();
     const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = ""; // tbodyをクリア
+    tbody.innerHTML = ""; 
 
-    // ★ デフォルト画像のパスを定数として定義 ★
+    // デフォルト画像のパスを定数として定義
     const DEFAULT_IMAGE_PATH = 'images/member/00.png';
 
     if (Array.isArray(members)) {
       members.forEach(m=>{
-        // 画像パスを「images/member/背番号.拡張子」として構築
         const memberNumber = m.number || '00'; 
-        
         const imagePathJPG = `images/member/${memberNumber}.jpg`; 
         const imagePathPNG = `images/member/${memberNumber}.png`; 
         
@@ -92,7 +85,6 @@ async function loadMembers(){
             <img src="${imagePathJPG}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
-                 // 【修正点2】onerrorを簡略化し、JPG→PNG→デフォルトの順で画像を試行する
                  onerror="this.onerror=function(){this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}'}; this.src='${imagePathPNG}';" 
             >
           </td>
@@ -114,7 +106,6 @@ async function loadMembers(){
 function navigate(page){
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     document.getElementById(page).classList.add("active");
-    // ★ 修正 ★：MEMBERページに切り替えるときだけデータを読み込む
     if (page === 'members') {
         loadMembers();
     }
@@ -135,23 +126,16 @@ function closeMenu(){
 function logout(){
   navigate("login");
   document.getElementById("hamburger").style.display = "none";
-  // ログアウト時にローカルストレージをクリア
   localStorage.removeItem("loggedIn");
   localStorage.removeItem("role");
 }
 
 // ページロード時にログイン状態確認
 window.addEventListener("load", () => {
-  // ログイン状態であれば、ログイン画面をスキップし、ハンバーガーを表示
   if(localStorage.getItem("loggedIn") === "true"){
     document.getElementById("login").classList.remove("active");
     document.getElementById("home").classList.add("active");
     document.getElementById("hamburger").style.display = "block";
     document.getElementById("menuRegister").style.display = "none";
-    
-    // 【修正点1に関連】ページロード時（Home表示時）もロードは不要のまま
-    // loadMembers(); 
-  }
-});
   }
 });
