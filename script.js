@@ -61,7 +61,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   }
 });
 
-// メンバー一覧取得（画像パスを背番号ベースにし、jpg/pngのフォールバックに対応）
+// メンバー一覧取得（画像パスを/images/member/に変更し、GitHub Pages対応済み）
 async function loadMembers(){
   try{
     // GASからメンバーデータを取得
@@ -72,9 +72,12 @@ async function loadMembers(){
 
     if (Array.isArray(members)) {
       members.forEach(m=>{
-        // 画像パスを「/member/背番号.拡張子」として構築
+        // 画像パスを「images/member/背番号.拡張子」として構築
         const memberNumber = m.number || '00'; 
-        const imagePath = `/images/member/${memberNumber}.jpg`; 
+        
+        // ★★★ 最終修正箇所：パスの先頭の「/」を削除 ★★★
+        const imagePathJPG = `images/member/${memberNumber}.jpg`; 
+        const imagePathPNG = `images/member/${memberNumber}.png`; 
         
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -82,10 +85,11 @@ async function loadMembers(){
           <td>${m.nickname || ''}</td>
           <td>${m.position || ''}</td>
           <td>
-            <img src="${imagePath}" 
+            <img src="${imagePathJPG}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
-                 onerror="this.onerror=null; this.src='/images/member/${memberNumber}.png';" 
+                 // ★★★ onerror内のパスも「/」を削除 ★★★
+                 onerror="this.onerror=null; this.src='${imagePathPNG}';" 
             >
           </td>
         `;
