@@ -29,9 +29,8 @@ header h1 {
 
 /* ヘッダーのロゴ画像スタイル */
 .header-logo {
-  height: 18px; /* ロゴの高さを調整 */
-  width: auto; /* 高さに合わせて幅を自動調整 */
-  /* 画像が親要素（h1）のflexアイテムとして振る舞うため、vertical-alignは不要です */
+  height: 16px !important; /* ロゴの高さをさらに小さく、強制的に適用 */
+  width: auto !important;  /* 高さに合わせて幅を自動調整、強制的に適用 */
 }
 
 #hamburger {
