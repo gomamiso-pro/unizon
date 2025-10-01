@@ -72,7 +72,7 @@ async function loadMembers(){
 
     if (Array.isArray(members)) {
       members.forEach(m=>{
-        // 画像パスを「/member/背番号.jpg」として構築
+        // 画像パスを「/member/背番号.拡張子」として構築
         const memberNumber = m.number || '00'; 
         const imagePath = `/member/${memberNumber}.jpg`; 
         
