@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNISON Softball Team</title>
+  <title>UNIZON Softball Team</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- サイドメニュー -->
 <nav id="sideMenu">
-  <h2>メニュー</h2>
+  <h2>MENU</h2>
   <button class="menu-item" onclick="navigate('home')">HOME</button>
-  <button class="menu-item" onclick="navigate('members')">メンバーリスト</button>
-  <button class="menu-item" onclick="logout()">ログアウト</button>
+  <button class="menu-item" onclick="navigate('members')">MEMBER</button>
+  <button class="menu-item" onclick="logout()">LOG-OUT</button>
   <button id="menuRegister" class="menu-item" onclick="navigate('register')" style="display:none;">
     メンバー登録
   </button>
@@ -29,21 +29,21 @@
       <div class="bar"></div>
       <div class="bar"></div>
     </button>
-    <h1>UNISON Softball Team10</h1>
+    <h1>UNIZON　10</h1>
   </header>
 
   <main>
     <!-- ログイン画面 -->
     <div id="login" class="page active">
-      <h2>メンバーログイン</h2>
+      <h2>LOG-IN</h2>
       <form id="loginForm" class="form-container">
-        <label>ログインID (ニックネーム):
+        <label>LOG-IN ID (ニックネーム):
           <input type="text" name="login_nickname" required>
         </label>
-        <label>パスワード (背番号):
+        <label>PASSWORD (背番号):
           <input type="password" name="login_number" required>
         </label>
-        <button type="submit">ログイン</button>
+        <button type="submit">LOG-IN</button>
         <p id="loginMessage" class="error-message"></p>
       </form>
     </div>
@@ -51,15 +51,15 @@
     <!-- ホーム -->
     <div id="home" class="page">
       <h2>ようこそ！</h2>
-      <p>UNISONソフトボールチームの公式ページへ。最新情報はこちらでご確認ください。</p>
+      <p>UNIZONソフトボールチームの公式ページへ。最新情報はこちらでご確認ください。</p>
     </div>
 
     <!-- メンバーリスト -->
     <div id="members" class="page">
-      <h2>メンバーリスト</h2>
+      <h2>MEMBER LIST</h2>
       <table>
         <thead>
-          <tr><th>番号</th><th>ニックネーム</th><th>ポジション</th><th>画像</th></tr>
+          <tr><th>背番号</th><th>NAME</th><th>守備</th><th>画像</th></tr>
         </thead>
         <tbody id="memberTable"></tbody>
       </table>
