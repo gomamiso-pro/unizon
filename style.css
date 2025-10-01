@@ -1,203 +1,63 @@
 /* ==================================== */
-/* 🎨 シンプル＆モダンなデザインCSS修正版 */
+/* 最小限のシンプルなリセットCSS */
 /* ==================================== */
 
 /* 全体 */
 body {
   margin: 0;
-  /* 本文はやわらかい文字（ヒラギノ丸ゴシックを維持） */
+  /* 本文はやわらかい文字（例：游ゴシック体、ヒラギノ丸ゴシックなど）を優先 */
   font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo UI", "Segoe UI", sans-serif;
-  background: #f0f2f5; /* 背景をより明るいライトグレーに */
-  color: #1a1a1a; /* 文字色を濃いめに */
-  line-height: 1.6;
-}
-/* ヘッダーの背景色として使用するネイビー系をカスタムプロパティで定義 */
-:root {
-  --primary-color: #3b5998; /* Facebookブルーに近い、落ち着いたネイビー */
-  --secondary-color: #0077cc; /* ボタンの青を維持 */
-  --light-gray: #f5f5f5;
-  --dark-gray: #444;
+  background: #f0f2f5; /* ライトグレーの背景色 */
+  color: #1a1a1a;
 }
 
-/* ヘッダー */
+/* ヘッダーの基本色とレイアウト */
 header {
-  background: var(--primary-color); /* 定義したネイビーに */
+  /* ★ 最重要: 背景色（ネイビー）が反映されるか確認 ★ */
+  background: #3b5998; 
   color: #ffffff;
-  padding: 12px 20px; /* 上下左右のパディングを調整 */
+  padding: 12px 20px;
   display: flex;
   align-items: center;
-  /* ヘッダーに控えめな影をつけ、立体感を出す */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
+
+/* ヘッダーのロゴ（テキストと画像を横並びに） */
 header h1 {
   flex: 1;
   margin: 0;
-  font-size: 20px; /* 少し大きく */
+  font-size: 20px; 
   font-family: cursive, "Segoe Script", sans-serif;
-  
   display: flex; 
   align-items: center; 
-  gap: 10px; /* 間隔を少し広く */
+  gap: 10px;
 }
-/* ヘッダー内の画像（ロゴ）に対するサイズ調整 */
+
+/* ★★★ ヘッダー内のロゴ画像サイズ調整 ★★★ */
 .header-logo {
-  height: 24px !important; /* 少し大きくして視認性を向上 */
+  height: 24px !important; /* 強制的にサイズを固定 */
   width: auto !important;
   vertical-align: middle;
 }
 
-/* ハンバーガーメニュー */
-#hamburger {
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-right: 0; /* 右の余白は不要に */
-  padding: 8px;
-}
-#hamburger .bar {
-  width: 25px;
-  height: 3px;
-  background: #fff;
-  margin: 4px 0;
-  border-radius: 2px; /* 棒に丸み */
-}
-
-/* サイドメニュー */
-#sideMenu {
-  position: fixed;
-  left: -250px;
-  top: 0;
-  width: 200px;
-  height: 100%;
-  background: var(--dark-gray); /* 濃いグレーを維持 */
-  color: #fff;
-  padding: 20px 0; /* 上下はパディング、左右はメニューアイテムで調整 */
-  transition: left 0.3s ease-in-out; /* トランジションにイージングを追加 */
-  z-index: 1000;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-}
-#sideMenu h2 {
-    margin: 0 20px 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #666;
-}
-.menu-item {
-  display: block;
-  width: auto; /* 100%からautoに変更し、パディングで調整 */
-  margin: 0; /* マージンを上下のみに */
-  padding: 12px 20px; /* 左右のパディングを追加 */
-  background: none; /* 背景色をなくす */
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  text-align: left;
-  transition: background-color 0.2s;
-}
-.menu-item:hover {
-    background: #5a74a8; /* ホバー時にハイライト */
-}
-
-/* ページ */
-.page {
-  display: none;
-  padding: 20px;
-}
-.page h2 {
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 5px;
-    margin-bottom: 20px;
-}
-
-/* フォームとボタン */
-.form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* 間隔を広く */
-  max-width: 350px; /* 少し幅を広く */
-  padding: 20px;
-  background: #ffffff; /* 白い背景 */
-  border-radius: 8px; /* 角を丸く */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 軽い影 */
-}
-.form-container input {
-  padding: 10px; /* パディングを増やす */
-  border: 1px solid #ccc;
-  border-radius: 4px; /* 角を丸く */
-}
-.form-container button {
-  padding: 12px;
-  background: var(--secondary-color);
-  color: #fff;
-  border: none;
-  border-radius: 4px; /* 角を丸く */
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-.form-container button:hover {
-  background: #005fa3;
-}
-.error-message {
-  color: #d9534f; /* 警告色に変更 */
-  font-size: 14px;
-  margin-top: -5px;
-}
-
-/* メンバーリストの画像調整 */
+/* ==================================== */
+/* メンバーリストの画像サイズ調整 */
+/* ==================================== */
 img.member-img {
+  /* サイズを確実に固定 */
   width: 60px !important; 
   height: 60px !important; 
+  
+  /* 丸い画像にする元の設定も強制 */
   object-fit: cover !important;
   border-radius: 50% !important;
+  border: 2px solid #3b5998 !important; /* ネイビーの枠線 */
   display: block;
   margin: 0 auto;
-  /* 枠線を primary-color に変更 */
-  border: 2px solid var(--primary-color) !important; 
-}
-#members table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    background: #ffffff;
-    border-radius: 8px;
-    overflow: hidden; /* 角丸に対応 */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-#members th, #members td {
-    padding: 12px 8px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-}
-#members th {
-    background: var(--light-gray);
-    color: #333;
-    font-weight: bold;
-}
-#members tr:nth-child(even) {
-    background: #f9f9f9;
-}
-#members tr:hover {
-    background: #f0f0ff;
 }
 
-
-/* モバイルでの調整 */
 @media (max-width: 600px) {
   img.member-img {
     width: 45px !important;
     height: 45px !important;
   }
-  .page {
-      padding: 10px;
-  }
-}
-
-/* フッター */
-footer {
-  text-align: center;
-  padding: 15px; /* パディングを増やして存在感を出す */
-  background: var(--light-gray);
-  color: #666;
-  margin-top: 30px;
-  font-size: 14px;
 }
