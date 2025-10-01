@@ -28,9 +28,10 @@ header h1 {
 }
 
 /* ヘッダーのロゴ画像スタイル */
-.header-logo {
-  height: 16px !important; /* ロゴの高さをさらに小さく、強制的に適用 */
-  width: auto !important;  /* 高さに合わせて幅を自動調整、強制的に適用 */
+header h1 .header-logo {
+  /* 親要素 h1 と一緒に指定することで詳細度を上げ、確実性を高める */
+  height: 16px !important; 
+  width: auto !important;  
 }
 
 #hamburger {
