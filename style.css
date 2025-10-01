@@ -27,6 +27,16 @@ header h1 {
   align-items: center; /* 垂直方向の中央揃え */
   gap: 8px; /* テキストと画像の間隔 */
 }
+/* ヘッダー内の画像（ロゴ）に対するサイズ調整 */
+.header-logo {
+  /* 高さを基準にサイズを調整（例：24px） */
+  height: 24px; 
+  /* 幅はアスペクト比を保って自動調整 */
+  width: auto; 
+  /* 垂直方向の位置を調整して、テキストと同じラインに合わせる */
+  vertical-align: middle;
+}
+
 #hamburger {
   background: none;
   border: none;
