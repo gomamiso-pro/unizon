@@ -145,7 +145,35 @@ img.member-img {
     height: 50px !important;
   }
 }
+/* メンバーリストのテーブルを中央に配置するための調整 */
+#members table {
+    /* テーブル全体の幅をコンテンツ幅に合わせる（中央寄せの準備） */
+    width: fit-content; 
+    max-width: 90%; /* スマホなどで広がりすぎないように制限 */
+    
+    /* 左右マージンをautoにすることで、親要素（.page）内でテーブルを水平中央寄せ */
+    margin-left: auto;
+    margin-right: auto;
+    
+    /* 枠線とセルの境界線を一つにまとめる（見た目をきれいに） */
+    border-collapse: collapse; 
+    
+    /* 枠線のスタイルを設定（リストを見やすく） */
+    border: 1px solid #ccc;
+}
+/* テーブルのセルに罫線を追加 */
+#members th, #members td {
+    padding: 10px 15px; /* セルの内側の余白 */
+    border: 1px solid #ccc; /* 薄いグレーの罫線 */
+    text-align: center; /* セル内のテキストを中央揃えに */
+}
 
+/* ヘッダー行に背景色をつけて見やすく */
+#members thead th {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    color: #333;
+}
 
 /* フッター */
 footer {
