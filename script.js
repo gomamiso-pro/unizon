@@ -75,39 +75,43 @@ async function loadMembers(){
       // ★★★ ここからソート処理を追加 ★★★
       members.sort((a, b) => {
         // orderNoが数値であることを期待して比較
-        // 存在しない場合や不正な値の場合は、安全のために0として扱う
         const aOrder = parseInt(a.orderNo, 10) || 0;
         const bOrder = parseInt(b.orderNo, 10) || 0;
         return aOrder - bOrder;
       });
       // ★★★ ここまでソート処理を追加 ★★★
-      members.forEach(m=>{
+        
+      // 修正ポイント: forEachにインデックス 'i' を追加
+      members.forEach((m, i) => { 
         const memberNumber = m.number || '00'; 
         const primaryImagePath = `images/member/${memberNumber}.png`;
         
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${m.number || ''}</td>
-          <td>${m.nickname || ''}</td>
-          <td>${m.position || ''}</td>
+          <td>${i + 1}</td> 
+          
           <td>
             <img src="${primaryImagePath}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
                  onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}';" 
+                 style="display: block; margin: 0 auto 5px;" 
             >
+            <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
           </td>
+          
+          <td>${m.position || ''}</td>
         `;
         tbody.appendChild(tr);
       });
     } else {
       console.error("メンバー取得エラー（GAS側）:", members.message);
-      tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="3">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
     }
   } catch(err){
     console.error("メンバー取得通信エラー:", err);
     const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="3">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
 }
 
