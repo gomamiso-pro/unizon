@@ -80,7 +80,7 @@ header h1 {
     padding: 0;
     width: 30px;
 
-    height: 35px; 
+    height: 45px; 
     display: flex; 
     flex-direction: column; 
     /* 修正: space-between で上下の線が端に張り付くようにする */
