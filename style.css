@@ -306,7 +306,6 @@ button[type="submit"]:hover,
 #members td:nth-child(3) {
     /* (既存の文字サイズ設定) */
     font-size: 40px; 
-    font-weight: bold;
     text-align: center; 
     
     /* ★★★ 背景画像の設定 ★★★ */
