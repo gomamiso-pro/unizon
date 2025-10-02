@@ -307,14 +307,12 @@ button[type="submit"]:hover,
     letter-spacing: -0.5px;
     white-space: nowrap; 
 }
-/* 背番号とNo.列は個別に調整するため、ここで上書きしない */
 
 
 /* ★★★ 背番号のスタイル (3列目) ★★★ */
-/* 背番号のスタイルを3列目に戻しました */
 #members td:nth-child(3) { 
     font-size: 35px; /* 大きなサイズを維持 */
-    font-weight: bold; /* 追加: 太字を明示 */
+    font-weight: bold; 
     text-align: center; 
     
     background-image: url('images/uniform.jpg'); 
@@ -382,7 +380,7 @@ button[type="submit"]:hover,
 /* 1列目: No */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
-    width: 10%; /* 狭く */
+    width: 10%; 
 }
 
 /* 2列目: 画像/ニックネーム */
@@ -391,13 +389,13 @@ button[type="submit"]:hover,
     width: 45%; 
 }
 
-/* 3列目: 背番号 */
+/* 3列目: 背番号 - 幅を拡大 */
 #members thead th:nth-child(3),
 #members tbody td:nth-child(3) {
-    width: 30%; /* 狭く */
+    width: 30%; 
 }
 
-/* 4列目: 守備 */
+/* 4列目: 守備 - 幅を縮小 */
 #members thead th:nth-child(4),
 #members tbody td:nth-child(4) {
     width: 15%; 
