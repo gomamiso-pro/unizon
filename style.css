@@ -85,10 +85,13 @@ header h1 {
 
 .bar {
     width: 100%;
-    height: 30px;
+    height: 5px;
     background-color: var(--secondary-color);
     border-radius: 10px;
     transition: transform 0.3s, opacity 0.3s;
+/* この行を追加 */
+    margin-bottom: 10px; /* 任意のサイズに変更してください */
+
 }
 
 /*
