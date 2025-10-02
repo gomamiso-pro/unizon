@@ -68,6 +68,9 @@ header h1 {
 /*
  * ハンバーガーメニューボタン 
  */
+/*
+ * ハンバーガーメニューボタン 
+ */
 #hamburger {
     /* メニュー開閉に対応するため、画面に固定し、z-indexを高く設定 */
     position: fixed !important; 
@@ -80,12 +83,14 @@ header h1 {
     padding: 0;
     width: 30px;
 
-    height: 45px; 
+    /* 修正: 40pxに広げ、スペースを確保しやすくする */
+    height: 40px; 
     display: flex; 
     flex-direction: column; 
-    /* 修正: space-between で上下の線が端に張り付くようにする */
+    
+    /* ★最もシンプルで確実な方法：スペースを線と線の間に均等に配分する */
     justify-content: space-between; 
-    /* gap: 8px; ← これを削除 */
+    /* gap: 8px; ← 削除 */
     cursor: pointer;
 }
 
@@ -96,6 +101,7 @@ header h1 {
     border-radius: 5px;
     transition: transform 0.3s, opacity 0.3s;
 }
+
 
 /*
  * メインコンテンツエリア
