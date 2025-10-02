@@ -68,8 +68,8 @@ header h1 {
 #hamburger {
     /* メニュー開閉に対応するため、画面に固定し、z-indexを高く設定 */
     position: fixed !important; 
-    top: 15px; 
-    left: 15px; 
+    top: 5px; 
+    left: 5px; 
     z-index: 210; 
     
     background: none;
@@ -90,7 +90,7 @@ header h1 {
     border-radius: 10px;
     transition: transform 0.3s, opacity 0.3s;
 /* この行を追加 */
-    margin-bottom: 10px; /* 任意のサイズに変更してください */
+    margin-bottom: 5px; /* 任意のサイズに変更してください */
 
 }
 
