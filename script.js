@@ -103,26 +103,26 @@ async function loadMembers(){
              
              // 💡 修正点4: onerrorで、まずJPGを試し、それも失敗したらデフォルト画像に切り替える
              onerror="this.onerror=null; this.src='${secondaryImagePath}'; this.onerror=function(){this.src='${DEFAULT_IMAGE_PATH}';};"
-             
              style="display: block; margin: 0 auto 5px;" 
         >
         <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
       </td>
 
       <td>${m.number || ''}</td> 
+      <td>${m.position || ''}</td> 
     `;
     tbody.appendChild(tr);
       });
     } else {
       console.error("メンバー取得エラー（GAS側）:", members.message);
       // 列数に合わせて colspan を修正
-      tbody.innerHTML = `<tr><td colspan="3">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
     }
   } catch(err){
     console.error("メンバー取得通信エラー:", err);
     // 列数に合わせて colspan を修正
     const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = `<tr><td colspan="3">ネットワーク通信エラーが発生しました。</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
 }
 
