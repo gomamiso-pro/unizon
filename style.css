@@ -57,7 +57,7 @@ header h1 {
 }
 
 .header-logo {
-    height: 35px; /* ロゴの高さ */
+    height: 50px; /* ロゴの高さ */
     margin-left: 10px;
     border-radius: 5px;
 }
