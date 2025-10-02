@@ -99,7 +99,7 @@ async function loadMembers(){
             >
             <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
           </td>
-          
+          <td>${m.number || ''}</td>
           <td>${m.position || ''}</td>
         `;
         tbody.appendChild(tr);
