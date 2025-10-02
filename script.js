@@ -1,5 +1,5 @@
 // Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
-const API_URL = "https://script.google.com/macros/s/AKfycbwjYCxH64x7vUc4pmvqXsv1iOcEq6Xu6YkJC096hJFjXGzIhyLND8IVszT-KW1jxiMB/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxEEK492Il_5SqYnVccBsTE2Wvy7PB4YotUDGh00IQkwCNfset_4wbvaATlFTXkkTER/exec";
 
 // ログイン状態を管理するための変数
 let isLoggedIn = false;
