@@ -305,7 +305,7 @@ button[type="submit"]:hover,
 /* メンバーリストの背番号の文字サイズと背景画像を設定 */
 #members td:nth-child(3) {
     /* (既存の文字サイズ設定) */
-    font-size: 40px; 
+    font-size: 35px; 
     text-align: center; 
     
     /* ★★★ 背景画像の設定 ★★★ */
@@ -359,7 +359,7 @@ button[type="submit"]:hover,
 /* 列幅の調整 - 背番号を広め、守備を狭める */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
-    width: 10%; /* No */
+    width: 15%; /* No */
 }
 
 #members thead th:nth-child(2),
