@@ -1,7 +1,6 @@
 /*
  * UNIZON Softball Team - style.css (最終調整版)
  * サイドメニュー開閉機能対応
- * メンバーリスト編集対応済み
  */
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
 
@@ -119,7 +118,6 @@ main {
     flex-direction: column;
 }
 
-/* ★ 修正点1: ページ切り替えの必須CSSを追加 (元コードになかったため) */
 .page {
     background-color: var(--secondary-color);
     padding: 25px;
@@ -128,7 +126,6 @@ main {
     margin-bottom: 20px;
     display: none; /* activeがないページは非表示 */
     flex-grow: 1;
-    /* ページのコンテンツに応じて flex-direction を調整 */
     flex-direction: column;
 }
 
@@ -407,20 +404,7 @@ button[type="submit"]:hover,
     width: 15%; 
 }
 
-/* ★ 修正点2: メンバーリストの行を操作可能であることを示すCSSを追加 */
-#members tbody tr {
-    /* 既存スタイル... */
-    cursor: pointer; /* ポインターアイコンを表示 */
-}
-
-/* ★ 修正点3: ホバー時の背景色をより明示的に設定 (既存ホバーを流用) */
-#members tbody tr:hover {
-    background-color: var(--light-gray); /* ホバー時は薄いグレーにする */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* ホバー時により濃い影 */
-}
-
-
-/* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル ★★★ */
+/* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル (変更なし) ★★★ */
 #members tbody tr {
     background-color: var(--secondary-color); /* セルの背景色を白に統一 */
     transition: background-color 0.2s;
@@ -428,6 +412,11 @@ button[type="submit"]:hover,
     overflow: hidden; 
     /* セル全体に影を適用 */
     box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+#members tbody tr:hover {
+    background-color: var(--light-gray); /* ホバー時は薄いグレーにする */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* ホバー時により濃い影 */
 }
 
 /* tdに直接角丸を適用して、trの背景色が途切れないようにする */
@@ -476,4 +465,4 @@ footer {
     color: var(--secondary-color);
     font-size: 0.8rem;
     flex-shrink: 0;
-}
+}}
