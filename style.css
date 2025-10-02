@@ -465,4 +465,15 @@ footer {
     color: var(--secondary-color);
     font-size: 0.8rem;
     flex-shrink: 0;
+    }
+/*
+ * フッター
+ */
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    flex-shrink: 0;
 }}
