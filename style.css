@@ -13,6 +13,8 @@
     --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
+
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -34,6 +36,11 @@ body {
  * ヘッダーとロゴ
  */
 header {
+    /* ... 既存のヘッダーCSS ... */
+    position: relative; /* 子要素（#hamburger）のabsoluteの基準点になる */
+    height: 60px; /* 例: ヘッダーの高さ。この高さに対して#hamburgerが中央配置されます */
+    /* ... 既存のヘッダーCSS ... */
+    
     background-color: var(--primary-color);
     color: var(--secondary-color);
     padding: 15px 0; 
@@ -46,7 +53,6 @@ header {
     z-index: 100;
     flex-shrink: 0;
 }
-
 header h1 {
     font-size: 1.5rem;
     display: flex;
@@ -67,20 +73,30 @@ header h1 {
  */
 #hamburger {
     /* メニュー開閉に対応するため、画面に固定し、z-indexを高く設定 */
-    position: fixed !important; 
-    top: 5px; 
-    left: 5px; 
+    /* position: fixed !important;  <- 一旦削除/コメントアウト */
+    /* top: 5px; left: 5px; <- 一旦削除/コメントアウト */
     z-index: 210; 
     
     background: none;
     border: none;
     padding: 0;
     width: 30px;
-    height: 100px; 
+    /* ハンバーガーメニューの見た目の高さをバー3本+間隔2本分に短くする */
+    height: 27px; /* 例：バー3本(5px*3) + 間隔2本(6px*2) = 27px */ 
+    
     display: flex; 
     flex-direction: column;
-    justify-content: space-around;
+    
+    /* これで3本のバーが上下均等に配置されます */
+    justify-content: space-between; 
+    
     cursor: pointer;
+    
+    /* 【重要】ヘッダー内で中央配置するためのプロパティ */
+    position: absolute; /* 親要素のヘッダーを基準に配置 */
+    top: 50%; /* 親要素の上から50%の位置 */
+    transform: translateY(-50%); /* 要素の高さの半分を上にずらして真の上下中央に配置 */
+    left: 10px; /* 左端から少し離すための調整 */
 }
 
 .bar {
@@ -89,10 +105,9 @@ header h1 {
     background-color: var(--secondary-color);
     border-radius: 10px;
     transition: transform 0.3s, opacity 0.3s;
-/* この行を追加 */
-    margin-bottom: 5px; /* 任意のサイズに変更してください */
-
+    /* margin-bottom は削除またはコメントアウトします */
 }
+
 
 /*
  * メインコンテンツエリア
