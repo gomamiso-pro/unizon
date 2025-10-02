@@ -61,18 +61,10 @@ header h1 {
     margin-left: 10px;
     border-radius: 5px;
 }
-
-/*
- * ハンバーガーメニューボタン 
- */
-/*
- * ハンバーガーメニューボタン 
- */
 /*
  * ハンバーガーメニューボタン 
  */
 #hamburger {
-    /* メニュー開閉に対応するため、画面に固定し、z-indexを高く設定 */
     position: fixed !important; 
     top: 15px; 
     left: 15px; 
@@ -82,15 +74,11 @@ header h1 {
     border: none;
     padding: 0;
     width: 30px;
-
-    /* 修正: 40pxに広げ、スペースを確保しやすくする */
-    height: 40px; 
-    display: flex; 
-    flex-direction: column; 
+    height: 40px; /* 高さの指定は残す */
     
-    /* ★最もシンプルで確実な方法：スペースを線と線の間に均等に配分する */
-    justify-content: space-between; 
-    /* gap: 8px; ← 削除 */
+    /* Flexboxを解除し、ブロック要素としてマージンで制御 */
+    display: block; 
+    
     cursor: pointer;
 }
 
@@ -100,7 +88,19 @@ header h1 {
     background-color: var(--secondary-color);
     border-radius: 5px;
     transition: transform 0.3s, opacity 0.3s;
+    
+    /* 上下に8pxのマージンを設定し、線を引き離す */
+    margin: 8px 0; 
 }
+
+/* 最初の線と最後の線は、ボタンの端に合わせるためマージンを解除 */
+#hamburger .bar:first-child {
+    margin-top: 0;
+}
+#hamburger .bar:last-child {
+    margin-bottom: 0;
+}
+
 
 
 /*
