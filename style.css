@@ -277,7 +277,7 @@ button[type="submit"]:hover,
 #members table {
     width: 100%;
     border-collapse: separate; 
-    border-spacing: 0 10px; 
+    border-spacing: 0 10px; /* 行の間に隙間を空ける設定を維持 */
     table-layout: fixed; 
 }
 
@@ -288,6 +288,7 @@ button[type="submit"]:hover,
     vertical-align: middle; 
     border: none; 
     word-wrap: break-word; 
+    white-space: nowrap; /* ★修正: テキストの改行を極力防ぐ */
 }
 
 /* 列幅の調整 */
@@ -295,30 +296,21 @@ button[type="submit"]:hover,
 #members tbody td:nth-child(1) {
     width: 15%; /* 背番号 */
 }
+/* ... (他の列幅は変更なし) ... */
 
-#members thead th:nth-child(2),
-#members tbody td:nth-child(2) {
-    width: 35%; /* NAME */
-}
-
-#members thead th:nth-child(3),
-#members tbody td:nth-child(3) {
-    width: 25%; /* 守備 */
-}
-
-#members thead th:nth-child(4),
-#members tbody td:nth-child(4) {
-    width: 25%; /* 画像 */
-}
 
 #members thead th {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
+    background-color: var(--secondary-color); /* ★修正: 背景を白に変更 */
+    color: var(--primary-color); /* ★修正: 文字色をネイビーに変更 */
     font-weight: 700;
-    border-radius: 5px 5px 0 0; 
+    border: 1px solid var(--primary-color); /* ★修正: 項目間の仕切り線と枠を追加 */
+    border-bottom: 2px solid var(--primary-color); /* 下線を少し太くしてコンテンツと区切る */
+    border-radius: 5px; /* ★角丸を適用 */
+    /* Sticky設定を解除するとテーブルが崩れにくいが、ここでは一旦残します */
     position: sticky;
     top: 60px; 
     z-index: 50;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 見出しを浮き上がらせる */
 }
 
 #members tbody tr {
@@ -348,7 +340,7 @@ button[type="submit"]:hover,
     height: 50px;
     object-fit: cover;
     border-radius: 50%; /* 真円 */
-    border: 2px solid var(--accent-color);
+    border: 2px solid var(--secondary-color); /* ★修正: 枠線を白に変更 */
     display: block; 
     margin: 0 auto; 
 }
