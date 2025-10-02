@@ -288,13 +288,13 @@ button[type="submit"]:hover,
     vertical-align: middle; 
     border: none; 
     word-wrap: break-word; 
-    white-space: nowrap; /* ★修正: テキストの改行を極力防ぐ */
 }
 
 /* 列幅の調整 */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
     width: 30%; /* ★修正: 背番号の幅を 15% から 20% に拡大 */
+    white-space: nowrap; /* ★修正: テキストの改行を極力防ぐ */
 }
 
 #members thead th:nth-child(2),
