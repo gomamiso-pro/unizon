@@ -76,10 +76,12 @@ header h1 {
     border: none;
     padding: 0;
     width: 30px;
+
     height: 35px; 
     display: flex; 
-    flex-direction: column;
-    justify-content: space-around;
+    flex-direction: column; 
+    /* justify-content: space-around; ← 削除 */ 
+    gap: 8px; /* 例として8px。上下のパディングやマージンも考慮して調整 */
     cursor: pointer;
 }
 
