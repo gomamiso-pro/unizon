@@ -102,7 +102,6 @@ header h1 {
 }
 
 
-
 /*
  * メインコンテンツエリア
  */
@@ -302,10 +301,19 @@ button[type="submit"]:hover,
     word-wrap: break-word; 
 }
 
+/* ★★★ 全ての本文項目 (<td>) に文字幅調整を適用 ★★★ */
+#members td {
+    /* 文字間隔を狭める（ニックネームなどにも適用） */
+    letter-spacing: -0.5px;
+    /* セルの幅を超えた場合に、文字を折り返さずに表示し、文字間隔の調整を優先 */
+    white-space: nowrap; 
+}
+
 /* メンバーリストの背番号の文字サイズ、背景画像、フォント、そして赤い縁取りを設定 */
-#members td:nth-child(3) {
+/* 背番号は3列目から4列目に移動したため、セレクタを :nth-child(3) → :nth-child(4) に修正 */
+#members td:nth-child(4) {
     /* (既存設定) */
-    font-size: 35px; 
+    font-size: 35px; /* 大きなサイズを維持 */
     text-align: center; 
     
     background-image: url('images/uniform.jpg'); 
@@ -323,14 +331,13 @@ button[type="submit"]:hover,
         1px -1px 0 red,
         -1px 1px 0 red;
     
-    /* ★★★ 文字幅調整の追加 ★★★ */
-    /* 文字間隔を少し狭める（例: -1px）。フォントによって最適な値が変わります。 */
+    /* 文字幅調整は全体に-0.5pxが適用されているが、背番号はより狭く-1pxを維持 */
     letter-spacing: -1px; 
     
-    /* セルのコンテンツがオーバーフローした場合に折り返す設定も保険として追加 */
     white-space: nowrap; 
 }
-/* ★★★ 見出し (th) のスタイル修正 - 縦書き適用 ★★★ */
+
+/* ★★★ 見出し (th) のスタイル修正 - 縦書き適用と文字幅調整 ★★★ */
 #members thead th {
     background-color: var(--secondary-color); /* 白 */
     color: var(--primary-color); /* ネイビー */
@@ -348,7 +355,11 @@ button[type="submit"]:hover,
     top: 60px; 
     z-index: 50;
     box-shadow: 0 2px 4px var(--shadow-color); /* 影をつけて浮いているように見せる */
+    
+    /* 全てのヘッダーに文字幅調整を適用 */
+    letter-spacing: -0.5px;
 }
+
 /* 1項目目の<th>（No.）を横書きに戻すCSSに文字幅調整を追加 */
 #members thead th:first-child {
     writing-mode: horizontal-tb; /* 標準の横書きに戻す */
@@ -357,7 +368,7 @@ button[type="submit"]:hover,
     padding: 10px 5px;          /* 横書きに合わせてパディングを調整 */
     text-align: center;         /* 中央揃えにするなど */
     
-    /* ★★★ 文字幅調整の追加 ★★★ */
+    /* No.列はさらに狭く-1pxを適用 */
     letter-spacing: -1px; 
 }
 
@@ -367,36 +378,38 @@ button[type="submit"]:hover,
 }
 
 
-/* 列幅の調整 - 背番号を広め、守備を狭める */
+/* ★★★ 列幅の調整 - 4列構造に合わせたインデックスと幅の修正 ★★★ */
+/* 構造: 1:No. | 2:画像/ニックネーム | 3:背番号 | 4:守備 */
+
+/* 1列目: No */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
-    width: 15%; /* No */
-    letter-spacing: -1px; 
+    width: 15%; 
 }
 
+/* 2列目: 画像/ニックネーム */
 #members thead th:nth-child(2),
 #members tbody td:nth-child(2) {
-    width: 40%; /* 画像 (調整) */
+    width: 40%; 
 }
 
+/* 3列目: 背番号 */
 #members thead th:nth-child(3),
 #members tbody td:nth-child(3) {
-    width: 40%; /* NAME (調整) */
+    width: 15%; /* 幅を狭くする */
 }
 
+/* 4列目: 守備 */
 #members thead th:nth-child(4),
 #members tbody td:nth-child(4) {
-    width: 15%; /* 背番号 (狭める) */
-    font-size:20px;
-    
-}
-#members thead th:nth-child(5),
-#members tbody td:nth-child(5) {
-    width: 35%; /* 守備 */
+    width: 30%; /* 守備（ポジション）*/
 }
 
+/* 元のコードに存在しなかった5列目の指定を削除 */
+/* #members thead th:nth-child(5), #members tbody td:nth-child(5) { ... } */
 
-/* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル ★★★ */
+
+/* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル (変更なし) ★★★ */
 #members tbody tr {
     background-color: var(--secondary-color); /* セルの背景色を白に統一 */
     transition: background-color 0.2s;
@@ -426,7 +439,7 @@ button[type="submit"]:hover,
     box-shadow: 2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
 }
 
-/* ★★★ 画像の枠線色の修正 ★★★ */
+/* ★★★ 画像の枠線色の修正 (変更なし) ★★★ */
 #members img {
     width: 70px;
     height: 70px;
