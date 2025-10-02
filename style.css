@@ -318,7 +318,10 @@ button[type="submit"]:hover,
     background-image: url('images/uniform.jpg'); 
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: center center;
+    /* ★ 修正点: 垂直方向の位置を調整（例: 30% または top 20px など） ★ */
+    /* ここでは水平方向は 'center' のまま、垂直方向を '20%' にして上にずらします */
+    background-position: center 20%; /* 'center' は水平方向、'20%' は垂直方向 */
+    /* または具体的なピクセル値で 'center 10px' なども可能です */
     color: white; 
     padding: 10px 5px; 
     
