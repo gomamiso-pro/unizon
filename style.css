@@ -371,6 +371,7 @@ button[type="submit"]:hover,
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
     width: 15%; /* No */
+    letter-spacing: -1px; 
 }
 
 #members thead th:nth-child(2),
