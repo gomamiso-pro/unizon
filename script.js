@@ -99,21 +99,25 @@ async function loadMembers(){
             >
             <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
           </td>
-          <td>${m.number || ''}</td>
-          <td>${m.position || ''}</td>
+          
+          <td>${m.number || ''}</td> 
         `;
         tbody.appendChild(tr);
       });
     } else {
       console.error("メンバー取得エラー（GAS側）:", members.message);
+      // 列数に合わせて colspan を修正
       tbody.innerHTML = `<tr><td colspan="3">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
     }
   } catch(err){
     console.error("メンバー取得通信エラー:", err);
+    // 列数に合わせて colspan を修正
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = `<tr><td colspan="3">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
 }
+
+
 
 // メンバー登録処理 
 document.getElementById("registerForm").addEventListener("submit", async function(e) {
