@@ -1,7 +1,7 @@
 // Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
 const API_URL = "https://script.google.com/macros/s/AKfycbz4DdRaX8u7PYwQxMnHYc7VYd8YHTWdd3D2hLGuaZ_B2osJ5WA0dulRISg9R17C3k5U/exec";
 
-// ログイン状態を管理するための変数
+// ログイン状態を管理するための変数 (localStorageを使うため、この変数は必須ではない)
 let isLoggedIn = false;
 
 // ログイン処理（ニックネームと背番号で認証）
@@ -58,7 +58,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   }
 });
 
-// メンバー一覧取得
+// メンバー一覧取得 (★描画高速化を適用)
 async function loadMembers(){
   const api_url = API_URL; 
   
@@ -68,6 +68,9 @@ async function loadMembers(){
     const members = await res.json();
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = ""; 
+
+    // ★★★ 高速化の鍵: DocumentFragmentを作成 ★★★
+    const fragment = document.createDocumentFragment(); 
 
     const DEFAULT_IMAGE_PATH = 'images/member/00.png';
 
@@ -89,8 +92,13 @@ async function loadMembers(){
             >
           </td>
         `;
-        tbody.appendChild(tr);
+        // fragmentに<tr>要素を追加 (ここでは描画は発生しない)
+        fragment.appendChild(tr); 
       });
+
+      // ★★★ 最終描画: Fragment全体を一度だけtbodyに追加し、描画を1回にまとめる ★★★
+      tbody.appendChild(fragment);
+
     } else {
       console.error("メンバー取得エラー（GAS側）:", members.message);
       tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
@@ -104,10 +112,12 @@ async function loadMembers(){
 
 // ページ切り替え
 function navigate(page){
+    // 全ページの active クラスを削除
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    // 選択されたページに active クラスを付与
     document.getElementById(page).classList.add("active");
     if (page === 'members') {
-        loadMembers();
+        loadMembers(); // メンバーリストの高速描画
     }
     // ページ遷移時にもメニューを閉じる
     closeMenu(); 
@@ -141,5 +151,9 @@ window.addEventListener("load", () => {
     document.getElementById("home").classList.add("active");
     document.getElementById("hamburger").style.display = "block";
     document.getElementById("menuRegister").style.display = "block";
+  } else {
+    // 未ログインならログイン画面を active に設定
+    document.getElementById("login").classList.add("active");
+    document.getElementById("home").classList.remove("active"); 
   }
 });
