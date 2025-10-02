@@ -191,6 +191,57 @@ function handleRegister(e) {
     return ContentService.createTextOutput("エラー: 登録中に問題が発生しました。 " + e.message);
   }
 }
+// メンバー登録処理
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const api_url = API_URL;
+    const form = e.target;
+    const messageElement = document.getElementById("registerMessage") || document.createElement('p');
+    if (!document.getElementById("registerMessage")) {
+        messageElement.id = "registerMessage";
+        document.getElementById("register").appendChild(messageElement);
+    }
+    messageElement.textContent = "登録中...";
+
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        messageElement.textContent = "エラー: 画像ファイルを選択してください。";
+        return;
+    }
+
+    // FileReaderでファイルをBase64形式に変換
+    const reader = new FileReader();
+    reader.onloadend = async function() {
+        const base64Data = reader.result.split(',')[1];
+
+        const formData = new FormData();
+        formData.append("action", "register");
+        formData.append("number", form.number.value);
+        formData.append("nickname", form.nickname.value);
+        formData.append("position", form.position.value);
+        formData.append("fileData", base64Data); // Base64データ
+        formData.append("fileName", file.name);
+        formData.append("fileType", file.type);
+
+        try {
+            const res = await fetch(api_url, {
+                method: "POST",
+                body: formData
+            });
+
+            const text = await res.text();
+            messageElement.textContent = text;
+            form.reset(); // フォームをリセット
+
+        } catch (err) {
+            messageElement.textContent = "通信エラーが発生しました。";
+            console.error("fetchエラー:", err);
+        }
+    };
+    reader.readAsDataURL(file); // Base64に変換を開始
+});
 // ページ切り替え
 function navigate(page){
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
