@@ -349,12 +349,16 @@ button[type="submit"]:hover,
     z-index: 50;
     box-shadow: 0 2px 4px var(--shadow-color); /* 影をつけて浮いているように見せる */
 }
-/* 1項目目の<th>（No.）を横書きに戻す */
+/* 1項目目の<th>（No.）を横書きに戻すCSSに文字幅調整を追加 */
 #members thead th:first-child {
     writing-mode: horizontal-tb; /* 標準の横書きに戻す */
     height: auto;               /* 縦書きで指定した高さを解除 */
     min-width: 50px;            /* No.列のための最小幅を確保（適宜調整してください） */
     padding: 10px 5px;          /* 横書きに合わせてパディングを調整 */
+    text-align: center;         /* 中央揃えにするなど */
+    
+    /* ★★★ 文字幅調整の追加 ★★★ */
+    letter-spacing: -1px; 
 }
 
 /* No.列に合わせた微調整 (必要に応じて) */
