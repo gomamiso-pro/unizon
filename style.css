@@ -305,8 +305,7 @@ button[type="submit"]:hover,
 /* メンバーリストの背番号の文字サイズ、背景画像、フォント、そして赤い縁取りを設定 */
 #members td:nth-child(3) {
     /* (既存設定) */
-    font-size: 20px; 
-    font-weight: bold;
+    font-size: 35px; 
     text-align: center; 
     
     background-image: url('images/uniform.jpg'); 
