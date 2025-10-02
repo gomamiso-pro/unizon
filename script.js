@@ -122,7 +122,7 @@ function handleRegister(e) {
   const fileName = e.parameter.fileName;
   const fileType = e.parameter.fileType;
   
-  if (!number || !nickname || !position || !fileData) {
+  if (!number || !nickname ) {
     return ContentService.createTextOutput("エラー: 必須項目が不足しています。");
   }
 
