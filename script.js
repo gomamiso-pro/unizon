@@ -73,14 +73,14 @@ async function loadMembers(){
 
     if (Array.isArray(members)) {
       // ★★★ ここからソート処理を追加 ★★★
-      members.sort((a, b) => {
-        // orderNoが数値であることを期待して比較
-        // 存在しない場合や不正な値の場合は、安全のために0として扱う
-        const aOrder = parseInt(a.orderNo, 10) || 0;
-        const bOrder = parseInt(b.orderNo, 10) || 0;
-        return aOrder - bOrder;
-      });
-      // ★★★ ここまでソート処理を追加 ★★★
+      members.sort((a, b) => {
+        // orderNoが数値であることを期待して比較
+        // 存在しない場合や不正な値の場合は、安全のために0として扱う
+        const aOrder = parseInt(a.orderNo, 10) || 0;
+        const bOrder = parseInt(b.orderNo, 10) || 0;
+        return aOrder - bOrder;
+      });
+      // ★★★ ここまでソート処理を追加 ★★★
       members.forEach(m=>{
         const memberNumber = m.number || '00'; 
         const primaryImagePath = `images/member/${memberNumber}.png`;
@@ -111,16 +111,25 @@ async function loadMembers(){
   }
 }
 
-// メンバー登録処理 (修正版)
+// メンバー登録処理 
 document.getElementById("registerForm").addEventListener("submit", async function(e) {
     e.preventDefault();
     const api_url = API_URL;
     const form = e.target;
     const messageElement = document.getElementById("registerMessage") || document.createElement('p');
+    
+    // エラーメッセージ要素がない場合、新しく作成してフォームコンテナに追加
     if (!document.getElementById("registerMessage")) {
         messageElement.id = "registerMessage";
-        document.getElementById("register").appendChild(messageElement);
+        const registerContainer = document.getElementById("register");
+        if (registerContainer) {
+            registerContainer.appendChild(messageElement);
+        } else {
+            // #registerがない場合のフォールバック
+            document.body.appendChild(messageElement);
+        }
     }
+    
     messageElement.textContent = "登録中...";
 
     const fileInput = document.getElementById('fileInput');
@@ -145,7 +154,8 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     if (file) {
         const reader = new FileReader();
         reader.onloadend = async function() {
-            base64Data = reader.result.split(',')[1];
+            // 'data:image/png;base64,' のようなプレフィックスを削除
+            base64Data = reader.result.split(',')[1]; 
             fileName = file.name;
             fileType = file.type;
             
@@ -185,6 +195,7 @@ async function sendRegistration(api_url, number, nickname, position, base64Data,
         console.error("fetchエラー:", err);
     }
 }
+
 // ページ切り替え
 function navigate(page){
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
