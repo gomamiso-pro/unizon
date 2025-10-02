@@ -294,17 +294,17 @@ button[type="submit"]:hover,
 /* 列幅の調整 */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
-    width: 20%; /* ★修正: 背番号の幅を 15% から 20% に拡大 */
+    width: 30%; /* ★修正: 背番号の幅を 15% から 20% に拡大 */
 }
 
 #members thead th:nth-child(2),
 #members tbody td:nth-child(2) {
-    width: 30%; /* ★修正: NICKNAMEの幅を 35% から 30% に縮小 (合計100%を維持) */
+    width: 25%; /* ★修正: NICKNAMEの幅を 35% から 30% に縮小 (合計100%を維持) */
 }
 
 #members thead th:nth-child(3),
 #members tbody td:nth-child(3) {
-    width: 25%; /* 守備 (変更なし) */
+    width: 20%; /* 守備 (変更なし) */
 }
 
 #members thead th:nth-child(4),
