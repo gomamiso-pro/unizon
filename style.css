@@ -358,6 +358,8 @@ button[type="submit"]:hover,
     
     /* 全てのヘッダーに文字幅調整を適用 */
     letter-spacing: -0.5px;
+    /* ★ 修正点: 折り返しを禁止 */
+    white-space: nowrap; 
 }
 
 /* 1項目目の<th>（No.）を横書きに戻すCSSに文字幅調整を追加 */
@@ -370,6 +372,8 @@ button[type="submit"]:hover,
     
     /* No.列はさらに狭く-1pxを適用 */
     letter-spacing: -1px; 
+　  /* ★ 修正点: 折り返しを禁止 */
+    white-space: nowrap; 
 }
 
 /* No.列に合わせた微調整 (必要に応じて) */
