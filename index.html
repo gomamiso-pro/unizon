@@ -7,8 +7,6 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!--<link rel="icon" type="image/x-icon" href="/favicon.ico">-->
-  
   <link rel="apple-touch-icon" sizes="180x180" href="/images/teams-b.jpg">
 
   <link rel="icon" type="image/png" sizes="192x192" href="/images/teams-b.jpg">
@@ -39,7 +37,7 @@
       <div class="bar"></div>
     </button>
     <h1> 
-      <img src="images/teams-r.jpg" alt="Team Logo" class="header-logo"><p>&nbsp; UNIZON　47</p>
+      <img src="images/teams-r.jpg" alt="Team Logo" class="header-logo"><p>&nbsp; UNIZON　48</p>
     </h1>
   </header>
 
@@ -88,10 +86,11 @@
     </div>
 
     <div id="register" class="page">
-      <h2>メンバー登録</h2>
+      <h2 id="registerHeader">メンバー登録</h2> 
+      
       <form id="registerForm" class="form-container">
         <label>背番号:
-          <input type="number" name="number" required>
+          <input type="number" name="number" id="numberInput" required> 
         </label>
         <label>ニックネーム:
           <input type="text" name="nickname" required>
@@ -103,6 +102,7 @@
           <input type="file" id="fileInput" accept="image/*" >
         </label>
         <button type="submit">登録</button>
+        <p id="registerMessage" class="error-message"></p> 
       </form>
     </div>
   </main>
