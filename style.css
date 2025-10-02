@@ -281,13 +281,18 @@ button[type="submit"]:hover,
     table-layout: fixed; 
 }
 
-#members th,
-#members td {
+#members th {
     padding: 12px;
     text-align: center; 
     vertical-align: middle; 
     border: none; 
     word-wrap: break-word; 
+}
+#members td {
+    padding: 12px;
+    text-align: center; 
+    vertical-align: middle; 
+    border: none;
 }
 
 /* 列幅の調整 */
