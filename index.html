@@ -1,399 +1,91 @@
-/*
- * UNIZON Softball Team - style.css (最終調整版)
- * サイドメニュー開閉機能対応
- */
-@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNIZON Softball Team</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-:root {
-    /* カラーパレット */
-    --primary-color: #001f44; /* ネイビー */
-    --secondary-color: #ffffff; /* 白 */
-    --accent-color: #e74c3c; /* 赤 */
-    --light-gray: #f4f4f4; /* 背景用の薄いグレー */
-    --shadow-color: rgba(0, 0, 0, 0.1);
-}
+<nav id="sideMenu">
+  <h2>MENU</h2>
+  <button class="menu-item" onclick="navigate('home')">HOME</button>
+  <button class="menu-item" onclick="navigate('members')">MEMBER</button>
+  <button id="menuRegister" class="menu-item" onclick="navigate('register')" style="display:none;">
+    メンバー登録
+  </button>  <button class="menu-item" onclick="logout()">LOG-OUT</button>
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+</nav>
 
-body {
-    font-family: 'M PLUS Rounded 1c', sans-serif; /* 丸文字系のフォント */
-    line-height: 1.6;
-    background-color: var(--light-gray);
-    color: var(--primary-color);
-    transition: background-color 0.3s ease;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+<div id="overlay" onclick="closeMenu()"></div>
 
-/*
- * ヘッダーとロゴ
- */
-header {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    padding: 15px 0; 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 3px 6px var(--shadow-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    flex-shrink: 0;
-}
+<div id="app">
+  <header>
+    <button id="hamburger" onclick="toggleMenu()" style="display:none;">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </button>
+    <h1>UNIZON　27
+      <img src="images/teams-r.jpg" alt="Team Logo" class="header-logo"> 
+    </h1>
+  </header>
 
-header h1 {
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    font-weight: 700;
-    /* ハンバーガーボタンと被らないようパディングを調整 */
-    padding-left: 65px; 
-}
-
-.header-logo {
-    height: 35px; /* ロゴの高さ */
-    margin-left: 10px;
-    border-radius: 5px;
-}
-
-/*
- * ハンバーガーメニューボタン 
- */
-#hamburger {
-    /* メニュー開閉に対応するため、画面に固定し、z-indexを高く設定 */
-    position: fixed !important; 
-    top: 15px; 
-    left: 15px; 
-    z-index: 210; 
+  <main>
+    <div id="login" class="page active">
+      <h2>LOG-IN</h2>
+      <form id="loginForm" class="form-container">
+        <label>LOG-IN ID (ニックネーム):
+          <input type="text" name="login_nickname" required>
+        </label>
+        <label>PASSWORD (背番号):
+          <input type="password" name="login_number" required>
+        </label>
+        <button type="submit">LOG-IN</button>
+        <p id="loginMessage" class="error-message"></p>
+      </form>
+    </div>
     
-    background: none;
-    border: none;
-    padding: 0;
-    width: 30px;
+    <div id="home" class="page">
+      <h2>ようこそ！</h2>
+      <p>UNIZONソフトボールチームの公式ページへ。最新情報はこちらでご確認ください。</p>
+    </div>
 
-    height: 35px; 
-    display: flex; 
-    flex-direction: column; 
-    /* 修正: gapで均等な隙間を設定 */
-    gap: 8px; 
-    cursor: pointer;
-}
+    <div id="members" class="page">
+      <h2>MEMBER LIST</h2>
+      <table>
+        <thead>
+          <tr><th>背番号</th><th>NAME</th><th>守備</th><th>画像</th></tr>
+        </thead>
+        <tbody id="memberTable"></tbody>
+      </table>
+    </div>
 
-.bar {
-    width: 100%;
-    height: 3px;
-    background-color: var(--secondary-color);
-    border-radius: 5px;
-    transition: transform 0.3s, opacity 0.3s;
-}
+    <div id="register" class="page">
+      <h2>メンバー登録</h2>
+      <form id="registerForm" class="form-container">
+        <label>番号:
+          <input type="number" name="number" required>
+        </label>
+        <label>ニックネーム:
+          <input type="text" name="nickname" required>
+        </label>
+        <label>ポジション:
+          <input type="text" name="position" required>
+        </label>
+        <label>画像:
+          <input type="file" id="fileInput" accept="image/*" required>
+        </label>
+        <button type="submit">登録</button>
+      </form>
+    </div>
+  </main>
+</div>
 
-/*
- * メインコンテンツエリア
- */
-#app {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
+<footer>&copy; 2025 UNISON Softball Team</footer>
 
-main {
-    padding: 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
+<script src="script.js"></script>
 
-.page {
-    background-color: var(--secondary-color);
-    padding: 25px;
-    border-radius: 12px; 
-    box-shadow: 0 4px 10px var(--shadow-color);
-    margin-bottom: 20px;
-    display: none; /* activeがないページは非表示 */
-    flex-grow: 1;
-    flex-direction: column;
-}
-
-.page.active {
-    display: flex; /* activeがあるページを表示 */
-}
-
-.page h2 {
-    color: var(--primary-color);
-    border-bottom: 3px solid var(--accent-color);
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-align: center;
-}
-
-/* ログイン画面の個別調整 */
-#login {
-    justify-content: center; 
-    align-items: center;
-    padding: 0; 
-    box-shadow: none; 
-    background-color: transparent; 
-}
-#login .form-container {
-    margin: 10px auto 50px auto; 
-    background-color: var(--secondary-color);
-    box-shadow: 0 4px 10px var(--shadow-color);
-}
-
-/*
- * フォームの共通スタイル
- */
-.form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 400px;
-    padding: 20px;
-    border: 1px solid var(--light-gray);
-    border-radius: 10px;
-    width: 100%;
-}
-
-label {
-    font-weight: 700;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="number"],
-input[type="file"] {
-    padding: 12px;
-    border: 2px solid var(--light-gray);
-    border-radius: 8px; 
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-input:focus {
-    border-color: var(--accent-color);
-    outline: none;
-}
-
-/*
- * ボタンの共通スタイル
- */
-button[type="submit"],
-.menu-item {
-    background-color: var(--accent-color);
-    color: var(--secondary-color);
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px; 
-    cursor: pointer;
-    font-size: 1.rem;
-    font-weight: 700;
-    transition: background-color 0.3s, transform 0.1s;
-    text-align: center;
-}
-
-button[type="submit"]:hover,
-.menu-item:hover {
-    background-color: #c0392b; 
-    transform: translateY(-1px);
-}
-
-/*
- * サイドメニュー (ナビゲーション) - 開閉ロジックの核となる部分
- */
-#sideMenu {
-    position: fixed;
-    top: 0;
-    left: -250px; /* 初期状態: 画面外に隠す */
-    width: 250px;
-    height: 100%;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    box-shadow: 4px 0 10px var(--shadow-color);
-    padding: 20px;
-    transition: left 0.3s ease; /* スライドアニメーション */
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* JavaScriptで 'open' クラスが付いた時にメニューを表示 */
-#sideMenu.open {
-    left: 0; 
-}
-
-#sideMenu h2 {
-    color: var(--accent-color);
-    margin-bottom: 15px;
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-#sideMenu .menu-item {
-    width: 100%;
-    background-color: transparent;
-    border: 2px solid var(--secondary-color);
-    color: var(--secondary-color);
-    padding: 10px;
-    text-align: left;
-}
-
-#sideMenu .menu-item:hover {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
-/*
- * オーバーレイ
- */
-#overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 190;
-    display: none; /* 初期状態: 非表示 */
-}
-
-/* JavaScriptで 'open' クラスが付いた時にオーバーレイを表示 */
-#overlay.open {
-    display: block; 
-}
-
-/*
- * メンバーリストのテーブル (最終修正版)
- */
-#members table {
-    width: 100%;
-    border-collapse: separate; 
-    border-spacing: 0 10px; /* 行の間の隙間を空ける */
-    table-layout: fixed; 
-}
-
-#members th,
-#members td {
-    padding: 12px;
-    text-align: center; 
-    vertical-align: middle; 
-    border: none; 
-    word-wrap: break-word; 
-}
-
-/* ★★★ 見出し (th) のスタイル修正 - 縦書き適用 ★★★ */
-#members thead th {
-    background-color: var(--secondary-color); /* 白 */
-    color: var(--primary-color); /* ネイビー */
-    font-weight: 700;
-    
-    /* 縦書きの適用 */
-    writing-mode: vertical-rl; /* 右から左へ縦書き */
-    height: 100px; /* 縦書きで高さを確保 */
-    padding: 5px 10px; /* 縦書きに合わせてパディングを調整 */
-    
-    border-radius: 8px; 
-    
-    /* stickyの設定 */
-    position: sticky;
-    top: 60px; 
-    z-index: 50;
-    box-shadow: 0 2px 4px var(--shadow-color); /* 影をつけて浮いているように見せる */
-}
-
-
-/* 列幅の調整 - 背番号を広め、守備を狭める */
-#members thead th:nth-child(1),
-#members tbody td:nth-child(1) {
-    width: 18%; /* 背番号 (広げる) */
-}
-
-#members thead th:nth-child(2),
-#members tbody td:nth-child(2) {
-    width: 37%; /* NAME (調整) */
-}
-
-#members thead th:nth-child(3),
-#members tbody td:nth-child(3) {
-    width: 20%; /* 守備 (狭める) */
-}
-
-#members thead th:nth-child(4),
-#members tbody td:nth-child(4) {
-    width: 25%; /* 画像 (調整) */
-}
-
-
-/* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル ★★★ */
-#members tbody tr {
-    background-color: var(--secondary-color); /* セルの背景色を白に統一 */
-    transition: background-color 0.2s;
-    border-radius: 8px;
-    overflow: hidden; 
-    /* セル全体に影を適用 */
-    box-shadow: 0 2px 5px var(--shadow-color);
-}
-
-#members tbody tr:hover {
-    background-color: var(--light-gray); /* ホバー時は薄いグレーにする */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* ホバー時により濃い影 */
-}
-
-/* tdに直接角丸を適用して、trの背景色が途切れないようにする */
-#members tbody tr td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-    /* border-spacingによる隙間対策（一部ブラウザで必要） */
-    box-shadow: -2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
-}
-
-#members tbody tr td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    /* border-spacingによる隙間対策（一部ブラウザで必要） */
-    box-shadow: 2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
-}
-
-/* ★★★ 画像の枠線色の修正 ★★★ */
-#members img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 50%; /* 真円 */
-    border: 2px solid var(--secondary-color); /* 白に変更 */
-    display: block; 
-    margin: 0 auto; 
-}
-
-/*
- * メッセージ表示
- */
-.error-message {
-    color: var(--accent-color);
-    text-align: center;
-    margin-top: 10px;
-    font-weight: 700;
-}
-
-/*
- * フッター
- */
-footer {
-    text-align: center;
-    padding: 15px;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    font-size: 0.8rem;
-    flex-shrink: 0;
-}
+</body>
+</html>
