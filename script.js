@@ -72,6 +72,15 @@ async function loadMembers(){
     const DEFAULT_IMAGE_PATH = 'images/member/00.png';
 
     if (Array.isArray(members)) {
+      // ★★★ ここからソート処理を追加 ★★★
+      members.sort((a, b) => {
+        // orderNoが数値であることを期待して比較
+        // 存在しない場合や不正な値の場合は、安全のために0として扱う
+        const aOrder = parseInt(a.orderNo, 10) || 0;
+        const bOrder = parseInt(b.orderNo, 10) || 0;
+        return aOrder - bOrder;
+      });
+      // ★★★ ここまでソート処理を追加 ★★★
       members.forEach(m=>{
         const memberNumber = m.number || '00'; 
         const primaryImagePath = `images/member/${memberNumber}.png`;
@@ -101,7 +110,87 @@ async function loadMembers(){
     tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
 }
+// ----------------------------------------------------------------------
+// 登録処理
+// ----------------------------------------------------------------------
+function handleRegister(e) {
+  // フォームデータの取得
+  const number = e.parameter.number;
+  const nickname = e.parameter.nickname;
+  const position = e.parameter.position;
+  const fileData = e.parameter.fileData;
+  const fileName = e.parameter.fileName;
+  const fileType = e.parameter.fileType;
+  
+  if (!number || !nickname || !position || !fileData) {
+    return ContentService.createTextOutput("エラー: 必須項目が不足しています。");
+  }
 
+  let imageUrl = '';
+  
+  try {
+    // 1. 画像ファイルをGoogle Driveに保存
+    const blob = Utilities.newBlob(Utilities.base64Decode(fileData), fileType, fileName);
+    const file = DriveApp.createFile(blob);
+    
+    // 画像の公開設定
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    imageUrl = file.getUrl(); 
+
+    // 2. スプレッドシートに行を追加
+    const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      return ContentService.createTextOutput("エラー: シートが見つかりません。");
+    }
+
+    // --- ★ orderNo の自動設定処理を追加 ★ ---
+
+    const data = sheet.getDataRange().getValues();
+    const headers = data.shift() || []; // ヘッダー行
+    const orderNoIndex = headers.indexOf("orderNo");
+
+    let nextOrderNo = 1; // データが空またはorderNo列がない場合のデフォルト値
+
+    if (orderNoIndex !== -1 && data.length > 0) {
+      // 既存のデータから最大の orderNo を検索
+      const maxOrderNo = data.reduce((max, row) => {
+        const currentOrderNo = parseInt(row[orderNoIndex], 10);
+        return isNaN(currentOrderNo) ? max : Math.max(max, currentOrderNo);
+      }, 0);
+      nextOrderNo = maxOrderNo + 1;
+    }
+    
+    // --- ★ データ挿入時の orderNo の位置に注意 ★ ---
+    
+    // ヘッダー行を元に、新しい行のデータの位置を決定する
+    // 例: headersが ['orderNo', 'number', 'nickname', 'position', 'image'] の場合
+    
+    const newRow = new Array(headers.length).fill('');
+    
+    // 各項目のインデックスを探して値を設定
+    if (orderNoIndex !== -1) newRow[orderNoIndex] = nextOrderNo;
+    
+    const numberIndex = headers.indexOf("number");
+    if (numberIndex !== -1) newRow[numberIndex] = number;
+    
+    const nicknameIndex = headers.indexOf("nickname");
+    if (nicknameIndex !== -1) newRow[nicknameIndex] = nickname;
+
+    const positionIndex = headers.indexOf("position");
+    if (positionIndex !== -1) newRow[positionIndex] = position;
+    
+    const imageIndex = headers.indexOf("image"); // 画像URLを保存する列名
+    if (imageIndex !== -1) newRow[imageIndex] = imageUrl;
+
+    // スプレッドシートに行を追加
+    sheet.appendRow(newRow);
+
+    return ContentService.createTextOutput(`${nickname}さんの情報が正常に登録されました (Order No: ${nextOrderNo})。`);
+  } catch (e) {
+    Logger.log(e);
+    return ContentService.createTextOutput("エラー: 登録中に問題が発生しました。 " + e.message);
+  }
+}
 // ページ切り替え
 function navigate(page){
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
