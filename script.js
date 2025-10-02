@@ -82,27 +82,36 @@ async function loadMembers(){
       // ★★★ ここまでソート処理を追加 ★★★
         
       // 修正ポイント: forEachにインデックス 'i' を追加
-      members.forEach((m, i) => { 
-        const memberNumber = m.number || '00'; 
-        const primaryImagePath = `images/member/${memberNumber}.png`;
-        
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${i + 1}</td> 
-          
-          <td>
-            <img src="${primaryImagePath}" 
-                 class="member-img" 
-                 alt="${m.nickname || '画像'}"
-                 onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}';" 
-                 style="display: block; margin: 0 auto 5px;" 
-            >
-            <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
-          </td>
-          
-          <td>${m.number || ''}</td> 
-        `;
-        tbody.appendChild(tr);
+ members.forEach((m, i) => {
+    // 💡 修正点1: 背番号をトリム（空白除去）して取得
+    const memberNumber = String(m.number || '00').trim(); 
+    
+    // 💡 修正点2: PNGを最初に試行するパスを設定
+    const primaryImagePath = `images/member/${memberNumber}.png`;
+    
+    // 💡 修正点3: JPGを次に試行するパスを設定
+    const secondaryImagePath = `images/member/${memberNumber}.jpg`;
+    
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${i + 1}</td> 
+
+      <td>
+        <img src="${primaryImagePath}"  
+             class="member-img" 
+             alt="${m.nickname || '画像'}"
+             
+             // 💡 修正点4: onerrorで、まずJPGを試し、それも失敗したらデフォルト画像に切り替える
+             onerror="this.onerror=null; this.src='${secondaryImagePath}'; this.onerror=function(){this.src='${DEFAULT_IMAGE_PATH}';};"
+             
+             style="display: block; margin: 0 auto 5px;" 
+        >
+        <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
+      </td>
+
+      <td>${m.number || ''}</td> 
+    `;
+    tbody.appendChild(tr);
       });
     } else {
       console.error("メンバー取得エラー（GAS側）:", members.message);
