@@ -1,5 +1,5 @@
 // Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
-const API_URL = "https://script.google.com/macros/s/AKfycbwAh2rIVLmZqp5jTguv_IN1FNbO60HeQC2qf7MLA4zNIRJdLThC3MXDAbRiGrssNrd-/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzlX2D6Zd-G9jAkaNnymLK17jgmunRPIAA53J8GMdGC44bB6IurzkCLmdWxqMcZvCh0/exec";
 
 // ログイン状態を管理するための変数
 let isLoggedIn = false;
@@ -191,7 +191,7 @@ function handleRegister(e) {
     return ContentService.createTextOutput("エラー: 登録中に問題が発生しました。 " + e.message);
   }
 }
-// メンバー登録処理
+// メンバー登録処理 (修正版)
 document.getElementById("registerForm").addEventListener("submit", async function(e) {
     e.preventDefault();
     const api_url = API_URL;
@@ -206,42 +206,65 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
 
-    if (!file) {
-        messageElement.textContent = "エラー: 画像ファイルを選択してください。";
+    // ファイルデータは必須ではないため、存在しない場合は空として送信
+    let base64Data = "";
+    let fileName = "";
+    let fileType = "";
+
+    const number = form.number.value;
+    const nickname = form.nickname.value;
+    const position = form.position.value; // ポジションはそのまま取得
+
+    // 必須チェック（背番号とニックネームは必須と仮定）
+    if (!number || !nickname) {
+        messageElement.textContent = "エラー: 背番号とニックネームは必須です。";
         return;
     }
 
-    // FileReaderでファイルをBase64形式に変換
-    const reader = new FileReader();
-    reader.onloadend = async function() {
-        const base64Data = reader.result.split(',')[1];
-
-        const formData = new FormData();
-        formData.append("action", "register");
-        formData.append("number", form.number.value);
-        formData.append("nickname", form.nickname.value);
-        formData.append("position", form.position.value);
-        formData.append("fileData", base64Data); // Base64データ
-        formData.append("fileName", file.name);
-        formData.append("fileType", file.type);
-
-        try {
-            const res = await fetch(api_url, {
-                method: "POST",
-                body: formData
-            });
-
-            const text = await res.text();
-            messageElement.textContent = text;
-            form.reset(); // フォームをリセット
-
-        } catch (err) {
-            messageElement.textContent = "通信エラーが発生しました。";
-            console.error("fetchエラー:", err);
-        }
-    };
-    reader.readAsDataURL(file); // Base64に変換を開始
+    // ファイルがある場合の処理
+    if (file) {
+        const reader = new FileReader();
+        reader.onloadend = async function() {
+            base64Data = reader.result.split(',')[1];
+            fileName = file.name;
+            fileType = file.type;
+            
+            // ファイルの読み込みが完了したら、送信処理を実行
+            await sendRegistration(api_url, number, nickname, position, base64Data, fileName, fileType, messageElement, form);
+        };
+        reader.readAsDataURL(file); // Base64に変換を開始
+    } else {
+        // ファイルがない場合、すぐに送信処理を実行
+        await sendRegistration(api_url, number, nickname, position, base64Data, fileName, fileType, messageElement, form);
+    }
 });
+
+// 送信処理を分離したヘルパー関数
+async function sendRegistration(api_url, number, nickname, position, base64Data, fileName, fileType, messageElement, form) {
+    const formData = new FormData();
+    formData.append("action", "register");
+    formData.append("number", number);
+    formData.append("nickname", nickname);
+    formData.append("position", position);
+    formData.append("fileData", base64Data);
+    formData.append("fileName", fileName);
+    formData.append("fileType", fileType);
+
+    try {
+        const res = await fetch(api_url, {
+            method: "POST",
+            body: formData
+        });
+
+        const text = await res.text();
+        messageElement.textContent = text;
+        form.reset(); // フォームをリセット
+
+    } catch (err) {
+        messageElement.textContent = "通信エラーが発生しました。";
+        console.error("fetchエラー:", err);
+    }
+}
 // ページ切り替え
 function navigate(page){
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
