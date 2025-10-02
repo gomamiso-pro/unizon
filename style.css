@@ -80,8 +80,8 @@ header h1 {
     height: 35px; 
     display: flex; 
     flex-direction: column; 
-    /* justify-content: space-around; ← 削除 */ 
-    gap: 8px; /* 例として8px。上下のパディングやマージンも考慮して調整 */
+    /* 修正: space-aroundを削除し、gapで均等な隙間を設定 */
+    gap: 8px; 
     cursor: pointer;
 }
 
@@ -274,12 +274,12 @@ button[type="submit"]:hover,
 }
 
 /*
- * メンバーリストのテーブル
+ * メンバーリストのテーブル (修正版)
  */
 #members table {
     width: 100%;
     border-collapse: separate; 
-    border-spacing: 0 10px; 
+    border-spacing: 0 10px; /* 行の間の隙間を空ける */
     table-layout: fixed; 
 }
 
@@ -292,7 +292,25 @@ button[type="submit"]:hover,
     word-wrap: break-word; 
 }
 
-/* 列幅の調整 */
+/* ★★★ 見出し (th) のスタイル修正 ★★★ */
+#members thead th {
+    /* 背景色を白、文字色をネイビーに */
+    background-color: var(--secondary-color); /* 白 */
+    color: var(--primary-color); /* ネイビー */
+    font-weight: 700;
+    
+    /* 角丸を全体に適用 */
+    border-radius: 8px; 
+    
+    /* stickyの設定 */
+    position: sticky;
+    top: 60px; 
+    z-index: 50;
+    box-shadow: 0 2px 4px var(--shadow-color); /* 影をつけて浮いているように見せる */
+}
+
+
+/* 列幅の調整 - 見出しが改行されにくいように調整 */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
     width: 15%; /* 背番号 */
@@ -300,7 +318,7 @@ button[type="submit"]:hover,
 
 #members thead th:nth-child(2),
 #members tbody td:nth-child(2) {
-    width: 35%; /* NAME */
+    width: 40%; /* NAME (幅を増やす) */
 }
 
 #members thead th:nth-child(3),
@@ -310,47 +328,44 @@ button[type="submit"]:hover,
 
 #members thead th:nth-child(4),
 #members tbody td:nth-child(4) {
-    width: 25%; /* 画像 */
+    width: 20%; /* 画像 (幅を減らす) */
 }
 
-#members thead th {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    font-weight: 700;
-    border-radius: 5px 5px 0 0; 
-    position: sticky;
-    top: 60px; 
-    z-index: 50;
-}
 
+/* ★★★ 行 (tr) とセル (td) のスタイル修正 ★★★ */
 #members tbody tr {
-    background-color: var(--light-gray);
+    background-color: var(--secondary-color); /* セルの背景色を白に統一 */
     transition: background-color 0.2s;
     border-radius: 8px;
     overflow: hidden; 
 }
 
 #members tbody tr:hover {
-    background-color: #e0e0e0;
+    background-color: var(--light-gray); /* ホバー時は薄いグレーにする */
 }
 
+/* tdに直接角丸を適用して、trの背景色が途切れないようにする */
 #members tbody tr td:first-child {
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
+    /* border-spacingによる隙間対策（一部ブラウザで必要） */
+    box-shadow: -2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
 }
 
 #members tbody tr td:last-child {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
+    /* border-spacingによる隙間対策（一部ブラウザで必要） */
+    box-shadow: 2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
 }
 
-/* 画像を丸くする */
+/* ★★★ 画像の枠線色の修正 ★★★ */
 #members img {
     width: 50px;
     height: 50px;
     object-fit: cover;
     border-radius: 50%; /* 真円 */
-    border: 2px solid var(--accent-color);
+    border: 2px solid var(--secondary-color); /* 赤から白に変更 */
     display: block; 
     margin: 0 auto; 
 }
