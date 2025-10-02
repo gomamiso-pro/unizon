@@ -320,6 +320,9 @@ button[type="submit"]:hover,
     
     /* パディングを少し増やして背景画像のためのスペースを確保しても良い */
     padding: 10px 5px; 
+    /* ★★★ フォントの追加・変更 ★★★ */
+    /* 視認性の高いフォントを指定します（フォントは環境によって見え方が変わります） */
+    font-family: 'Impact', 'Arial Black', sans-serif; 
 }
 /* ★★★ 見出し (th) のスタイル修正 - 縦書き適用 ★★★ */
 #members thead th {
