@@ -320,7 +320,7 @@ button[type="submit"]:hover,
     background-repeat: no-repeat;
     
     /* 🌟 修正点: 垂直方向の位置を '20%' に指定し、背景画像を上にずらします 🌟 */
-    background-position: center 10%; 
+    background-position: center 25%; 
     
     color: white; 
     padding: 10px 5px; 
