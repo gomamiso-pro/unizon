@@ -82,7 +82,7 @@ header h1 {
     padding: 0;
     width: 30px;
     /* ハンバーガーメニューの見た目の高さをバー3本+間隔2本分に短くする */
-    height: 54px; /* 例：バー3本(5px*3) + 間隔2本(6px*2) = 27px */ 
+    height: 35px; /* 例：バー3本(5px*3) + 間隔2本(6px*2) = 27px */ 
     
     display: flex; 
     flex-direction: column;
