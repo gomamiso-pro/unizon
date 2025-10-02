@@ -76,7 +76,7 @@ header h1 {
     border: none;
     padding: 0;
     width: 30px;
-    height: 60px; 
+    height: 45px; 
     display: flex; 
     flex-direction: column;
     justify-content: space-around;
