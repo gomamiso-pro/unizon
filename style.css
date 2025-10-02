@@ -304,12 +304,12 @@ button[type="submit"]:hover,
 
 #members thead th:nth-child(2),
 #members tbody td:nth-child(2) {
-    width: 25%; /* ★修正: NICKNAMEの幅を 35% から 30% に縮小 (合計100%を維持) */
+    width: 30%; /* ★修正: NICKNAMEの幅を 35% から 30% に縮小 (合計100%を維持) */
 }
 
 #members thead th:nth-child(3),
 #members tbody td:nth-child(3) {
-    width: 20%; /* 守備 (変更なし) */
+    width: 15%; /* 守備 (変更なし) */
 }
 
 #members thead th:nth-child(4),
