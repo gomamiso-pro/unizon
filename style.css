@@ -394,13 +394,13 @@ button[type="submit"]:hover,
 /* 3列目: 背番号 */
 #members thead th:nth-child(3),
 #members tbody td:nth-child(3) {
-    width: 15%; /* 狭く */
+    width: 30%; /* 狭く */
 }
 
 /* 4列目: 守備 */
 #members thead th:nth-child(4),
 #members tbody td:nth-child(4) {
-    width: 30%; 
+    width: 15%; 
 }
 
 /* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル (変更なし) ★★★ */
