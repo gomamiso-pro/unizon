@@ -338,22 +338,28 @@ button[type="submit"]:hover,
 /* 列幅の調整 - 背番号を広め、守備を狭める */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
-    width: 18%; /* 背番号 (広げる) */
+    width: 10%; /* No */
 }
 
 #members thead th:nth-child(2),
 #members tbody td:nth-child(2) {
-    width: 37%; /* NAME (調整) */
+    width: 40%; /* 画像 (調整) */
 }
 
 #members thead th:nth-child(3),
 #members tbody td:nth-child(3) {
-    width: 20%; /* 守備 (狭める) */
+    width: 40%; /* NAME (調整) */
 }
 
 #members thead th:nth-child(4),
 #members tbody td:nth-child(4) {
-    width: 25%; /* 画像 (調整) */
+    width: 15%; /* 背番号 (狭める) */
+    font-size:20px;
+    
+}
+#members thead th:nth-child(5),
+#members tbody td:nth-child(5) {
+    width: 35%; /* 守備 */
 }
 
 
