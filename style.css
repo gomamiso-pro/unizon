@@ -301,19 +301,20 @@ button[type="submit"]:hover,
     word-wrap: break-word; 
 }
 
-/* ★★★ 全ての本文項目 (<td>) に文字幅調整を適用 ★★★ */
+/* ★★★ 共通設定: 全てのヘッダー/本文セルに文字幅調整と折り返し禁止を適用 ★★★ */
+#members th,
 #members td {
-    /* 文字間隔を狭める（ニックネームなどにも適用） */
     letter-spacing: -0.5px;
-    /* セルの幅を超えた場合に、文字を折り返さずに表示し、文字間隔の調整を優先 */
     white-space: nowrap; 
 }
+/* 背番号とNo.列は個別に調整するため、ここで上書きしない */
 
-/* メンバーリストの背番号の文字サイズ、背景画像、フォント、そして赤い縁取りを設定 */
-/* 背番号は3列目から4列目に移動したため、セレクタを :nth-child(3) → :nth-child(4) に修正 */
-#members td:nth-child(4) {
-    /* (既存設定) */
+
+/* ★★★ 背番号のスタイル (3列目) ★★★ */
+/* 背番号のスタイルを3列目に戻しました */
+#members td:nth-child(3) { 
     font-size: 35px; /* 大きなサイズを維持 */
+    font-weight: bold; /* 追加: 太字を明示 */
     text-align: center; 
     
     background-image: url('images/uniform.jpg'); 
@@ -331,13 +332,13 @@ button[type="submit"]:hover,
         1px -1px 0 red,
         -1px 1px 0 red;
     
-    /* 文字幅調整は全体に-0.5pxが適用されているが、背番号はより狭く-1pxを維持 */
+    /* 背番号はより狭く-1pxを適用 */
     letter-spacing: -1px; 
     
     white-space: nowrap; 
 }
 
-/* ★★★ 見出し (th) のスタイル修正 - 縦書き適用と文字幅調整 ★★★ */
+/* ★★★ 見出し (th) のスタイル修正 - 縦書き適用 ★★★ */
 #members thead th {
     background-color: var(--secondary-color); /* 白 */
     color: var(--primary-color); /* ネイビー */
@@ -355,14 +356,9 @@ button[type="submit"]:hover,
     top: 60px; 
     z-index: 50;
     box-shadow: 0 2px 4px var(--shadow-color); /* 影をつけて浮いているように見せる */
-    
-    /* 全てのヘッダーに文字幅調整を適用 */
-    letter-spacing: -0.5px;
-    /* ★ 修正点: 折り返しを禁止 */
-    white-space: nowrap; 
 }
 
-/* 1項目目の<th>（No.）を横書きに戻すCSSに文字幅調整を追加 */
+/* 1項目目の<th>（No.）を横書きに戻すCSSに文字幅調整を適用 */
 #members thead th:first-child {
     writing-mode: horizontal-tb; /* 標準の横書きに戻す */
     height: auto;               /* 縦書きで指定した高さを解除 */
@@ -372,8 +368,7 @@ button[type="submit"]:hover,
     
     /* No.列はさらに狭く-1pxを適用 */
     letter-spacing: -1px; 
-　  /* ★ 修正点: 折り返しを禁止 */
-    white-space: nowrap; 
+    white-space: nowrap; /* 折り返し禁止を適用 */
 }
 
 /* No.列に合わせた微調整 (必要に応じて) */
@@ -382,36 +377,31 @@ button[type="submit"]:hover,
 }
 
 
-/* ★★★ 列幅の調整 - 4列構造に合わせたインデックスと幅の修正 ★★★ */
-/* 構造: 1:No. | 2:画像/ニックネーム | 3:背番号 | 4:守備 */
+/* ★★★ 列幅の調整 - 4列構造（1:No, 2:ニックネーム, 3:背番号, 4:守備）に合わせて修正 ★★★ */
 
 /* 1列目: No */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) {
-    width: 15%; 
+    width: 10%; /* 狭く */
 }
 
 /* 2列目: 画像/ニックネーム */
 #members thead th:nth-child(2),
 #members tbody td:nth-child(2) {
-    width: 40%; 
+    width: 45%; 
 }
 
 /* 3列目: 背番号 */
 #members thead th:nth-child(3),
 #members tbody td:nth-child(3) {
-    width: 15%; /* 幅を狭くする */
+    width: 15%; /* 狭く */
 }
 
 /* 4列目: 守備 */
 #members thead th:nth-child(4),
 #members tbody td:nth-child(4) {
-    width: 30%; /* 守備（ポジション）*/
+    width: 30%; 
 }
-
-/* 元のコードに存在しなかった5列目の指定を削除 */
-/* #members thead th:nth-child(5), #members tbody td:nth-child(5) { ... } */
-
 
 /* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル (変更なし) ★★★ */
 #members tbody tr {
