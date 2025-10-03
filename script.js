@@ -1,5 +1,5 @@
 // Google Apps Script のURL
-const API_URL = "https://script.google.com/macros/s/AKfycbwSMrhwwoIds6fxsAkwHq3thAnW73O3BpxgnvSpAy4afYjnYnaxxgfWc_0huYc7yseu/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyQwZv05cGyuLHMr8xVdZEVH4FvemN9g3gsAYFIeBN_sZOYjwljLKUNKWYKAcMWrOT7/exec";
 
 // ログイン状態を管理する変数
 let isLoggedIn = false;
