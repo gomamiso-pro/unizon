@@ -4,6 +4,12 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzJp1yL0Ksdsvzu7b3Tu0ix
 // ログイン状態を管理する変数
 let isLoggedIn = false;
 
+// loggerオブジェクトが未定義の場合に備えて定義（ブラウザのconsoleを使用）
+const logger = {
+    log: (...args) => console.log('[LOG]', ...args),
+    error: (...args) => console.error('[ERROR]', ...args)
+};
+
 // --------------------
 // ログイン処理
 // --------------------
@@ -35,8 +41,11 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
     if (data.status === "success") {
       messageElement.textContent = "ログイン成功！";
-      document.getElementById("hamburger").style.display = "block";
-      document.getElementById("menuRegister").style.display = "block";
+      // hamburgerとmenuRegisterが存在することを確認してから表示
+      const hamburger = document.getElementById("hamburger");
+      const menuRegister = document.getElementById("menuRegister");
+      if (hamburger) hamburger.style.display = "block";
+      if (menuRegister) menuRegister.style.display = "block";
       navigate("home");
       localStorage.setItem("loggedIn", "true");
       e.target.reset();
@@ -76,17 +85,14 @@ async function loadMembers() {
         // コンソール出力も残しておくと便利です
         logger.log(`メンバー: ${m.nickname || m.number} | memberImageUrlの値:`, memberImageUrl); 
         
-        // ★★★ Drive画像インジケーター表示ロジック ★★★
+        // ★★★ Drive画像インジケーター表示ロジック 修正済み ★★★
         const isDriveLink = memberImageUrl.includes('uc?id=') || memberImageUrl.includes('drive.google.com');
 
         let driveImageIndicator = '';
         if (isDriveLink) {
-            // Driveリンクの場合、URLを小さな画像としても表示
+            // Driveリンクの場合、URLを小さな画像としても表示 (未定義変数'member'を'm'に修正し、memberImageUrlを使用)
             driveImageIndicator = `
-                <div style="border: 2px solid #2ecc71; border-radius: 4px; overflow: hidden; width: 20px; height: 20px; margin-left: 5px;" title="Google Drive Link">
-                    <img src="${member.memberImageUrl}" alt="${member.name}の写真">
-                    <p>${member.name}</p>
-                    
+                <div style="border: 2px solid #2ecc71; border-radius: 4px; overflow: hidden; width: 20px; height: 20px; margin-left: 5px; flex-shrink: 0;" title="Google Drive Link">
                     <img src="${memberImageUrl}" style="width: 100%; height: 100%; object-fit: cover;" 
                          onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
                 </div>
@@ -108,6 +114,7 @@ async function loadMembers() {
           const now = new Date().getTime();
           const lastTouch = tr.dataset.lastTouch || 0;
           const delta = now - lastTouch;
+          // ダブルタップ判定（300ms以内）
           if (delta < 300 && delta > 0) {
             event.preventDefault();
             navigateToEdit(m);
@@ -166,7 +173,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   messageElement.textContent = "処理中...";
 
   const fileInput = document.getElementById('fileInput');
-  const file = fileInput.files[0];
+  const file = fileInput ? fileInput.files[0] : null;
 
   const number = form.number.value;
   const nickname = form.nickname.value;
@@ -189,11 +196,13 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
     const reader = new FileReader();
     reader.onloadend = async function() {
-      base64Data = reader.result.split(',')[1];
+      // Data URLのヘッダ部分（"data:image/png;base64,"など）を除去
+      base64Data = reader.result.split(',')[1]; 
       await sendRegistration(number, nickname, position, base64Data, fileName, fileType, messageElement, form);
     };
     reader.readAsDataURL(file);
   } else {
+    // ファイルがない場合も、既存データの編集や、画像なしの新規登録として送信
     await sendRegistration(number, nickname, position, base64Data, fileName, fileType, messageElement, form);
   }
 });
@@ -216,16 +225,25 @@ async function sendRegistration(number, nickname, position, base64Data, fileName
     const text = await res.text();
 
     let result = {};
-    try { result = JSON.parse(text); } 
+    try { 
+      result = JSON.parse(text); 
+    } 
     catch { 
-      messageElement.textContent = text.includes("success") ? "処理成功！" : "サーバーから不正な応答がありました。"; 
+      // JSONパース失敗時、responseTextが空でないか確認
+      if (text.includes("success")) {
+          messageElement.textContent = "処理成功！";
+      } else {
+          messageElement.textContent = "サーバーから不正な応答がありました。"; 
+      }
       form.reset();
       // 登録・編集後はメンバーリストを再読み込み
       loadMembers(); 
       return; 
     }
 
-    messageElement.textContent = result.status === "success" ? (result.message || "登録/編集が完了しました！") : (result.message || "処理に失敗しました。");
+    messageElement.textContent = result.status === "success" 
+        ? (result.message || "登録/編集が完了しました！") 
+        : (result.message || "処理に失敗しました。");
     form.reset();
     // 登録・編集後はメンバーリストを再読み込み
     loadMembers();
@@ -241,26 +259,31 @@ async function sendRegistration(number, nickname, position, base64Data, fileName
 // --------------------
 function navigate(page) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(page).classList.add("active");
+  const targetPage = document.getElementById(page);
+  if (targetPage) targetPage.classList.add("active");
 
   if (page === 'members') loadMembers();
 
   if (page === 'register') {
     const editData = localStorage.getItem('editMemberData');
     const header = document.getElementById('registerHeader');
+    const numberInput = document.getElementById('numberInput');
+    const registerForm = document.getElementById('registerForm');
 
-    if (editData) {
+    if (editData && registerForm && numberInput) {
       const member = JSON.parse(editData);
-      document.getElementById('numberInput').value = member.number || '';
-      document.getElementById('registerForm').nickname.value = member.nickname || '';
-      document.getElementById('registerForm').position.value = member.position || '';
+      numberInput.value = member.number || '';
+      registerForm.nickname.value = member.nickname || '';
+      registerForm.position.value = member.position || '';
       if (header) header.textContent = 'メンバー編集';
-      document.getElementById('numberInput').disabled = true;
+      // 編集時は背番号（キー）の変更を不可にする
+      numberInput.disabled = true;
       localStorage.removeItem('editMemberData');
-    } else {
-      document.getElementById('registerForm').reset();
+    } else if (registerForm && numberInput) {
+      registerForm.reset();
       if (header) header.textContent = 'メンバー登録';
-      document.getElementById('numberInput').disabled = false;
+      // 新規登録時は背番号の変更を可能にする
+      numberInput.disabled = false;
     }
   }
 
@@ -271,12 +294,16 @@ function navigate(page) {
 // メニュー操作
 // --------------------
 function toggleMenu() {
-  document.getElementById("sideMenu").classList.toggle("open");
-  document.getElementById("overlay").classList.toggle("open");
+  const sideMenu = document.getElementById("sideMenu");
+  const overlay = document.getElementById("overlay");
+  if (sideMenu) sideMenu.classList.toggle("open");
+  if (overlay) overlay.classList.toggle("open");
 }
 function closeMenu() {
-  document.getElementById("sideMenu").classList.remove("open");
-  document.getElementById("overlay").classList.remove("open");
+  const sideMenu = document.getElementById("sideMenu");
+  const overlay = document.getElementById("overlay");
+  if (sideMenu) sideMenu.classList.remove("open");
+  if (overlay) overlay.classList.remove("open");
 }
 
 // --------------------
@@ -284,20 +311,33 @@ function closeMenu() {
 // --------------------
 function logout() {
   navigate("login");
-  document.getElementById("hamburger").style.display = "none";
-  document.getElementById("menuRegister").style.display = "none";
+  const hamburger = document.getElementById("hamburger");
+  const menuRegister = document.getElementById("menuRegister");
+  if (hamburger) hamburger.style.display = "none";
+  if (menuRegister) menuRegister.style.display = "none";
   localStorage.removeItem("loggedIn");
-  localStorage.removeItem("role");
+  localStorage.removeItem("role"); // roleもあればクリア
 }
 
 // --------------------
 // ページロード時ログイン確認
 // --------------------
 window.addEventListener("load", () => {
+  const loginPage = document.getElementById("login");
+  const homePage = document.getElementById("home");
+  const hamburger = document.getElementById("hamburger");
+  const menuRegister = document.getElementById("menuRegister");
+
   if (localStorage.getItem("loggedIn") === "true") {
-    document.getElementById("login").classList.remove("active");
-    document.getElementById("home").classList.add("active");
-    document.getElementById("hamburger").style.display = "block";
-    document.getElementById("menuRegister").style.display = "block";
+    if (loginPage) loginPage.classList.remove("active");
+    if (homePage) homePage.classList.add("active");
+    if (hamburger) hamburger.style.display = "block";
+    if (menuRegister) menuRegister.style.display = "block";
   }
+});
+
+// DOMContentLoaded後にイベントリスナーをセット
+document.addEventListener('DOMContentLoaded', () => {
+    // ハンバーガーメニューとオーバーレイの操作関数をグローバルにするか、HTML側で対応
+    // 今回はHTMLから直接呼ばれる前提なので、ここでは特に追加のコードは不要です。
 });
