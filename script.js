@@ -89,21 +89,19 @@ async function loadMembers(){
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${i + 1}</td> 
-
+        
           <td>
             <img src="${memberImageUrl}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
-                 // ★ 修正ポイント: 画像URLのロードに失敗した場合の onerror 処理をシンプルに
                  onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}';"
                  style="display: block; margin: 0 auto 5px;" 
             >
             <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
           </td>
-
+        
           <td>${m.number || ''}</td> 
           <td>${m.position || ''}</td> 
-        `;
         tbody.appendChild(tr);
       });
     } else {
