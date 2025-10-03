@@ -76,6 +76,7 @@ async function loadMembers(){
   try{
     const res = await fetch(api_url);
     const members = await res.json();
+    console.log("取得したメンバー一覧:", members); // ←この行を追加
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = ""; 
 
