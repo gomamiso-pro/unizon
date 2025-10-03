@@ -76,12 +76,25 @@ async function loadMembers() {
         // コンソール出力も残しておくと便利です
         console.log(`メンバー: ${m.nickname || m.number} | memberImageUrlの値:`, memberImageUrl); 
         
-        // ★★★ ここからDriveアイコン/インジケーター表示ロジックの開始 ★★★
+        // ★★★ Drive画像インジケーター表示ロジック ★★★
         const isDriveLink = memberImageUrl.includes('uc?id=') || memberImageUrl.includes('drive.google.com');
-        const driveIndicator = isDriveLink 
-            ? '<span style="color:#2ecc71; font-weight: bold;">✅ Drive URL</span>' // Driveリンクの場合の表示
-            : '<span style="color:#e74c3c;">❌ Default Path</span>'; // それ以外の場合の表示
-        // ★★★ Driveアイコン/インジケーター表示ロジックの終了 ★★★
+
+        let driveImageIndicator = '';
+        if (isDriveLink) {
+            // Driveリンクの場合、URLを小さな画像としても表示
+            driveImageIndicator = `
+                <div style="border: 2px solid #2ecc71; border-radius: 4px; overflow: hidden; width: 20px; height: 20px; margin-left: 5px;" title="Google Drive Link">
+                    <img src="${memberImageUrl}" style="width: 100%; height: 100%; object-fit: cover;" 
+                         onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
+                </div>
+            `;
+        }
+        
+        // テキストインジケーターは残します
+        const driveTextIndicator = isDriveLink 
+            ? '<span style="color:#2ecc71; font-weight: bold;">✅ Drive URL</span>'
+            : '<span style="color:#e74c3c;">❌ Default Path</span>';
+        // ★★★ Drive画像インジケーター表示ロジック 終了 ★★★
 
         const tr = document.createElement("tr");
         tr.dataset.memberData = JSON.stringify(m);
@@ -102,13 +115,18 @@ async function loadMembers() {
         tr.innerHTML = `
           <td>${i + 1}</td>
           <td>
-            <img src="${memberImageUrl}" class="member-img" alt="${m.nickname || '画像'}"
-                 style="display:block;margin:0 auto 5px;"
-                 onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
+            <div style="display: flex; align-items: center; justify-content: center; margin: 0 auto 5px;">
+                <img src="${memberImageUrl}" class="member-img" alt="${m.nickname || '画像'}"
+                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;"
+                     onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
+                
+                ${driveImageIndicator}
+            </div>
+            
             <p style="text-align:center;margin:0;">${m.nickname || ''}</p>
             
             <small style="display:block; text-align:center; font-size: 0.7em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" title="${memberImageUrl}">
-                ${driveIndicator}
+                ${driveTextIndicator}
             </small>
             </td>
           <td>${m.number || ''}</td>
