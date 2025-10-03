@@ -95,7 +95,13 @@ async function loadMembers(){
         // ★ 修正点: スプレッドシートから取得した画像URLを使用
         // m.image は GASでIMAGE_URL_COL_INDEXに保存した値
         const memberImageUrl = m.image || DEFAULT_IMAGE_URL; 
-        
+          // ★ ここで変換処理を追加
+          if (memberImageUrl.includes("drive.google.com/file/d/")) {
+            const fileIdMatch = memberImageUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (fileIdMatch) {
+              memberImageUrl = `https://drive.google.com/uc?id=${fileIdMatch[1]}`;
+            }
+          }
         const tr = document.createElement("tr");
         
         // メンバーデータ全体を保存（編集時に利用）
