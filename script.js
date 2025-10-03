@@ -1,3 +1,10 @@
+// <td>${i + 1}</td> ```
+
+### 修正済みの全JavaScriptコード
+
+このコード全体をコピーして、ご自身の `script.js` に上書きしてください。
+
+```javascript
 // Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
 const API_URL = "https://script.google.com/macros/s/AKfycbwI79PUOlo8875HBONFO_XRHR-s_UEFtalGYO5lgpUFD9KaMEg6FJOWGjiodTk-fhcA/exec";
 
@@ -69,7 +76,7 @@ async function loadMembers(){
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = ""; 
 
-    // ※ DEFAULT_IMAGE_PATHはonerror処理がないため、ここでは使用されません
+    // ※ onerror処理はありません
     const DEFAULT_IMAGE_PATH = 'images/member/00.png';
 
     if (Array.isArray(members)) {
@@ -83,7 +90,6 @@ async function loadMembers(){
       
       members.forEach((m, i) => {
         // キー名 'image' を参照
-        // onerrorがないため、デフォルト画像は m.imageが空の場合にのみ適用されます
         const memberImageUrl = m.image || DEFAULT_IMAGE_PATH;
         
         const tr = document.createElement("tr");
@@ -103,12 +109,12 @@ async function loadMembers(){
       });
     } else {
       console.error("メンバー取得エラー（GAS側）:", members.message);
-      // 列数に合わせて colspan を修正
+      // 列数に合わせて colspan を修正 (4列)
       tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
     }
   } catch(err){
     console.error("メンバー取得通信エラー:", err);
-    // 列数に合わせて colspan を修正
+    // 列数に合わせて colspan を修正 (4列)
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
