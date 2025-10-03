@@ -92,8 +92,8 @@ async function loadMembers(){
         
       members.forEach((m, i) => {
         // ★ 修正点: スプレッドシートから取得した画像URLを使用
-        // m.imageurl は GASでIMAGE_URL_COL_INDEXに保存した値
-        const memberImageUrl = m.imageurl || DEFAULT_IMAGE_URL; 
+        // m.image は GASでIMAGE_URL_COL_INDEXに保存した値
+        const memberImageUrl = m.image || DEFAULT_IMAGE_URL; 
         
         const tr = document.createElement("tr");
         
