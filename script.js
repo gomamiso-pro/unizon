@@ -87,10 +87,8 @@ async function loadMembers(){
         
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${i + 1}</td> 
-        
-          <td>
-            <img src="${memberImageUrl}" 
+          <td>${i + 1}</td>         
+          <td>             <img src="${memberImageUrl}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
                  onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}';"
@@ -99,9 +97,7 @@ async function loadMembers(){
             <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
           </td>
         
-          <td>${m.number || ''}</td> 
-          <td>${m.position || ''}</td> 
-        </tr>
+          <td>${m.number || ''}</td>           <td>${m.position || ''}</td>         </tr>
           `;
         tbody.appendChild(tr);
       });
