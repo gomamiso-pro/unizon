@@ -102,6 +102,7 @@ async function loadMembers(){
         
           <td>${m.number || ''}</td> 
           <td>${m.position || ''}</td> 
+          </tr>
         tbody.appendChild(tr);
       });
     } else {
