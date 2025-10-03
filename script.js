@@ -73,9 +73,10 @@ async function loadMembers() {
         // GASから取得したURL（m.image）をそのまま使用するか、デフォルト画像を使用
         const memberImageUrl = m.image || DEFAULT_IMAGE_URL;
 
-        // ★ 削除された箇所 ★
-        // Google Drive のリンクを直接表示用に変換する処理は不要なため削除しました。
-        // GAS側で既に uc?id= 形式で保存されているため、このクライアント側の変換は不要です。
+        // コンソール出力も残しておくと便利です
+        console.log(`メンバー: ${m.nickname || m.number} | memberImageUrlの値:`, memberImageUrl); 
+
+        // ★ 削除された箇所 ★ (クライアント側のURL変換ロジック)
         
         const tr = document.createElement("tr");
         tr.dataset.memberData = JSON.stringify(m);
@@ -100,7 +101,11 @@ async function loadMembers() {
                  style="display:block;margin:0 auto 5px;"
                  onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
             <p style="text-align:center;margin:0;">${m.nickname || ''}</p>
-          </td>
+            
+            <small style="display:block; text-align:center; color:#e74c3c; font-size: 0.7em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" title="${memberImageUrl}">
+                ${memberImageUrl.includes('uc?id=') ? '✅ Drive URL' : '❌ Default Path'}
+            </small>
+            </td>
           <td>${m.number || ''}</td>
           <td>${m.position || ''}</td>
         `;
