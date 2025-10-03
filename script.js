@@ -40,7 +40,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     if (data.status === "success") {
       messageElement.textContent = "ログイン成功！";
       // 成功時のみフォームをクリア
-      e.target.reset(); 
+      e.target.reset(); 
       
       // ログイン成功時のUI更新
       document.getElementById("hamburger").style.display = "block"; // ハンバーガーメニューを表示
@@ -89,16 +89,16 @@ async function loadMembers(){
         
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${i + 1}</td>         
-          <td>             <img src="${memberImageUrl}" 
+          <td style="text-align: center; vertical-align: middle;">${i + 1}</td>         
+          <td style="text-align: center; vertical-align: middle;">             <img src="${memberImageUrl}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
-                 style="display: block; margin: 0 auto 5px;" 
+                 style="display: block; margin: 0 auto 5px; width: 50px; height: 50px; object-fit: cover; border-radius: 50%;" 
             >
-            <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
+            <p style="margin: 0; font-size: 0.9em;">${m.nickname || ''}</p>
           </td>
         
-          <td>${m.number || ''}</td>           <td>${m.position || ''}</td>         </tr>
+          <td style="text-align: center; vertical-align: middle;">${m.number || ''}</td>           <td style="text-align: center; vertical-align: middle;">${m.position || ''}</td>         </tr>
           `;
         tbody.appendChild(tr);
       });
