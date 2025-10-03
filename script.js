@@ -62,6 +62,7 @@ async function loadMembers() {
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = "";
 
+    // 以前の解析で有効だった相対パスに戻します
     const DEFAULT_IMAGE_URL = 'images/member/00.png';
 
     if (Array.isArray(members)) {
@@ -69,15 +70,13 @@ async function loadMembers() {
       members.sort((a, b) => (parseInt(a.orderNo, 10) || 0) - (parseInt(b.orderNo, 10) || 0));
 
       members.forEach((m, i) => {
-        // let に変更して再代入可能に
-        let memberImageUrl = m.image || DEFAULT_IMAGE_URL;
+        // GASから取得したURL（m.image）をそのまま使用するか、デフォルト画像を使用
+        const memberImageUrl = m.image || DEFAULT_IMAGE_URL;
 
-        // Google Drive のリンクを直接表示用に変換
-        if (memberImageUrl.includes("drive.google.com/file/d/")) {
-          const fileIdMatch = memberImageUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-          if (fileIdMatch) memberImageUrl = `https://drive.google.com/uc?id=${fileIdMatch[1]}`;
-        }
-
+        // ★ 削除された箇所 ★
+        // Google Drive のリンクを直接表示用に変換する処理は不要なため削除しました。
+        // GAS側で既に uc?id= 形式で保存されているため、このクライアント側の変換は不要です。
+        
         const tr = document.createElement("tr");
         tr.dataset.memberData = JSON.stringify(m);
 
@@ -152,6 +151,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   if (file) {
     const originalName = file.name;
     let ext = originalName.slice(originalName.lastIndexOf('.'));
+    // JPEGは拡張子をjpgに統一（GAS側と合わせる）
     if (ext.toLowerCase() === '.jpeg') ext = '.jpg';
     fileName = `${number}${ext}`;
     fileType = file.type;
@@ -189,11 +189,15 @@ async function sendRegistration(number, nickname, position, base64Data, fileName
     catch { 
       messageElement.textContent = text.includes("success") ? "処理成功！" : "サーバーから不正な応答がありました。"; 
       form.reset();
+      // 登録・編集後はメンバーリストを再読み込み
+      loadMembers(); 
       return; 
     }
 
     messageElement.textContent = result.status === "success" ? (result.message || "登録/編集が完了しました！") : (result.message || "処理に失敗しました。");
     form.reset();
+    // 登録・編集後はメンバーリストを再読み込み
+    loadMembers();
 
   } catch (err) {
     messageElement.textContent = "通信エラーが発生しました。";
