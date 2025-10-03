@@ -1,395 +1,480 @@
+
 /*
- * UNIZON Softball Team - style.css (最終調整版)
- * サイドメニュー開閉機能対応
- * 【修正点】テーブルセル内の強制改行禁止 (white-space: nowrap;) を削除し、
- * 画面幅に応じた柔軟な表示と、必要に応じた横スクロールを可能にしました。
- */
+ * UNIZON Softball Team - style.css (最終調整版)
+ * サイドメニュー開閉機能対応
+ */
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
 
 :root {
-    /* カラーパレット */
-    --primary-color: #001f44; /* ネイビー */
-    --secondary-color: #ffffff; /* 白 */
-    --accent-color: #e74c3c; /* 赤 */
-    --light-gray: #f4f4f4; /* 背景用の薄いグレー */
-    --shadow-color: rgba(0, 0, 0, 0.1);
+    /* カラーパレット */
+    --primary-color: #001f44; /* ネイビー */
+    --secondary-color: #ffffff; /* 白 */
+    --accent-color: #e74c3c; /* 赤 */
+    --light-gray: #f4f4f4; /* 背景用の薄いグレー */
+    --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: 'M PLUS Rounded 1c', sans-serif;
-    line-height: 1.6;
-    background-color: var(--light-gray);
-    color: var(--primary-color);
-    transition: background-color 0.3s ease;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-family: 'M PLUS Rounded 1c', sans-serif; /* 丸文字系のフォント */
+    line-height: 1.6;
+    background-color: var(--light-gray);
+    color: var(--primary-color);
+    transition: background-color 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-/* ヘッダーとロゴ */
+/*
+ * ヘッダーとロゴ
+ */
 header {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    padding: 15px 0; 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 3px 6px var(--shadow-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    flex-shrink: 0;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 15px 0; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 6px var(--shadow-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
 }
 
 header h1 {
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    font-weight: 700;
-    padding-left: 65px; 
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    /* ハンバーガーボタンと被らないようパディングを調整 */
+    padding-left: 65px; 
 }
 
 .header-logo {
-    height: 50px;
-    margin-left: 10px;
-    border-radius: 5px;
+    height: 50px; /* ロゴの高さ */
+    margin-left: 10px;
+    border-radius: 5px;
 }
-
-/* ハンバーガーメニューボタン */
+/*
+ * ハンバーガーメニューボタン 
+ */
 #hamburger {
-    position: fixed !important; 
-    top: 15px; 
-    left: 15px; 
-    z-index: 210; 
-    background: none;
-    border: none;
-    padding: 0;
-    width: 30px;
-    height: 40px;
-    display: block; 
-    cursor: pointer;
+    position: fixed !important; 
+    top: 15px; 
+    left: 15px; 
+    z-index: 210; 
+    
+    background: none;
+    border: none;
+    padding: 0;
+    width: 30px;
+    height: 40px; /* 高さの指定は残す */
+    
+    /* Flexboxを解除し、ブロック要素としてマージンで制御 */
+    display: block; 
+    
+    cursor: pointer;
 }
 
 .bar {
-    width: 100%;
-    height: 3px;
-    background-color: var(--secondary-color);
-    border-radius: 5px;
-    transition: transform 0.3s, opacity 0.3s;
-    margin: 8px 0; 
+    width: 100%;
+    height: 3px;
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    transition: transform 0.3s, opacity 0.3s;
+    
+    /* 上下に8pxのマージンを設定し、線を引き離す */
+    margin: 8px 0; 
 }
 
+/* 最初の線と最後の線は、ボタンの端に合わせるためマージンを解除 */
 #hamburger .bar:first-child {
-    margin-top: 0;
+    margin-top: 0;
 }
 #hamburger .bar:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0;
 }
 
-/* メインコンテンツ */
+
+/*
+ * メインコンテンツエリア
+ */
 #app {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 main {
-    padding: 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .page {
-    background-color: var(--secondary-color);
-    padding: 25px;
-    border-radius: 12px; 
-    box-shadow: 0 4px 10px var(--shadow-color);
-    margin-bottom: 20px;
-    display: none;
-    flex-grow: 1;
-    flex-direction: column;
+    background-color: var(--secondary-color);
+    padding: 25px;
+    border-radius: 12px; 
+    box-shadow: 0 4px 10px var(--shadow-color);
+    margin-bottom: 20px;
+    display: none; /* activeがないページは非表示 */
+    flex-grow: 1;
+    flex-direction: column;
 }
 
 .page.active {
-    display: flex;
+    display: flex; /* activeがあるページを表示 */
 }
 
 .page h2 {
-    color: var(--primary-color);
-    border-bottom: 3px solid var(--accent-color);
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-align: center;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
 }
 
-/* ログイン画面 */
+/* ログイン画面の個別調整 */
 #login {
-    justify-content: center; 
-    align-items: center;
-    padding: 0; 
-    box-shadow: none; 
-    background-color: transparent; 
+    justify-content: center; 
+    align-items: center;
+    padding: 0; 
+    box-shadow: none; 
+    background-color: transparent; 
 }
 #login .form-container {
-    margin: 10px auto 50px auto; 
-    background-color: var(--secondary-color);
-    box-shadow: 0 4px 10px var(--shadow-color);
+    margin: 10px auto 50px auto; 
+    background-color: var(--secondary-color);
+    box-shadow: 0 4px 10px var(--shadow-color);
 }
 
-/* フォーム共通 */
+/*
+ * フォームの共通スタイル
+ */
 .form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 400px;
-    padding: 20px;
-    border: 1px solid var(--light-gray);
-    border-radius: 10px;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    padding: 20px;
+    border: 1px solid var(--light-gray);
+    border-radius: 10px;
+    width: 100%;
 }
 
 label {
-    font-weight: 700;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 input[type="text"],
 input[type="password"],
 input[type="number"],
 input[type="file"] {
-    padding: 12px;
-    border: 2px solid var(--light-gray);
-    border-radius: 8px; 
-    font-size: 1rem;
-    transition: border-color 0.3s;
+    padding: 12px;
+    border: 2px solid var(--light-gray);
+    border-radius: 8px; 
+    font-size: 1rem;
+    transition: border-color 0.3s;
 }
 
 input:focus {
-    border-color: var(--accent-color);
-    outline: none;
+    border-color: var(--accent-color);
+    outline: none;
 }
 
-/* ボタン共通 */
+/*
+ * ボタンの共通スタイル
+ */
 button[type="submit"],
 .menu-item {
-    background-color: var(--accent-color);
-    color: var(--secondary-color);
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px; 
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 700;
-    transition: background-color 0.3s, transform 0.1s;
-    text-align: center;
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px; 
+    cursor: pointer;
+    font-size: 1.rem;
+    font-weight: 700;
+    transition: background-color 0.3s, transform 0.1s;
+    text-align: center;
 }
 
 button[type="submit"]:hover,
 .menu-item:hover {
-    background-color: #c0392b; 
-    transform: translateY(-1px);
+    background-color: #c0392b; 
+    transform: translateY(-1px);
 }
 
-/* サイドメニュー */
+/*
+ * サイドメニュー (ナビゲーション) - 開閉ロジックの核となる部分
+ */
 #sideMenu {
-    position: fixed;
-    top: 0;
-    left: -250px;
-    width: 250px;
-    height: 100%;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    box-shadow: 4px 0 10px var(--shadow-color);
-    padding: 20px;
-    transition: left 0.3s ease;
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    position: fixed;
+    top: 0;
+    left: -250px; /* 初期状態: 画面外に隠す */
+    width: 250px;
+    height: 100%;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    box-shadow: 4px 0 10px var(--shadow-color);
+    padding: 20px;
+    transition: left 0.3s ease; /* スライドアニメーション */
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
+/* JavaScriptで 'open' クラスが付いた時にメニューを表示 */
 #sideMenu.open {
-    left: 0; 
+    left: 0; 
 }
 
 #sideMenu h2 {
-    color: var(--accent-color);
-    margin-bottom: 15px;
-    font-size: 1.5rem;
-    font-weight: 700;
+    color: var(--accent-color);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
 #sideMenu .menu-item {
-    width: 100%;
-    background-color: transparent;
-    border: 2px solid var(--secondary-color);
-    color: var(--secondary-color);
-    padding: 10px;
-    text-align: left;
+    width: 100%;
+    background-color: transparent;
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 10px;
+    text-align: left;
 }
 
 #sideMenu .menu-item:hover {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
 }
 
-/* オーバーレイ */
+/*
+ * オーバーレイ
+ */
 #overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 190;
-    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 190;
+    display: none; /* 初期状態: 非表示 */
 }
 
+/* JavaScriptで 'open' クラスが付いた時にオーバーレイを表示 */
 #overlay.open {
-    display: block; 
+    display: block; 
 }
 
-/* メンバーリストの親要素に横スクロールを設定 */
-#members {
-    /* テーブルが画面幅を超えた場合、#members エリア内で横スクロールできるようにする */
-    overflow-x: auto; 
-    padding-bottom: 10px;
-}
-
+/*
+ * メンバーリストのテーブル (最終修正版)
+ */
 #members table {
-    width: 100%;
-    border-collapse: separate; 
-    border-spacing: 0 10px;
-    table-layout: fixed; 
-    min-width: 450px; /* 小さすぎる画面での崩れ防止のため、最小幅を設定 */
+    width: 100%;
+    border-collapse: separate; 
+    border-spacing: 0 10px; /* 行の間の隙間を空ける */
+    table-layout: fixed; 
 }
 
 #members th,
 #members td {
-    padding: 12px;
-    text-align: center; 
-    vertical-align: middle; 
-    border: none; 
-    word-wrap: break-word; 
-    letter-spacing: -0.5px;
-    /* 全セルの white-space: nowrap; を削除しました */
+    padding: 12px;
+    text-align: center; 
+    vertical-align: middle; 
+    border: none; 
+    word-wrap: break-word; 
 }
 
-/* 背番号列 */
-#members td:nth-child(3) { 
-    font-size: 35px; 
-    font-weight: bold; 
-    text-align: center; 
-    color: white; 
-    padding: 10px 5px; 
-    font-family: 'Impact', 'Arial Black', sans-serif; 
-    text-shadow: 
-        1px 1px 0 red,
-        -1px -1px 0 red,
-        1px -1px 0 red,
-        -1px 1px 0 red;
-    letter-spacing: -1px; 
-    /* 背番号列の white-space: nowrap; を削除しました */
+/* ★★★ 共通設定: 全てのヘッダー/本文セルに文字幅調整と折り返し禁止を適用 ★★★ */
+#members th,
+#members td {
+    letter-spacing: -0.5px;
+    white-space: nowrap; 
 }
 
-/* テーブルヘッダー縦書き */
+
+/* ★★★ 背番号のスタイル (3列目) - 変更箇所のみ抜粋 ★★★ */
+#members td:nth-child(3) { 
+    font-size: 35px; /* 大きなサイズを維持 */
+    font-weight: bold; 
+    text-align: center; /* 数字（テキスト）の位置を維持 */
+    
+    background-image: url('images/uniform.jpg'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    
+    /* 🌟 修正点: 垂直方向の位置を '20%' に指定し、背景画像を上にずらします 🌟 */
+    background-position: center 45%; 
+    
+    color: white; 
+    padding: 10px 5px; 
+    
+    font-family: 'Impact', 'Arial Black', sans-serif; 
+
+    text-shadow: 
+        1px 1px 0 red,
+        -1px -1px 0 red,
+        1px -1px 0 red,
+        -1px 1px 0 red;
+    
+    /* 背番号はより狭く-1pxを適用 */
+    letter-spacing: -1px; 
+    
+    white-space: nowrap; 
+}
+
+/* ★★★ 見出し (th) のスタイル修正 - 縦書き適用 ★★★ */
 #members thead th {
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
-    font-weight: 700;
-    writing-mode: vertical-rl;
-    height: 100px;
-    padding: 5px 10px;
-    border-radius: 8px; 
-    position: sticky;
-    top: 60px; 
-    z-index: 50;
-    box-shadow: 0 2px 4px var(--shadow-color);
+    background-color: var(--secondary-color); /* 白 */
+    color: var(--primary-color); /* ネイビー */
+    font-weight: 700;
+    
+    /* 縦書きの適用 */
+    writing-mode: vertical-rl; /* 右から左へ縦書き */
+    height: 100px; /* 縦書きで高さを確保 */
+    padding: 5px 10px; /* 縦書きに合わせてパディングを調整 */
+    
+    border-radius: 8px; 
+    
+    /* stickyの設定 */
+    position: sticky;
+    top: 60px; 
+    z-index: 50;
+    box-shadow: 0 2px 4px var(--shadow-color); /* 影をつけて浮いているように見せる */
 }
 
+/* 1項目目の<th>（No.）を横書きに戻すCSSに文字幅調整を適用 */
 #members thead th:first-child {
-    writing-mode: horizontal-tb;
-    height: auto;
-    min-width: 50px;
-    padding: 10px 5px;
-    text-align: center;
-    letter-spacing: -1px; 
-    white-space: nowrap;
+    writing-mode: horizontal-tb; /* 標準の横書きに戻す */
+    height: auto;               /* 縦書きで指定した高さを解除 */
+    min-width: 50px;            /* No.列のための最小幅を確保（適宜調整してください） */
+    padding: 10px 5px;          /* 横書きに合わせてパディングを調整 */
+    text-align: center;         /* 中央揃えにするなど */
+    
+    /* No.列はさらに狭く-1pxを適用 */
+    letter-spacing: -1px; 
+    white-space: nowrap; /* 折り返し禁止を適用 */
 }
 
-/* 列幅調整 */
-/* width設定は残しつつ、コンテンツの折り返しを可能にしました */
-#members thead th:nth-child(1),
-#members tbody td:nth-child(1) { width: 10%; }
-#members thead th:nth-child(2),
-#members tbody td:nth-child(2) { width: 45%; }
-#members thead th:nth-child(3),
-#members tbody td:nth-child(3) { width: 30%; }
-#members thead th:nth-child(4),
-#members tbody td:nth-child(4) { width: 15%; }
+/* No.列に合わせた微調整 (必要に応じて) */
+#members thead th:first-child:not([style*="text-align"]) {
+    text-align: center; /* 中央揃えにするなど */
+}
 
-/* 行・セルスタイル */
+
+/* ★★★ 列幅の調整 - 4列構造（1:No, 2:ニックネーム, 3:背番号, 4:守備）に合わせて修正 ★★★ */
+
+/* 1列目: No */
+#members thead th:nth-child(1),
+#members tbody td:nth-child(1) {
+    width: 10%; 
+}
+
+/* 2列目: 画像/ニックネーム */
+#members thead th:nth-child(2),
+#members tbody td:nth-child(2) {
+    width: 45%; 
+}
+
+/* 3列目: 背番号 - 幅を拡大 */
+#members thead th:nth-child(3),
+#members tbody td:nth-child(3) {
+    width: 30%; 
+}
+
+/* 4列目: 守備 - 幅を縮小 */
+#members thead th:nth-child(4),
+#members tbody td:nth-child(4) {
+    width: 15%; 
+}
+
+/* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル (変更なし) ★★★ */
 #members tbody tr {
-    background-color: var(--secondary-color); 
-    transition: background-color 0.2s;
-    border-radius: 8px;
-    overflow: hidden; 
-    box-shadow: 0 2px 5px var(--shadow-color);
+    background-color: var(--secondary-color); /* セルの背景色を白に統一 */
+    transition: background-color 0.2s;
+    border-radius: 8px;
+    overflow: hidden; 
+    /* セル全体に影を適用 */
+    box-shadow: 0 2px 5px var(--shadow-color);
 }
 
 #members tbody tr:hover {
-    background-color: var(--light-gray);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: var(--light-gray); /* ホバー時は薄いグレーにする */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* ホバー時により濃い影 */
 }
 
+/* tdに直接角丸を適用して、trの背景色が途切れないようにする */
 #members tbody tr td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-    box-shadow: -2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    /* border-spacingによる隙間対策（一部ブラウザで必要） */
+    box-shadow: -2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
 }
 
 #members tbody tr td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    box-shadow: 2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    /* border-spacingによる隙間対策（一部ブラウザで必要） */
+    box-shadow: 2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
 }
 
-/* メンバー画像 */
+/* ★★★ 画像の枠線色の修正 (変更なし) ★★★ */
 #members img {
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid var(--secondary-color);
-    display: block; 
-    margin: 0 auto; 
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 50%; /* 真円 */
+    border: 2px solid var(--secondary-color); /* 白に変更 */
+    display: block; 
+    margin: 0 auto; 
 }
 
-/* メッセージ表示 */
+/*
+ * メッセージ表示
+ */
 .error-message {
-    color: var(--accent-color);
-    text-align: center;
-    margin-top: 10px;
-    font-weight: 700;
+    color: var(--accent-color);
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 700;
 }
 
-/* フッター */
+/*
+ * フッター
+ */
 footer {
-    text-align: center;
-    padding: 15px;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    font-size: 0.8rem;
-    flex-shrink: 0;
-}
+    text-align: center;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    }
+/*
+ * フッター
+ */
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}}
