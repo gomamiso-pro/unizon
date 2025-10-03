@@ -5,10 +5,9 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyQwZv05cGyuLHMr8xVdZEV
 let isLoggedIn = false;
 
 // ★★★ Google Drive ファイルIDの定義 ★★★
-const UNIFORM_IMAGE_FILE_ID = "1lO7_cPJJiz0bUO6GJnEX3JjptiPpHQ0v"; 
-const HEADER_ICON_FILE_ID_R = "1haC9WZr5P7xhqK-jVJow0LBV25fTqM5U"; // teams-r.jpg
-const HEADER_ICON_FILE_ID_B = "156gtF9-CKGRU9LHQQAixrCehq52Cx4Ra"; // teams-b.jpg (現在未使用だが定義)
-const DEFAULT_MEMBER_FILE_ID = "1cG4X_1D1FmfLOK18pii4Iaoki96icxJM"; // 00.png
+const UNIFORM_IMAGE_FILE_ID = "1lO7_cPJJiz0bUO6GJnEX3JjptiPpHQ0v"; 
+// HEADER_ICON_FILE_ID_R, HEADER_ICON_FILE_ID_B は、GitHub/サーバー上の静的画像パスを使用するように変更しました。
+const DEFAULT_MEMBER_FILE_ID = "1cG4X_1D1FmfLOK18pi4Iaoki96icxJM"; // 00.png
 
 // --------------------
 // ログイン処理
@@ -69,19 +68,19 @@ async function loadMembers() {
     tbody.innerHTML = "";
 
     // ★★★ メンバーリスト内で使用する画像URLを生成 ★★★
-    // 1. デフォルトメンバー画像URL (Drive参照)
+    // 1. デフォルトメンバー画像URL (Drive参照)
     const DEFAULT_IMAGE_URL = DEFAULT_MEMBER_FILE_ID
-        ? `https://drive.google.com/uc?id=${DEFAULT_MEMBER_FILE_ID}&alt=media`
-        : 'images/member/00.png'; // フォールバックのローカルパス
+        ? `https://drive.google.com/uc?id=${DEFAULT_MEMBER_FILE_ID}&alt=media`
+        : 'images/member/00.png'; // フォールバックのローカルパス
 
-    // 2. ユニフォーム画像URL (Drive参照)
-    const UNIFORM_IMAGE_URL = UNIFORM_IMAGE_FILE_ID 
-        ? `https://drive.google.com/uc?id=${UNIFORM_IMAGE_FILE_ID}&alt=media` 
-        : '';
-    const UNIFORM_IMAGE_TAG = UNIFORM_IMAGE_URL 
-        ? `<img src="${UNIFORM_IMAGE_URL}" alt="Uniform Icon" style="width: 15px; height: 15px; margin-left: 5px; vertical-align: middle; border-radius: 2px;" onerror="this.style.display='none';">` 
-        : '';
-    // ★★★ 画像URL生成 終了 ★★★
+    // 2. ユニフォーム画像URL (Drive参照)
+    const UNIFORM_IMAGE_URL = UNIFORM_IMAGE_FILE_ID 
+        ? `https://drive.google.com/uc?id=${UNIFORM_IMAGE_FILE_ID}&alt=media` 
+        : '';
+    const UNIFORM_IMAGE_TAG = UNIFORM_IMAGE_URL 
+        ? `<img src="${UNIFORM_IMAGE_URL}" alt="Uniform Icon" style="width: 15px; height: 15px; margin-left: 5px; vertical-align: middle; border-radius: 2px;" onerror="this.style.display='none';">` 
+        : '';
+    // ★★★ 画像URL生成 終了 ★★★
 
     if (Array.isArray(members)) {
       // ソート
@@ -100,7 +99,7 @@ async function loadMembers() {
                 <div style="border: 2px solid #2ecc71; border-radius: 4px; overflow: hidden; width: 20px; height: 20px; margin-left: 5px; flex-shrink: 0;" title="Google Drive Link">
                     <img src="${memberImageUrl}" style="width: 100%; height: 100%; object-fit: cover;" 
                          onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
-                </div>
+            </div>
             `;
         }
         
@@ -145,11 +144,11 @@ async function loadMembers() {
             </small>
             </td>
           <td>
-                <div style="display: flex; align-items: center; justify-content: center;">
-                    <span>${m.number || ''}</span>
-                    ${UNIFORM_IMAGE_TAG}
-                </div>
-            </td>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <span>${m.number || ''}</span>
+                    ${UNIFORM_IMAGE_TAG}
+                </div>
+            </td>
           <td>${m.position || ''}</td>
         `;
         tbody.appendChild(tr);
@@ -331,17 +330,17 @@ function logout() {
 // (HTML側の img タグに id="headerLogo" が必要です)
 // --------------------
 function setHeaderIcon() {
-    const iconElement = document.getElementById("headerLogo"); 
-    
-    if (iconElement && HEADER_ICON_FILE_ID_R) {
-        // Drive URLを生成
-        const iconUrl = `https://drive.google.com/uc?id=${HEADER_ICON_FILE_ID_R}&alt=media`;
-        
-        // src属性を動的に変更
-        iconElement.src = iconUrl;
-        // エラー時は非表示
-        iconElement.onerror = function() { this.style.display = 'none'; }; 
-    }
+    const iconElement = document.getElementById("headerLogo"); 
+   
+    // HEADER_ICON_FILE_ID_R (teams-r.jpg) の代わりに、GitHub/サーバーの静的パスを使用する
+    const STATIC_ICON_PATH = "images/teams-r.jpg";
+
+    if (iconElement) {
+        // Drive URLの代わりに静的パスを設定
+        iconElement.src = STATIC_ICON_PATH;
+        // エラー時は非表示
+        iconElement.onerror = function() { this.style.display = 'none'; }; 
+    }
 }
 
 
@@ -349,9 +348,9 @@ function setHeaderIcon() {
 // ページロード時ログイン確認
 // --------------------
 window.addEventListener("load", () => {
-    // ヘッダーアイコンをDriveから読み込む
+    // ヘッダーアイコンをDriveから読み込む (現在は静的パスから読み込むように変更)
     setHeaderIcon();
-    
+    
   const loginPage = document.getElementById("login");
   const homePage = document.getElementById("home");
   const hamburger = document.getElementById("hamburger");
