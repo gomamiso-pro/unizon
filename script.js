@@ -75,9 +75,14 @@ async function loadMembers() {
 
         // コンソール出力も残しておくと便利です
         console.log(`メンバー: ${m.nickname || m.number} | memberImageUrlの値:`, memberImageUrl); 
-
-        // ★ 削除された箇所 ★ (クライアント側のURL変換ロジック)
         
+        // ★★★ ここからDriveアイコン/インジケーター表示ロジックの開始 ★★★
+        const isDriveLink = memberImageUrl.includes('uc?id=') || memberImageUrl.includes('drive.google.com');
+        const driveIndicator = isDriveLink 
+            ? '<span style="color:#2ecc71; font-weight: bold;">✅ Drive URL</span>' // Driveリンクの場合の表示
+            : '<span style="color:#e74c3c;">❌ Default Path</span>'; // それ以外の場合の表示
+        // ★★★ Driveアイコン/インジケーター表示ロジックの終了 ★★★
+
         const tr = document.createElement("tr");
         tr.dataset.memberData = JSON.stringify(m);
 
@@ -102,8 +107,8 @@ async function loadMembers() {
                  onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
             <p style="text-align:center;margin:0;">${m.nickname || ''}</p>
             
-            <small style="display:block; text-align:center; color:#e74c3c; font-size: 0.7em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" title="${memberImageUrl}">
-                ${memberImageUrl.includes('uc?id=') ? '✅ Drive URL' : '❌ Default Path'}
+            <small style="display:block; text-align:center; font-size: 0.7em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" title="${memberImageUrl}">
+                ${driveIndicator}
             </small>
             </td>
           <td>${m.number || ''}</td>
