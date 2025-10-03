@@ -4,11 +4,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwj1Al6V1-xOppBW_UQCR1f
 // ログイン状態を管理する変数
 let isLoggedIn = false;
 
-// loggerオブジェクトが未定義の場合に備えて定義（ブラウザのconsoleを使用）
-const logger = {
-    log: (...args) => console.log('[LOG]', ...args),
-    error: (...args) => console.error('[ERROR]', ...args)
-};
+// loggerオブジェクトの定義は削除
 
 // --------------------
 // ログイン処理
@@ -30,7 +26,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   try {
     const res = await fetch(API_URL, { method: "POST", body: formData });
     const text = await res.text();
-    logger.log("GASからの応答:", text);
+    // logger.log("GASからの応答:", text); // 削除
 
     let data = {};
     try { data = JSON.parse(text); } 
@@ -55,7 +51,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
   } catch (err) {
     messageElement.textContent = "通信エラーが発生しました。";
-    logger.error("fetchエラー:", err);
+    // logger.error("fetchエラー:", err); // 削除
   }
 });
 
@@ -66,7 +62,7 @@ async function loadMembers() {
   try {
     const res = await fetch(API_URL);
     const members = await res.json();
-    logger.log("取得したメンバー一覧:", members);
+    // logger.log("取得したメンバー一覧:", members); // 削除
 
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = "";
@@ -83,7 +79,7 @@ async function loadMembers() {
         const memberImageUrl = m.image || DEFAULT_IMAGE_URL;
 
         // コンソール出力も残しておくと便利です
-        logger.log(`メンバー: ${m.nickname || m.number} | memberImageUrlの値:`, memberImageUrl); 
+        // logger.log(`メンバー: ${m.nickname || m.number} | memberImageUrlの値:`, memberImageUrl); // 削除
         
         // ★★★ Drive画像インジケーター表示ロジック 修正済み ★★★
         const isDriveLink = memberImageUrl.includes('uc?id=') || memberImageUrl.includes('drive.google.com');
@@ -146,11 +142,11 @@ async function loadMembers() {
       });
     } else {
       tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
-      logger.error("メンバー取得エラー（GAS側）:", members.message);
+      // logger.error("メンバー取得エラー（GAS側）:", members.message); // 削除
     }
 
   } catch (err) {
-    logger.error("メンバー取得通信エラー:", err);
+    // logger.error("メンバー取得通信エラー:", err); // 削除
     document.getElementById("memberTable").innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
 }
@@ -250,7 +246,7 @@ async function sendRegistration(number, nickname, position, base64Data, fileName
 
   } catch (err) {
     messageElement.textContent = "通信エラーが発生しました。";
-    logger.error("fetchエラー:", err);
+    // logger.error("fetchエラー:", err); // 削除
   }
 }
 
@@ -338,6 +334,5 @@ window.addEventListener("load", () => {
 
 // DOMContentLoaded後にイベントリスナーをセット
 document.addEventListener('DOMContentLoaded', () => {
-    // ハンバーガーメニューとオーバーレイの操作関数をグローバルにするか、HTML側で対応
-    // 今回はHTMLから直接呼ばれる前提なので、ここでは特に追加のコードは不要です。
+    // このブロックは、元のコードには含まれていましたが、特に追加の処理は定義されていません。
 });
