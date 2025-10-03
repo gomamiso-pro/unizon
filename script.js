@@ -69,7 +69,7 @@ async function loadMembers(){
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = ""; 
 
-    // ★ 修正後のデフォルト画像パス
+    // ※ DEFAULT_IMAGE_PATHはonerror処理がないため、ここでは使用されません
     const DEFAULT_IMAGE_PATH = 'images/member/00.png';
 
     if (Array.isArray(members)) {
@@ -83,6 +83,7 @@ async function loadMembers(){
       
       members.forEach((m, i) => {
         // キー名 'image' を参照
+        // onerrorがないため、デフォルト画像は m.imageが空の場合にのみ適用されます
         const memberImageUrl = m.image || DEFAULT_IMAGE_PATH;
         
         const tr = document.createElement("tr");
@@ -91,7 +92,6 @@ async function loadMembers(){
           <td>             <img src="${memberImageUrl}" 
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
-                 onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}';"
                  style="display: block; margin: 0 auto 5px;" 
             >
             <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
