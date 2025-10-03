@@ -4,7 +4,11 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxjUdYK68JGzpVgPPncy0fX
 // ログイン状態を管理する変数
 let isLoggedIn = false;
 
-// loggerオブジェクトの定義は削除
+// ★★★ Google Drive ファイルIDの定義 ★★★
+const UNIFORM_IMAGE_FILE_ID = "1lO7_cPJJiz0bUO6GJnEX3JjptiPpHQ0v"; 
+const HEADER_ICON_FILE_ID_R = "1haC9WZr5P7xhqK-jVJow0LBV25fTqM5U"; // teams-r.jpg
+const HEADER_ICON_FILE_ID_B = "156gtF9-CKGRU9LHQQAixrCehq52Cx4Ra"; // teams-b.jpg (現在未使用だが定義)
+const DEFAULT_MEMBER_FILE_ID = "1cG4X_1D1FmfLOK18pii4Iaoki96icxJM"; // 00.png
 
 // --------------------
 // ログイン処理
@@ -64,34 +68,34 @@ async function loadMembers() {
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = "";
 
-    // 以前の解析で有効だった相対パスに戻します
-    const DEFAULT_IMAGE_URL = 'images/member/00.png';
+    // ★★★ メンバーリスト内で使用する画像URLを生成 ★★★
+    // 1. デフォルトメンバー画像URL (Drive参照)
+    const DEFAULT_IMAGE_URL = DEFAULT_MEMBER_FILE_ID
+        ? `https://drive.google.com/uc?id=${DEFAULT_MEMBER_FILE_ID}&alt=media`
+        : 'images/member/00.png'; // フォールバックのローカルパス
 
-    // ★★★ 修正箇所 1/2: ユニフォーム画像の設定をここに移動 ★★★
-    const UNIFORM_IMAGE_FILE_ID = "1lO7_cPJJiz0bUO6GJnEX3JjptiPpHQ0v"; 
+    // 2. ユニフォーム画像URL (Drive参照)
     const UNIFORM_IMAGE_URL = UNIFORM_IMAGE_FILE_ID 
         ? `https://drive.google.com/uc?id=${UNIFORM_IMAGE_FILE_ID}&alt=media` 
         : '';
-    // 背番号の横に表示するアイコンタグ
     const UNIFORM_IMAGE_TAG = UNIFORM_IMAGE_URL 
         ? `<img src="${UNIFORM_IMAGE_URL}" alt="Uniform Icon" style="width: 15px; height: 15px; margin-left: 5px; vertical-align: middle; border-radius: 2px;" onerror="this.style.display='none';">` 
         : '';
-    // ★★★ 修正箇所 1/2 終了 ★★★
+    // ★★★ 画像URL生成 終了 ★★★
 
     if (Array.isArray(members)) {
       // ソート
       members.sort((a, b) => (parseInt(a.orderNo, 10) || 0) - (parseInt(b.orderNo, 10) || 0));
 
       members.forEach((m, i) => {
-        // GASから取得したURL（m.image）をそのまま使用するか、デフォルト画像を使用
+        // GASから取得したメンバーの画像URL（m.image）をそのまま使用するか、DriveのDEFAULT_IMAGE_URLを使用
         const memberImageUrl = m.image || DEFAULT_IMAGE_URL;
         
-        // ★★★ Drive画像インジケーター表示ロジック 修正済み ★★★
+        // Drive画像インジケーター表示ロジック
         const isDriveLink = memberImageUrl.includes('uc?id=') || memberImageUrl.includes('drive.google.com');
 
         let driveImageIndicator = '';
         if (isDriveLink) {
-            // Driveリンクの場合、URLを小さな画像としても表示
             driveImageIndicator = `
                 <div style="border: 2px solid #2ecc71; border-radius: 4px; overflow: hidden; width: 20px; height: 20px; margin-left: 5px; flex-shrink: 0;" title="Google Drive Link">
                     <img src="${memberImageUrl}" style="width: 100%; height: 100%; object-fit: cover;" 
@@ -100,11 +104,11 @@ async function loadMembers() {
             `;
         }
         
-        // テキストインジケーターは残します
+        // テキストインジケーター
         const driveTextIndicator = isDriveLink 
             ? '<span style="color:#2ecc71; font-weight: bold;">✅ Drive URL</span>'
             : '<span style="color:#e74c3c;">❌ Default Path</span>';
-        // ★★★ Drive画像インジケーター表示ロジック 終了 ★★★
+        // Drive画像インジケーター表示ロジック 終了
 
         const tr = document.createElement("tr");
         tr.dataset.memberData = JSON.stringify(m);
@@ -145,7 +149,7 @@ async function loadMembers() {
                     <span>${m.number || ''}</span>
                     ${UNIFORM_IMAGE_TAG}
                 </div>
-                </td>
+            </td>
           <td>${m.position || ''}</td>
         `;
         tbody.appendChild(tr);
@@ -168,7 +172,7 @@ function navigateToEdit(memberData) {
 }
 
 // --------------------
-// メンバー登録/編集 (以下略)
+// メンバー登録/編集
 // --------------------
 document.getElementById("registerForm").addEventListener("submit", async function(e) {
   e.preventDefault();
@@ -212,7 +216,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 });
 
 // --------------------
-// 登録/編集送信 (以下略)
+// 登録/編集送信
 // --------------------
 async function sendRegistration(number, nickname, position, base64Data, fileName, fileType, messageElement, form) {
   const formData = new FormData();
@@ -323,10 +327,30 @@ function logout() {
 }
 
 // --------------------
+// ヘッダーアイコン設定関数
+// (HTML側の img タグに id="headerLogo" が必要です)
+// --------------------
+function setHeaderIcon() {
+    const iconElement = document.getElementById("headerLogo"); 
+    
+    if (iconElement && HEADER_ICON_FILE_ID_R) {
+        // Drive URLを生成
+        const iconUrl = `https://drive.google.com/uc?id=${HEADER_ICON_FILE_ID_R}&alt=media`;
+        
+        // src属性を動的に変更
+        iconElement.src = iconUrl;
+        // エラー時は非表示
+        iconElement.onerror = function() { this.style.display = 'none'; }; 
+    }
+}
+
+
+// --------------------
 // ページロード時ログイン確認
 // --------------------
 window.addEventListener("load", () => {
-    // 以前の setUniformBackground() の呼び出しは削除
+    // ヘッダーアイコンをDriveから読み込む
+    setHeaderIcon();
     
   const loginPage = document.getElementById("login");
   const homePage = document.getElementById("home");
@@ -343,5 +367,4 @@ window.addEventListener("load", () => {
 
 // DOMContentLoaded後にイベントリスナーをセット
 document.addEventListener('DOMContentLoaded', () => {
-    // このブロックは、元のコードには含まれていましたが、特に追加の処理は定義されていません。
 });
