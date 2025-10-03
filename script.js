@@ -84,6 +84,9 @@ async function loadMembers() {
             // Driveリンクの場合、URLを小さな画像としても表示
             driveImageIndicator = `
                 <div style="border: 2px solid #2ecc71; border-radius: 4px; overflow: hidden; width: 20px; height: 20px; margin-left: 5px;" title="Google Drive Link">
+                    <img src="${member.memberImageUrl}" alt="${member.name}の写真">
+                    <p>${member.name}</p>
+                    
                     <img src="${memberImageUrl}" style="width: 100%; height: 100%; object-fit: cover;" 
                          onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
                 </div>
