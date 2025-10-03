@@ -117,13 +117,11 @@ async function loadMembers(){
           <td>${i + 1}</td> 
 
           <td>
-            <img src="${memberImageUrl}"  
-                 class="member-img" 
-                 alt="${m.nickname || '画像'}"
-                 
-                 // ★ 修正点: Drive URLが読み込めなかった場合、ローカルのデフォルト画像に切り替える
-                 onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_URL}';"
-                 style="display: block; margin: 0 auto 5px;" 
+            <img 
+              src="${memberImageUrl}"  
+              class="member-img" 
+              alt="${m.nickname || '画像'}"
+              style="display: block; margin: 0 auto 5px;"
             >
             <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
           </td>
