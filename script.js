@@ -173,17 +173,34 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 
     // ファイルがある場合の処理
+// メンバー登録/編集処理 の中の「ファイルがある場合の処理」ブロック全体
+
+    // ファイルがある場合の処理
     if (file) {
-        // ★ 変更なし: ファイル名を背番号ベースに統一
+        // ★ 修正案: 拡張子を安全かつシンプルに取得する
         const originalName = file.name;
-        const extMatch = originalName.match(/\.([0-9a-z]+)(?=[?#])|(\.)(?:jpe?g|png|gif|webp)$/i);
-        let ext = extMatch ? extMatch[2] || '.' + extMatch[1] : '.png';
         
+        // 1. 拡張子を正規表現で取得 (例: ".png")
+        // originalNameから拡張子部分（最後の.以降）を取得。見つからなければ空文字。
+        const extMatch = originalName.match(/\.([0-9a-z]+)(?=[?#])|(\.)(?:jpe?g|png|gif|webp)$/i);
+        let ext = extMatch ? extMatch[2] || '.' + extMatch[1] : ''; // 拡張子がない場合は空文字
+        
+        // 2. .jpeg を .jpg に統一
         if (ext.toLowerCase() === '.jpeg') {
             ext = '.jpg';
         }
-
-        fileName = `${number}${ext}`; // 例: "07.png"
+        
+        // 3. 拡張子が取得できなかった場合、念のためファイルタイプから推測 (例: image/png -> .png)
+        if (!ext && file.type.startsWith('image/')) {
+            // 例: "image/png" の "png" 部分を取得し、"." をつける
+            ext = '.' + file.type.split('/').pop();
+        }
+        
+        // 4. 背番号と拡張子を厳密に結合 (例: "30" + ".png" -> "30.png")
+        // ★★★ 重要な変更点: 背番号に付着した不要な文字が入らないよう、ここでextを付ける ★★★
+        fileName = `${number}${ext}`; 
+        
+        // 5. ファイルタイプはそのまま
         fileType = file.type;
 
         const reader = new FileReader();
