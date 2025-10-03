@@ -1,5 +1,5 @@
 // Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
-const API_URL = "https://script.google.com/macros/s/AKfycbwy0l7NOIaWEAJggxXuhSFGHUgS8QykH-eFX3oLBVfEx1f1wU_-1bHIXiBQB4uG59ky/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzu9avWV7fNS6skOHqPZJjQhmwzfp-9NGDUEiN5NCXmVPCxJASWcHs_QLaYpjx2JPzs/exec";
 
 // ログイン状態を管理するための変数 (未使用だが維持)
 let isLoggedIn = false;
@@ -172,9 +172,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         return;
     }
 
-    // ファイルがある場合の処理
-// メンバー登録/編集処理 の中の「ファイルがある場合の処理」ブロック全体
-
+　　// メンバー登録/編集処理 の中の「ファイルがある場合の処理」ブロック全体
     // ファイルがある場合の処理
     if (file) {
         // ★ 修正案: 拡張子を安全かつシンプルに取得する
