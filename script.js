@@ -80,7 +80,7 @@ async function loadMembers(){
     tbody.innerHTML = ""; 
 
     // ★ 修正点: メンバーデータに画像URLがない場合のローカルのデフォルト画像パス
-    const DEFAULT_IMAGE_URL = '/images/member/00.png'; 
+    const DEFAULT_IMAGE_URL = 'images/member/00.png'; 
 
     if (Array.isArray(members)) {
       // ソート処理
