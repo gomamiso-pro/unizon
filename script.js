@@ -84,7 +84,7 @@ async function loadMembers(){
       members.forEach((m, i) => {
         // ★ 修正ポイント: GASから返される 'imageUrl' プロパティを使用
         // 'm.imageUrl' が存在しない場合はデフォルト画像を使用
-        const memberImageUrl = m.image || DEFAULT_IMAGE_PATH;
+        const memberImageUrl = m.imageurl || DEFAULT_IMAGE_PATH;
         
         const tr = document.createElement("tr");
         tr.innerHTML = `
