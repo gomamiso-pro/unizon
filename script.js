@@ -44,7 +44,7 @@ menuItems.forEach(item => {
 // メンバー一覧取得
 // -----------------------------
 function loadMembers() {
-  fetch("YOUR_GAS_WEBAPP_URL") // ← ここを GAS WebApp URL に置き換え
+  fetch("https://script.google.com/macros/s/AKfycbwaChrXugws6UgEoxfcwiJCVaj_G7EKN8OG-e7Nsm0cKqs6QIf-jJbTqK5maz4jz57h/exec") // ← ここを GAS WebApp URL に置き換え
     .then(res => res.json())
     .then(data => {
       membersTableBody.innerHTML = ""; // 既存行をクリア
