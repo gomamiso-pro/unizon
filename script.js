@@ -69,49 +69,42 @@ async function loadMembers(){
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = ""; 
 
+    // ★ 修正後のデフォルト画像パス
     const DEFAULT_IMAGE_PATH = 'images/member/00.png';
 
     if (Array.isArray(members)) {
-      // ★★★ ここからソート処理を追加 ★★★
+      // ソート処理
       members.sort((a, b) => {
         // orderNoが数値であることを期待して比較
         const aOrder = parseInt(a.orderNo, 10) || 0;
         const bOrder = parseInt(b.orderNo, 10) || 0;
         return aOrder - bOrder;
       });
-      // ★★★ ここまでソート処理を追加 ★★★
+      
+      members.forEach((m, i) => {
+        // ★ 修正ポイント: GASから返される 'imageUrl' プロパティを使用
+        // 'm.imageUrl' が存在しない場合はデフォルト画像を使用
+        const memberImageUrl = m.image || DEFAULT_IMAGE_PATH;
         
-      // 修正ポイント: forEachにインデックス 'i' を追加
- members.forEach((m, i) => {
-    // 💡 修正点1: 背番号をトリム（空白除去）して取得
-    const memberNumber = String(m.number || '00').trim(); 
-    
-    // 💡 修正点2: PNGを最初に試行するパスを設定
-    const primaryImagePath = `images/member/${memberNumber}.png`;
-    
-    // 💡 修正点3: JPGを次に試行するパスを設定
-    const secondaryImagePath = `images/member/${memberNumber}.jpg`;
-    
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${i + 1}</td> 
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i + 1}</td> 
 
-      <td>
-        <img src="${primaryImagePath}"  
-             class="member-img" 
-             alt="${m.nickname || '画像'}"
-             
-             // 💡 修正点4: onerrorで、まずJPGを試し、それも失敗したらデフォルト画像に切り替える
-             onerror="this.onerror=null; this.src='${secondaryImagePath}'; this.onerror=function(){this.src='${DEFAULT_IMAGE_PATH}';};"
-             style="display: block; margin: 0 auto 5px;" 
-        >
-        <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
-      </td>
+          <td>
+            <img src="${memberImageUrl}" 
+                 class="member-img" 
+                 alt="${m.nickname || '画像'}"
+                 // ★ 修正ポイント: 画像URLのロードに失敗した場合の onerror 処理をシンプルに
+                 onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_PATH}';"
+                 style="display: block; margin: 0 auto 5px;" 
+            >
+            <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
+          </td>
 
-      <td>${m.number || ''}</td> 
-      <td>${m.position || ''}</td> 
-    `;
-    tbody.appendChild(tr);
+          <td>${m.number || ''}</td> 
+          <td>${m.position || ''}</td> 
+        `;
+        tbody.appendChild(tr);
       });
     } else {
       console.error("メンバー取得エラー（GAS側）:", members.message);
@@ -125,7 +118,6 @@ async function loadMembers(){
     tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
 }
-
 
 
 // メンバー登録処理 
