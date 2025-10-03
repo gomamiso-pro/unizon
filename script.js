@@ -24,7 +24,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   try {
     const res = await fetch(API_URL, { method: "POST", body: formData });
     const text = await res.text();
-    console.log("GASからの応答:", text);
+    logger.log("GASからの応答:", text);
 
     let data = {};
     try { data = JSON.parse(text); } 
@@ -46,7 +46,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
   } catch (err) {
     messageElement.textContent = "通信エラーが発生しました。";
-    console.error("fetchエラー:", err);
+    logger.error("fetchエラー:", err);
   }
 });
 
@@ -57,7 +57,7 @@ async function loadMembers() {
   try {
     const res = await fetch(API_URL);
     const members = await res.json();
-    console.log("取得したメンバー一覧:", members);
+    logger.log("取得したメンバー一覧:", members);
 
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = "";
@@ -74,7 +74,7 @@ async function loadMembers() {
         const memberImageUrl = m.image || DEFAULT_IMAGE_URL;
 
         // コンソール出力も残しておくと便利です
-        console.log(`メンバー: ${m.nickname || m.number} | memberImageUrlの値:`, memberImageUrl); 
+        logger.log(`メンバー: ${m.nickname || m.number} | memberImageUrlの値:`, memberImageUrl); 
         
         // ★★★ Drive画像インジケーター表示ロジック ★★★
         const isDriveLink = memberImageUrl.includes('uc?id=') || memberImageUrl.includes('drive.google.com');
@@ -139,11 +139,11 @@ async function loadMembers() {
       });
     } else {
       tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
-      console.error("メンバー取得エラー（GAS側）:", members.message);
+      logger.error("メンバー取得エラー（GAS側）:", members.message);
     }
 
   } catch (err) {
-    console.error("メンバー取得通信エラー:", err);
+    logger.error("メンバー取得通信エラー:", err);
     document.getElementById("memberTable").innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
 }
@@ -232,7 +232,7 @@ async function sendRegistration(number, nickname, position, base64Data, fileName
 
   } catch (err) {
     messageElement.textContent = "通信エラーが発生しました。";
-    console.error("fetchエラー:", err);
+    logger.error("fetchエラー:", err);
   }
 }
 
