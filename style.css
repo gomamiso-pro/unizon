@@ -1,6 +1,8 @@
 /*
  * UNIZON Softball Team - style.css (最終調整版)
  * サイドメニュー開閉機能対応
+ * 【修正点】テーブルセル内の強制改行禁止 (white-space: nowrap;) を削除し、
+ * 画面幅に応じた柔軟な表示と、必要に応じた横スクロールを可能にしました。
  */
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
 
@@ -258,12 +260,19 @@ button[type="submit"]:hover,
     display: block; 
 }
 
-/* メンバーリスト */
+/* メンバーリストの親要素に横スクロールを設定 */
+#members {
+    /* テーブルが画面幅を超えた場合、#members エリア内で横スクロールできるようにする */
+    overflow-x: auto; 
+    padding-bottom: 10px;
+}
+
 #members table {
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0 10px;
     table-layout: fixed; 
+    min-width: 450px; /* 小さすぎる画面での崩れ防止のため、最小幅を設定 */
 }
 
 #members th,
@@ -274,7 +283,7 @@ button[type="submit"]:hover,
     border: none; 
     word-wrap: break-word; 
     letter-spacing: -0.5px;
-    white-space: nowrap; 
+    /* 全セルの white-space: nowrap; を削除しました */
 }
 
 /* 背番号列 */
@@ -282,7 +291,6 @@ button[type="submit"]:hover,
     font-size: 35px; 
     font-weight: bold; 
     text-align: center; 
-    /* ★★★ 修正箇所: 不要になった背景画像設定を削除 ★★★ */
     color: white; 
     padding: 10px 5px; 
     font-family: 'Impact', 'Arial Black', sans-serif; 
@@ -292,7 +300,7 @@ button[type="submit"]:hover,
         1px -1px 0 red,
         -1px 1px 0 red;
     letter-spacing: -1px; 
-    white-space: nowrap; 
+    /* 背番号列の white-space: nowrap; を削除しました */
 }
 
 /* テーブルヘッダー縦書き */
@@ -321,6 +329,7 @@ button[type="submit"]:hover,
 }
 
 /* 列幅調整 */
+/* width設定は残しつつ、コンテンツの折り返しを可能にしました */
 #members thead th:nth-child(1),
 #members tbody td:nth-child(1) { width: 10%; }
 #members thead th:nth-child(2),
