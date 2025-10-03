@@ -79,8 +79,8 @@ async function loadMembers(){
     const tbody = document.getElementById("memberTable");
     tbody.innerHTML = ""; 
 
-    // GitHub Pages/Webアプリの静的アセットを参照するパスに変更
-    const DEFAULT_IMAGE_PATH = 'images/member/00.png';
+    // ★ 修正点: メンバーデータに画像URLがない場合のローカルのデフォルト画像パス
+    const DEFAULT_IMAGE_URL = 'images/member/00.png'; 
 
     if (Array.isArray(members)) {
       // ソート処理
@@ -91,9 +91,9 @@ async function loadMembers(){
       });
         
       members.forEach((m, i) => {
-        const memberNumber = String(m.number || '00').trim(); 
-        const primaryImagePath = `images/member/${memberNumber}.png`;
-        const secondaryImagePath = `images/member/${memberNumber}.jpg`;
+        // ★ 修正点: スプレッドシートから取得した画像URLを使用
+        // m.imageurl は GASでIMAGE_URL_COL_INDEXに保存した値
+        const memberImageUrl = m.imageurl || DEFAULT_IMAGE_URL; 
         
         const tr = document.createElement("tr");
         
@@ -103,12 +103,11 @@ async function loadMembers(){
         // ★ メンバー行にダブルクリック/ダブルタップイベントを追加
         tr.addEventListener('dblclick', () => navigateToEdit(m));
         tr.addEventListener('touchend', (event) => {
-          // モバイルのダブルタップをシミュレート
           const now = new Date().getTime();
           const lastTouch = tr.dataset.lastTouch || 0;
           const delta = now - lastTouch;
-          if (delta < 300 && delta > 0) { // 300ms以内をダブルタップと判定
-            event.preventDefault(); // 拡大などを防ぐ
+          if (delta < 300 && delta > 0) {
+            event.preventDefault();
             navigateToEdit(m);
           }
           tr.dataset.lastTouch = now;
@@ -118,11 +117,12 @@ async function loadMembers(){
           <td>${i + 1}</td> 
 
           <td>
-            <img src="${primaryImagePath}"  
+            <img src="${memberImageUrl}"  
                  class="member-img" 
                  alt="${m.nickname || '画像'}"
-                 // 画像フォールバック処理は維持
-                 onerror="this.onerror=null; this.src='${secondaryImagePath}'; this.onerror=function(){this.src='${DEFAULT_IMAGE_PATH}';};"
+                 
+                 // ★ 修正点: Drive URLが読み込めなかった場合、ローカルのデフォルト画像に切り替える
+                 onerror="this.onerror=null; this.src='${DEFAULT_IMAGE_URL}';"
                  style="display: block; margin: 0 auto 5px;" 
             >
             <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
@@ -153,8 +153,6 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const form = e.target;
     const messageElement = document.getElementById("registerMessage");
     
-    // messageElementがnullになることはHTML修正でなくなったため、確認を省略
-
     messageElement.textContent = "処理中...";
 
     const fileInput = document.getElementById('fileInput');
@@ -176,7 +174,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
     // ファイルがある場合の処理
     if (file) {
-        // ★ 修正: ファイル名を背番号ベースに統一
+        // ★ 変更なし: ファイル名を背番号ベースに統一
         const originalName = file.name;
         const extMatch = originalName.match(/\.([0-9a-z]+)(?=[?#])|(\.)(?:jpe?g|png|gif|webp)$/i);
         let ext = extMatch ? extMatch[2] || '.' + extMatch[1] : '.png';
@@ -203,12 +201,11 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 // 送信処理を分離したヘルパー関数
 async function sendRegistration(api_url, number, nickname, position, base64Data, fileName, fileType, messageElement, form) {
     const formData = new FormData();
-    // GAS側で新規登録か編集かを判断するため、actionは'register' (または'update')として送信
-    // GAS側で背番号の重複確認と上書き処理が必要です。
-    formData.append("action", "register"); // GAS側で背番号をキーに更新または新規作成
+    formData.append("action", "register");
     formData.append("number", number);
     formData.append("nickname", nickname);
     formData.append("position", position);
+    // ファイルデータも送信 (GAS側で利用)
     formData.append("fileData", base64Data);
     formData.append("fileName", fileName);
     formData.append("fileType", fileType);
@@ -221,7 +218,6 @@ async function sendRegistration(api_url, number, nickname, position, base64Data,
 
         const text = await res.text();
         
-        // JSON形式で結果を期待
         let result = {};
         try { result = JSON.parse(text); } 
         catch { 
@@ -236,7 +232,7 @@ async function sendRegistration(api_url, number, nickname, position, base64Data,
             messageElement.textContent = result.message || "処理に失敗しました。";
         }
 
-        form.reset(); // フォームをリセット
+        form.reset(); 
 
     } catch (err) {
         messageElement.textContent = "通信エラーが発生しました。";
@@ -244,42 +240,36 @@ async function sendRegistration(api_url, number, nickname, position, base64Data,
     }
 }
 
-// ページ切り替え
+// ページ切り替え (変更なし)
 function navigate(page){
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     document.getElementById(page).classList.add("active");
 
-    // メンバー画面に遷移する場合、一覧を再読み込み
     if (page === 'members') {
         loadMembers();
     }
     
-    // 登録/編集画面に遷移する場合の処理
     if (page === 'register') {
         const editData = localStorage.getItem('editMemberData');
         const header = document.getElementById('registerHeader');
         
         if (editData) {
-            // 編集モード
             const member = JSON.parse(editData);
-            document.getElementById('registerForm').number.value = member.number || '';
+            document.getElementById('numberInput').value = member.number || '';
             document.getElementById('registerForm').nickname.value = member.nickname || '';
             document.getElementById('registerForm').position.value = member.position || '';
             
-            // ヘッダーを「メンバー編集」に切り替え
             if (header) header.textContent = 'メンバー編集';
 
-            // 背番号は編集させないように無効化（GASで上書きされないようにするため）
-            document.getElementById('registerForm').number.disabled = true;
+            // 背番号は編集させないように無効化
+            document.getElementById('numberInput').disabled = true;
 
-            // 処理が完了したら編集データをクリア
             localStorage.removeItem('editMemberData');
             
         } else {
-            // 新規登録モード
             document.getElementById('registerForm').reset();
             if (header) header.textContent = 'メンバー登録';
-            document.getElementById('registerForm').number.disabled = false;
+            document.getElementById('numberInput').disabled = false;
         }
     }
     
@@ -287,7 +277,7 @@ function navigate(page){
 }
 
 // ------------------------------------
-// メニュー開閉操作 (CSSの 'open' クラスと連動)
+// メニュー開閉操作 (変更なし)
 // ------------------------------------
 function toggleMenu(){
   document.getElementById("sideMenu").classList.toggle("open");
@@ -298,7 +288,7 @@ function closeMenu(){
   document.getElementById("overlay").classList.remove("open"); 
 }
 
-// ログアウト
+// ログアウト (変更なし)
 function logout(){
   navigate("login");
   document.getElementById("hamburger").style.display = "none";
@@ -307,14 +297,12 @@ function logout(){
   localStorage.removeItem("role");
 }
 
-// ページロード時にログイン状態確認
+// ページロード時にログイン状態確認 (変更なし)
 window.addEventListener("load", () => {
   if(localStorage.getItem("loggedIn") === "true"){
     document.getElementById("login").classList.remove("active");
     document.getElementById("home").classList.add("active");
     document.getElementById("hamburger").style.display = "block";
     document.getElementById("menuRegister").style.display = "block";
-    // ログイン状態であれば、即座にホームに遷移するため、navigate("home")でも良い
-    // navigate("home"); 
   }
 });
