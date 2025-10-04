@@ -1,19 +1,20 @@
-// Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
-const API_URL = "https://script.google.com/macros/s/AKfycbwE-Zkw1Lu8xPYJ2SR_hcLvvImmreKNwLLLJFvTfA7m_B8nBGKQb534Jr7Z16jGBXM/exec";
+// Google Apps Script のURL
+const API_URL = "https://script.google.com/macros/s/AKfycbyQwZv05cGyuLHMr8xVdZEVH4FvemN9g3gsAYFIeBN_sZOYjwljLKUNKWYKAcMWrOT7/exec";
 
-// ログイン状態を管理するための変数
+// ログイン状態を管理する変数
 let isLoggedIn = false;
 
-// ダブルクリック/ダブルタップ検出用の変数
-let lastTouchTime = 0;
-const DBL_TOUCH_THRESHOLD = 300; // ms
+// ★★★ Google Drive ファイルIDの定義 ★★★
+const UNIFORM_IMAGE_FILE_ID = "1lO7_cPJJiz0bUO6GJnEX3JjptiPpHQ0v"; 
+// HEADER_ICON_FILE_ID_R, HEADER_ICON_FILE_ID_B は、GitHub/サーバー上の静的画像パスを使用するように変更しました。
+const DEFAULT_MEMBER_FILE_ID = "1cG4X_1D1FmfLOK18pi4Iaoki96icxJM"; // 00.png
 
-// ログイン処理（ニックネームと背番号で認証）
+// --------------------
+// ログイン処理
+// --------------------
 document.getElementById("loginForm").addEventListener("submit", async function(e) {
   e.preventDefault();
-  
-  const api_url = API_URL; 
-  
+
   const nickname = e.target.login_nickname.value;
   const number = e.target.login_number.value;
   const messageElement = document.getElementById("loginMessage");
@@ -22,283 +23,347 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
   formData.append("action", "login"); 
   formData.append("nickname", nickname);
   formData.append("number", number);
-  
+
   messageElement.textContent = "認証中...";
 
   try {
-    const res = await fetch(api_url, {
-      method: "POST",
-      body: formData
-    });
-
+    const res = await fetch(API_URL, { method: "POST", body: formData });
     const text = await res.text();
-    console.log("GASからの応答:", text);
 
     let data = {};
     try { data = JSON.parse(text); } 
     catch { 
-      messageElement.textContent = `サーバーから不正な応答がありました。`; 
+      messageElement.textContent = "サーバーから不正な応答がありました。"; 
       return; 
     }
 
     if (data.status === "success") {
       messageElement.textContent = "ログイン成功！";
+      // hamburgerとmenuRegisterが存在することを確認してから表示
+      const hamburger = document.getElementById("hamburger");
+      const menuRegister = document.getElementById("menuRegister");
+      if (hamburger) hamburger.style.display = "block";
+      if (menuRegister) menuRegister.style.display = "block";
+      navigate("home");
+      localStorage.setItem("loggedIn", "true");
       e.target.reset();
-      
-      // ログイン成功時のUI更新
-      document.getElementById("hamburger").style.display = "block"; // ハンバーガーメニューを表示
-      document.getElementById("menuRegister").style.display = "block"; // 登録メニューも表示
-      
-      navigate("home"); // ログイン成功でホーム画面へ遷移
-      localStorage.setItem("loggedIn", "true"); // ログイン状態を保存
-      
     } else {
       messageElement.textContent = data.message || "ログインIDまたはパスワードが違います。";
     }
 
   } catch (err) {
     messageElement.textContent = "通信エラーが発生しました。";
-    console.error("fetchエラー:", err);
   }
 });
 
+// --------------------
 // メンバー一覧取得
-async function loadMembers(){
-  const api_url = API_URL; 
-  
-  try{
-    // GASからメンバーデータを取得
-    const res = await fetch(api_url);
+// --------------------
+async function loadMembers() {
+  try {
+    const res = await fetch(API_URL);
     const members = await res.json();
-    const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = ""; 
 
-    const DEFAULT_IMAGE_PATH = 'images/member/00.png';
+    const tbody = document.getElementById("memberTable");
+    tbody.innerHTML = "";
+
+    // ★★★ メンバーリスト内で使用する画像URLを生成 ★★★
+    // 1. デフォルトメンバー画像URL (Drive参照)
+    const DEFAULT_IMAGE_URL = DEFAULT_MEMBER_FILE_ID
+        ? `https://drive.google.com/uc?id=${DEFAULT_MEMBER_FILE_ID}&alt=media`
+        : 'images/member/00.png'; // フォールバックのローカルパス
+
+    // 2. ユニフォーム画像URL (Drive参照)
+    const UNIFORM_IMAGE_URL = UNIFORM_IMAGE_FILE_ID 
+        ? `https://drive.google.com/uc?id=${UNIFORM_IMAGE_FILE_ID}&alt=media` 
+        : '';
+    const UNIFORM_IMAGE_TAG = UNIFORM_IMAGE_URL 
+        ? `<img src="${UNIFORM_IMAGE_URL}" alt="Uniform Icon" style="width: 15px; height: 15px; margin-left: 5px; vertical-align: middle; border-radius: 2px;" onerror="this.style.display='none';">` 
+        : '';
+    // ★★★ 画像URL生成 終了 ★★★
 
     if (Array.isArray(members)) {
-      // ★★★ ソート処理 ★★★
-      members.sort((a, b) => {
-        // orderNoが数値であることを期待して比較
-        const aOrder = parseInt(a.orderNo, 10) || 0;
-        const bOrder = parseInt(b.orderNo, 10) || 0;
-        return aOrder - bOrder;
-      });
-      // ★★★ ここまでソート処理 ★★★
+      // ソート
+      members.sort((a, b) => (parseInt(a.orderNo, 10) || 0) - (parseInt(b.orderNo, 10) || 0));
+
+      members.forEach((m, i) => {
+        // GASから取得したメンバーの画像URL（m.image）をそのまま使用するか、DriveのDEFAULT_IMAGE_URLを使用
+        const memberImageUrl = m.image || DEFAULT_IMAGE_URL;
         
- members.forEach((m, i) => {
-    // 背番号をトリム（空白除去）して取得
-    const memberNumber = String(m.number || '00').trim(); 
-    
-    // PNGを最初に試行するパスを設定
-    const primaryImagePath = `images/member/${memberNumber}.png`;
-    
-    // JPGを次に試行するパスを設定
-    const secondaryImagePath = `images/member/${memberNumber}.jpg`;
-    
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${i + 1}</td> 
+        // Drive画像インジケーター表示ロジック
+        const isDriveLink = memberImageUrl.includes('uc?id=') || memberImageUrl.includes('drive.google.com');
 
-      <td>
-        <img src="${primaryImagePath}"  
-             class="member-img" 
-             alt="${m.nickname || '画像'}"
-             
-             onerror="this.onerror=null; this.src='${secondaryImagePath}'; this.onerror=function(){this.src='${DEFAULT_IMAGE_PATH}';};"
-             style="display: block; margin: 0 auto 5px;" 
-        >
-        <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
-      </td>
+        let driveImageIndicator = '';
+        if (isDriveLink) {
+            driveImageIndicator = `
+                <div style="border: 2px solid #2ecc71; border-radius: 4px; overflow: hidden; width: 20px; height: 20px; margin-left: 5px; flex-shrink: 0;" title="Google Drive Link">
+                    <img src="${memberImageUrl}" style="width: 100%; height: 100%; object-fit: cover;" 
+                         onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
+            </div>
+            `;
+        }
+        
+        // テキストインジケーター
+        const driveTextIndicator = isDriveLink 
+            ? '<span style="color:#2ecc71; font-weight: bold;">✅ Drive URL</span>'
+            : '<span style="color:#e74c3c;">❌ Default Path</span>';
+        // Drive画像インジケーター表示ロジック 終了
 
-      <td>${m.number || ''}</td> 
-      <td>${m.position || ''}</td> 
-    `;
-    // 💡 変更点: ダブルクリックで編集画面へ (PC)
-    tr.addEventListener('dblclick', (event) => {
-      editMember(m);
-    });
-    // 💡 変更点: ダブルタッチで編集画面へ (モバイル対応)
-    tr.addEventListener('touchend', (event) => {
-      const currentTime = new Date().getTime();
-      const timeDifference = currentTime - lastTouchTime;
+        const tr = document.createElement("tr");
+        tr.dataset.memberData = JSON.stringify(m);
 
-      if (timeDifference < DBL_TOUCH_THRESHOLD && timeDifference > 0) {
-        // ダブルタップと判定
-        editMember(m);
-        event.preventDefault(); // クリックイベントの発生を防ぐ
-      }
-      lastTouchTime = currentTime;
-    });
-    
-    tbody.appendChild(tr);
-      });
-    } else {
-      console.error("メンバー取得エラー（GAS側）:", members.message);
-      // 列数に合わせて colspan を修正
-      tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
-    }
-  } catch(err){
-    console.error("メンバー取得通信エラー:", err);
-    // 列数に合わせて colspan を修正
-    const tbody = document.getElementById("memberTable");
-    tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
-  }
-}
-
-// 💡 新規追加: メンバー編集画面に情報をロードする関数
-function editMember(memberData) {
-  // フォームにデータを設定
-  document.getElementById("registerNumber").value = memberData.number || '';
-  document.getElementById("registerNickname").value = memberData.nickname || '';
-  document.getElementById("registerPosition").value = memberData.position || '';
-  
-  // フォームのタイトルとボタンを編集モードに切り替え
-  document.getElementById("registerTitle").textContent = "メンバー編集";
-  document.getElementById("registerButton").textContent = "編集を保存";
-  document.getElementById("actionType").value = "edit"; // アクションを編集に設定
-  document.getElementById("registerNumber").disabled = true; // 背番号を編集不可にする（キーとするため）
-  
-  // メッセージをクリア
-  document.getElementById("registerMessage").textContent = "";
-
-  // 登録画面に遷移
-  navigate("register");
-}
-
-
-// メンバー登録処理 
-document.getElementById("registerForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-    const api_url = API_URL;
-    const form = e.target;
-    
-    const messageElement = document.getElementById("registerMessage");
-    
-    messageElement.textContent = "処理中...";
-
-    const fileInput = document.getElementById('fileInput');
-    const file = fileInput.files[0];
-
-    // ファイルデータは必須ではないため、存在しない場合は空として送信
-    let base64Data = "";
-    let fileName = "";
-    let fileType = "";
-
-    const number = form.number.value;
-    const nickname = form.nickname.value;
-    const position = form.position.value;
-    const actionType = document.getElementById("actionType").value;
-    
-    // 必須チェック
-    if (!number || !nickname) {
-        messageElement.textContent = "エラー: 背番号とニックネームは必須です。";
-        return;
-    }
-
-    // GASに送るアクション名を actionType に応じて決定
-    const action = actionType === 'edit' ? 'edit' : 'register';
-
-    // ファイルがある場合の処理
-    if (file) {
-        const reader = new FileReader();
-        reader.onloadend = async function() {
-            // 'data:image/png;base64,' のようなプレフィックスを削除
-            base64Data = reader.result.split(',')[1]; 
-            fileName = file.name;
-            fileType = file.type;
-            
-            // ファイルの読み込みが完了したら、送信処理を実行
-            await sendRegistration(api_url, action, number, nickname, position, base64Data, fileName, fileType, messageElement, form);
-        };
-        reader.readAsDataURL(file); // Base64に変換を開始
-    } else {
-        // ファイルがない場合、すぐに送信処理を実行
-        await sendRegistration(api_url, action, number, nickname, position, base64Data, fileName, fileType, messageElement, form);
-    }
-});
-
-// 送信処理を分離したヘルパー関数
-async function sendRegistration(api_url, action, number, nickname, position, base64Data, fileName, fileType, messageElement, form) {
-    const formData = new FormData();
-    formData.append("action", action); // 'register' または 'edit'
-    formData.append("number", number);
-    formData.append("nickname", nickname);
-    formData.append("position", position);
-    formData.append("fileData", base64Data);
-    formData.append("fileName", fileName);
-    formData.append("fileType", fileType);
-
-    try {
-        const res = await fetch(api_url, {
-            method: "POST",
-            body: formData
+        // ダブルクリック・ダブルタップで編集
+        tr.addEventListener('dblclick', () => navigateToEdit(m));
+        tr.addEventListener('touchend', (event) => {
+          const now = new Date().getTime();
+          const lastTouch = tr.dataset.lastTouch || 0;
+          const delta = now - lastTouch;
+          // ダブルタップ判定（300ms以内）
+          if (delta < 300 && delta > 0) {
+            event.preventDefault();
+            navigateToEdit(m);
+          }
+          tr.dataset.lastTouch = now;
         });
 
-        const text = await res.text();
-        messageElement.textContent = text;
-        
-        // フォームの状態を登録モードに戻す
-        document.getElementById("registerTitle").textContent = "メンバー登録";
-        document.getElementById("registerButton").textContent = "登録";
-        document.getElementById("actionType").value = "register"; 
-        document.getElementById("registerNumber").disabled = false; 
-
-        // フォームリセット
-        form.reset();
-
-    } catch (err) {
-        messageElement.textContent = "通信エラーが発生しました。";
-        console.error("fetchエラー:", err);
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td>
+            <div style="display: flex; align-items: center; justify-content: center; margin: 0 auto 5px;">
+                <img src="${memberImageUrl}" class="member-img" alt="${m.nickname || '画像'}"
+                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;"
+                     onerror="this.onerror=null;this.src='${DEFAULT_IMAGE_URL}';">
+                
+                ${driveImageIndicator}
+            </div>
+            
+            <p style="text-align:center;margin:0;">${m.nickname || ''}</p>
+            
+            <small style="display:block; text-align:center; font-size: 0.7em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" title="${memberImageUrl}">
+                ${driveTextIndicator}
+            </small>
+            </td>
+          <td>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <span>${m.number || ''}</span>
+                    ${UNIFORM_IMAGE_TAG}
+                </div>
+            </td>
+          <td>${m.position || ''}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
     }
-}
 
-// ページ切り替え
-function navigate(page){
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById(page).classList.add("active");
-    
-    if (page === 'members') {
-        loadMembers();
-    } else if (page === 'register') {
-        // 💡 変更点: 登録画面に遷移した際、フォームをリセットし、登録モードに強制的に戻す
-        document.getElementById("registerForm").reset();
-        document.getElementById("registerTitle").textContent = "メンバー登録";
-        document.getElementById("registerButton").textContent = "登録";
-        document.getElementById("actionType").value = "register";
-        document.getElementById("registerNumber").disabled = false;
-        document.getElementById("registerMessage").textContent = ""; // メッセージクリア
-    }
-    // ページ遷移時にもメニューを閉じる
-    closeMenu(); 
-}
-
-// ------------------------------------
-// メニュー開閉操作 (CSSの 'open' クラスと連動)
-// ------------------------------------
-function toggleMenu(){
-  document.getElementById("sideMenu").classList.toggle("open");
-  document.getElementById("overlay").classList.toggle("open"); 
-}
-function closeMenu(){
-  document.getElementById("sideMenu").classList.remove("open");
-  document.getElementById("overlay").classList.remove("open"); 
-}
-
-// ログアウト
-function logout(){
-  navigate("login");
-  document.getElementById("hamburger").style.display = "none";
-  document.getElementById("menuRegister").style.display = "none"; 
-  localStorage.removeItem("loggedIn");
-  localStorage.removeItem("role");
-}
-
-// ページロード時にログイン状態確認
-window.addEventListener("load", () => {
-  if(localStorage.getItem("loggedIn") === "true"){
-    document.getElementById("login").classList.remove("active");
-    document.getElementById("home").classList.add("active");
-    document.getElementById("hamburger").style.display = "block";
-    document.getElementById("menuRegister").style.display = "block";
+  } catch (err) {
+    document.getElementById("memberTable").innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
   }
+}
+
+// --------------------
+// メンバー編集用ナビゲート
+// --------------------
+function navigateToEdit(memberData) {
+  localStorage.setItem('editMemberData', JSON.stringify(memberData));
+  navigate('register');
+}
+
+// --------------------
+// メンバー登録/編集
+// --------------------
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const messageElement = document.getElementById("registerMessage");
+  messageElement.textContent = "処理中...";
+
+  const fileInput = document.getElementById('fileInput');
+  const file = fileInput ? fileInput.files[0] : null;
+
+  const number = form.number.value;
+  const nickname = form.nickname.value;
+  const position = form.position.value;
+
+  if (!number || !nickname) {
+    messageElement.textContent = "エラー: 背番号とニックネームは必須です。";
+    return;
+  }
+
+  let base64Data = "", fileName = "", fileType = "";
+
+  if (file) {
+    const originalName = file.name;
+    let ext = originalName.slice(originalName.lastIndexOf('.'));
+    // JPEGは拡張子をjpgに統一（GAS側と合わせる）
+    if (ext.toLowerCase() === '.jpeg') ext = '.jpg';
+    fileName = `${number}${ext}`;
+    fileType = file.type;
+
+    const reader = new FileReader();
+    reader.onloadend = async function() {
+      // Data URLのヘッダ部分（"data:image/png;base64,"など）を除去
+      base64Data = reader.result.split(',')[1]; 
+      await sendRegistration(number, nickname, position, base64Data, fileName, fileType, messageElement, form);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // ファイルがない場合も、既存データの編集や、画像なしの新規登録として送信
+    await sendRegistration(number, nickname, position, base64Data, fileName, fileType, messageElement, form);
+  }
+});
+
+// --------------------
+// 登録/編集送信
+// --------------------
+async function sendRegistration(number, nickname, position, base64Data, fileName, fileType, messageElement, form) {
+  const formData = new FormData();
+  formData.append("action", "register");
+  formData.append("number", number);
+  formData.append("nickname", nickname);
+  formData.append("position", position);
+  formData.append("fileData", base64Data);
+  formData.append("fileName", fileName);
+  formData.append("fileType", fileType);
+
+  try {
+    const res = await fetch(API_URL, { method: "POST", body: formData });
+    const text = await res.text();
+
+    let result = {};
+    try { 
+      result = JSON.parse(text); 
+    } 
+    catch { 
+      // JSONパース失敗時、responseTextが空でないか確認
+      if (text.includes("success")) {
+          messageElement.textContent = "処理成功！";
+      } else {
+          messageElement.textContent = "サーバーから不正な応答がありました。"; 
+      }
+      form.reset();
+      // 登録・編集後はメンバーリストを再読み込み
+      loadMembers(); 
+      return; 
+    }
+
+    messageElement.textContent = result.status === "success" 
+        ? (result.message || "登録/編集が完了しました！") 
+        : (result.message || "処理に失敗しました。");
+    form.reset();
+    // 登録・編集後はメンバーリストを再読み込み
+    loadMembers();
+
+  } catch (err) {
+    messageElement.textContent = "通信エラーが発生しました。";
+  }
+}
+
+// --------------------
+// ページ遷移
+// --------------------
+function navigate(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const targetPage = document.getElementById(page);
+  if (targetPage) targetPage.classList.add("active");
+
+  if (page === 'members') loadMembers();
+
+  if (page === 'register') {
+    const editData = localStorage.getItem('editMemberData');
+    const header = document.getElementById('registerHeader');
+    const numberInput = document.getElementById('numberInput');
+    const registerForm = document.getElementById('registerForm');
+
+    if (editData && registerForm && numberInput) {
+      const member = JSON.parse(editData);
+      numberInput.value = member.number || '';
+      registerForm.nickname.value = member.nickname || '';
+      registerForm.position.value = member.position || '';
+      if (header) header.textContent = 'メンバー編集';
+      // 編集時は背番号（キー）の変更を不可にする
+      numberInput.disabled = true;
+      localStorage.removeItem('editMemberData');
+    } else if (registerForm && numberInput) {
+      registerForm.reset();
+      if (header) header.textContent = 'メンバー登録';
+      // 新規登録時は背番号の変更を可能にする
+      numberInput.disabled = false;
+    }
+  }
+
+  closeMenu();
+}
+
+// --------------------
+// メニュー操作
+// --------------------
+function toggleMenu() {
+  const sideMenu = document.getElementById("sideMenu");
+  const overlay = document.getElementById("overlay");
+  if (sideMenu) sideMenu.classList.toggle("open");
+  if (overlay) overlay.classList.toggle("open");
+}
+function closeMenu() {
+  const sideMenu = document.getElementById("sideMenu");
+  const overlay = document.getElementById("overlay");
+  if (sideMenu) sideMenu.classList.remove("open");
+  if (overlay) overlay.classList.remove("open");
+}
+
+// --------------------
+// ログアウト
+// --------------------
+function logout() {
+  navigate("login");
+  const hamburger = document.getElementById("hamburger");
+  const menuRegister = document.getElementById("menuRegister");
+  if (hamburger) hamburger.style.display = "none";
+  if (menuRegister) menuRegister.style.display = "none";
+  localStorage.removeItem("loggedIn");
+  localStorage.removeItem("role"); // roleもあればクリア
+}
+
+// --------------------
+// ヘッダーアイコン設定関数
+// (HTML側の img タグに id="headerLogo" が必要です)
+// --------------------
+function setHeaderIcon() {
+    const iconElement = document.getElementById("headerLogo"); 
+   
+    // HEADER_ICON_FILE_ID_R (teams-r.jpg) の代わりに、GitHub/サーバーの静的パスを使用する
+    const STATIC_ICON_PATH = "images/teams-r.jpg";
+
+    if (iconElement) {
+        // Drive URLの代わりに静的パスを設定
+        iconElement.src = STATIC_ICON_PATH;
+        // エラー時は非表示
+        iconElement.onerror = function() { this.style.display = 'none'; }; 
+    }
+}
+
+
+// --------------------
+// ページロード時ログイン確認
+// --------------------
+window.addEventListener("load", () => {
+    // ヘッダーアイコンをDriveから読み込む (現在は静的パスから読み込むように変更)
+    setHeaderIcon();
+    
+  const loginPage = document.getElementById("login");
+  const homePage = document.getElementById("home");
+  const hamburger = document.getElementById("hamburger");
+  const menuRegister = document.getElementById("menuRegister");
+
+  if (localStorage.getItem("loggedIn") === "true") {
+    if (loginPage) loginPage.classList.remove("active");
+    if (homePage) homePage.classList.add("active");
+    if (hamburger) hamburger.style.display = "block";
+    if (menuRegister) menuRegister.style.display = "block";
+  }
+});
+
+// DOMContentLoaded後にイベントリスナーをセット
+document.addEventListener('DOMContentLoaded', () => {
 });
