@@ -253,27 +253,30 @@
                 card.className = 'member-card';
                 card.dataset.number = member.number;
                 
-                // 画像要素の生成とエラー処理の設定
+                // 画像要素の生成
                 const img = document.createElement('img');
                 img.alt = member.nickname;
-                img.src = member.image_gas || member.image_png; // GAS/外部URLを優先、なければ.pngを試す
-
-                // 画像エラーハンドラ (PNG/JPG/デフォルトの順に試す)
+                
+                // ★ 画像エラーハンドラの設定 (PNG/JPG/00.pngの順に試す) ★
                 let errorCount = 0;
                 img.onerror = function() {
                     errorCount++;
+                    
                     if (errorCount === 1) {
                         // 1回目エラー: GAS/外部URL または .png が失敗
                         // 次に .jpg を試す
                         this.src = member.image_jpg; 
                     } else if (errorCount === 2) {
                         // 2回目エラー: .jpg も失敗
-                        this.src = DEFAULT_IMAGE_PATH; // デフォルトを試す
+                        this.src = DEFAULT_IMAGE_PATH; // デフォルト 00.png を試す
                     } else {
                         // 3回目以降のエラーは無視
                         this.onerror = null; 
                     }
                 };
+
+                // 初期ソースの設定（GAS/外部URLを優先、なければ.pngを試す）
+                img.src = member.image_gas || member.image_png;
 
                 card.appendChild(img);
                 
@@ -349,7 +352,7 @@
             
             RESULT_IMAGE.onerror = null; // エラー処理をリセット
             
-            // 画像エラーハンドラ (PNG/JPG/デフォルトの順に試す)
+            // ★ 画像エラーハンドラの設定 (PNG/JPG/00.pngの順に試す) ★
             let errorCount = 0;
             RESULT_IMAGE.onerror = function() {
                 errorCount++;
@@ -359,7 +362,7 @@
                     this.src = member.image_jpg; 
                 } else if (errorCount === 2) {
                     // 2回目エラー: .jpg も失敗
-                    this.src = DEFAULT_IMAGE_PATH; // デフォルトを試す
+                    this.src = DEFAULT_IMAGE_PATH; // デフォルト 00.png を試す
                 } else {
                     this.onerror = null; 
                 }
