@@ -134,15 +134,14 @@ async function loadMembers(){
                 const positionDisplay = Array.isArray(m.position) ? m.position.join(' / ') : m.position || '';
 
                 // 画像URLの優先順位設定
-                const imageUrl = m.image || primaryImagePath;
+                // m.image (GAS/外部URL) > primaryImagePath (.png)
+                let initialImageUrl = m.image || primaryImagePath;
                 
-                // ★ 修正点: tr.innerHTMLで画像タグ全体を組み立て、画像のエラー処理をDOM側で安全に行う
-
-                // 画像表示とエラー処理をインラインHTMLから削除し、純粋なimgタグにする
+                // HTMLを生成し、一時的に追加
                 tr.innerHTML = `
                     <td>${i + 1}</td>    
                     <td id="td-name-${memberNumber}">
-                        <img src="${imageUrl}"  
+                        <img src="${initialImageUrl}"  
                             class="member-img"      
                             alt="${m.nickname || '画像'}"
                             id="img-${memberNumber}"
@@ -158,28 +157,31 @@ async function loadMembers(){
                 // --- 画像エラー処理をイベントリスナーとして設定する ---
                 const imgElement = document.getElementById(`img-${memberNumber}`);
                 if (imgElement) {
-                    // エラー処理関数を定義
                     let errorCount = 0;
                     imgElement.addEventListener('error', function errorHandler() {
                         errorCount++;
-                        this.onerror = null; // 再度エラーが起きないようにリスナーを解除
                         
                         if (errorCount === 1) {
-                            // 1回目：ローカルのjpgに切り替え
-                            if (!imageUrl.includes('google.com')) {
-                                this.src = secondaryImagePath;
-                            } else {
-                                // GASからの画像URLがエラーの場合、直接デフォルトへ
-                                this.src = DEFAULT_IMAGE_PATH;
-                            }
-                            // 2回目に備えて新しいエラー処理を設定
-                            this.onerror = function(){
-                                this.src = DEFAULT_IMAGE_PATH; // 2回目エラーでデフォルト画像
-                            };
+                            // 1回目エラー: .png (またはGAS URL) が失敗した場合
+                            if (m.image && initialImageUrl === m.image) {
+                                // 最初にGASのURLを試していて失敗した場合
+                                this.src = primaryImagePath; // ローカルの.pngを試す
+                                initialImageUrl = primaryImagePath; // 次のエラーカウント用に更新
 
+                            } else {
+                                // primaryImagePath (.png) が失敗した場合
+                                this.src = secondaryImagePath; // ローカルの.jpgを試す
+                                initialImageUrl = secondaryImagePath; // 次のエラーカウント用に更新
+                            }
+                            
                         } else if (errorCount === 2) {
-                            // 2回目エラー：デフォルト画像に切り替える
-                            this.src = DEFAULT_IMAGE_PATH;
+                            // 2回目エラー: .png または .jpg が失敗した場合
+                            // GAS URL -> .png -> .jpg のいずれかのパターンで、2回目の失敗
+                             this.src = DEFAULT_IMAGE_PATH; // デフォルト画像に切り替える
+                             
+                        } else if (errorCount >= 3) {
+                             // 3回目以降のエラー（デフォルト画像も失敗した場合など）は無視
+                             this.onerror = null; 
                         }
                     });
                 }
