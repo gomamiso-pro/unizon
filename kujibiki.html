@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>くじ引き - UNIZON Softball Team</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        :root {
+            --primary-color: #001f44;
+            --secondary-color: #ffffff;
+            --accent-color: #e74c3c;
+        }
+
+        /* くじ引き専用のCSS */
+        #kujibiki-page {
+            text-align: center;
+        }
+        #result-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            min-height: 150px; /* 結果表示エリアを確保 */
+        }
+        #result-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--accent-color);
+            margin-bottom: 10px;
+            background-color: #ccc; /* ロード中の背景 */
+            display: none; /* 隠しておく */
+        }
+        #result-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            min-height: 50px;
+        }
+        #kujibiki-button {
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        #kujibiki-button:hover:not(:disabled) {
+            background-color: #003366;
+        }
+        #kujibiki-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    
+    <header style="justify-content: flex-start;">
+        <button class="menu-item" style="margin-right: 15px;" onclick="window.location.href='index.html'">
+            メニューに戻る
+        </button>
+        <h1>
+            <span>くじ引き大会！</span>
+        </h1>
+    </header>
+
+    <main id="app">
+        <section id="kujibiki-page" class="page active" style="display: flex; flex-direction: column; align-items: center;">
+            <h2>今日の運試し</h2>
+            
+            <p id="loading-message">メンバーリストを読み込み中...</p>
+            
+            <div id="result-container">
+                <img id="result-image" src="" alt="当選者画像">
+                <div id="result-name">---</div>
+            </div>
+            
+            <button id="kujibiki-button" onclick="startKujibiki()" disabled>くじを引く！</button>
+
+            <p style="margin-top: 20px;">※ このくじ引きは、アプリに登録されているメンバーリストを使用します。</p>
+
+        </section>
+    </main>
+
+    <script>
+        // --- くじ引きのロジック ---
+        
+        // ★ メンバーリストアプリと同じAPI URLを設定 ★
+        const API_URL = "https://script.google.com/macros/s/AKfycbzROz8hBY31FZB0cECHPXF6DJlX2t8t3rOAHaOBAfWE3M4jYiyw6u3TWG3N0WxPbGFM/exec";
+        const DEFAULT_IMAGE_PATH = 'images/member/00.png';
+
+        let membersData = []; // メンバーデータを格納する配列
+        
+        const RESULT_IMAGE = document.getElementById('result-image');
+        const RESULT_NAME = document.getElementById('result-name');
+        const BUTTON = document.getElementById('kujibiki-button');
+        const LOADING_MESSAGE = document.getElementById('loading-message');
+        let intervalId;
+
+        // メンバーデータを非同期で読み込む関数
+        async function loadMembersForKujibiki() {
+            LOADING_MESSAGE.textContent = "メンバーリストを読み込み中...";
+            try {
+                const res = await fetch(API_URL);
+                const members = await res.json();
+
+                if (Array.isArray(members) && members.length > 0) {
+                    membersData = members.map(m => {
+                        const memberNumber = String(m.number || '00').trim();
+                        // 画像URLの優先順位を設定（GAS/外部URL > .png > .jpg）
+                        const primaryImagePath = `images/member/${memberNumber}.png`;
+                        const secondaryImagePath = `images/member/${memberNumber}.jpg`;
+                        
+                        return {
+                            nickname: m.nickname,
+                            image: m.image || primaryImagePath,
+                            secondaryImage: secondaryImagePath,
+                            number: memberNumber
+                        };
+                    });
+                    
+                    LOADING_MESSAGE.textContent = "準備完了！";
+                    BUTTON.disabled = false;
+                    
+                } else {
+                    LOADING_MESSAGE.textContent = "エラー: メンバーがいません。";
+                }
+            } catch (err) {
+                LOADING_MESSAGE.textContent = "エラー: メンバーリストの取得に失敗しました。";
+                console.error("メンバー取得通信エラー:", err);
+            }
+        }
+
+        // 画像を表示・更新する関数（エラー処理含む）
+        function updateResultImage(member) {
+            RESULT_IMAGE.style.display = 'block';
+            let initialImageUrl = member.image;
+            RESULT_IMAGE.src = initialImageUrl;
+            
+            // エラー処理 (DOM Element Listener)
+            RESULT_IMAGE.onerror = function() {
+                // 1回目エラー: .png (またはGAS URL) が失敗した場合
+                if (initialImageUrl === member.image) {
+                    // GAS URLを試していて失敗した場合、ローカル.pngを試す
+                    this.src = member.image.includes('google.com') ? member.image : member.secondaryImage;
+                    
+                } else if (initialImageUrl === member.secondaryImage) {
+                    // .jpgも失敗した場合
+                    this.src = DEFAULT_IMAGE_PATH; // デフォルト画像へ
+                    
+                } else {
+                    // 予期せぬエラー、またはデフォルトも失敗
+                    this.onerror = null; // リスナー解除
+                    this.src = DEFAULT_IMAGE_PATH; // 安全策として再設定
+                }
+                
+                // 次の段階のURLをinitialImageUrlに設定してループさせる
+                initialImageUrl = this.src;
+            };
+        }
+
+
+        // くじ引き開始
+        function startKujibiki() {
+            if (BUTTON.disabled || membersData.length === 0) return;
+            
+            BUTTON.disabled = true;
+            RESULT_NAME.textContent = "シャッフル中...";
+            RESULT_IMAGE.style.display = 'none';
+
+            let count = 0;
+            
+            // 抽選のアニメーション（高速で名前を切り替える）
+            intervalId = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * membersData.length);
+                const currentMember = membersData[randomIndex];
+                
+                RESULT_NAME.textContent = currentMember.nickname;
+                
+                // 画像も高速で切り替える (頻繁な画像ロードは重いので、今回は名前のみ高速切り替え)
+                // updateResultImage(currentMember); 
+                
+                count++;
+                
+                // 1.5秒後に停止
+                if (count > 20) {
+                    clearInterval(intervalId);
+                    
+                    // 最終結果を決定
+                    setTimeout(stopKujibiki, 500); 
+                }
+            }, 75); 
+        }
+
+        // くじ引き停止・結果表示
+        function stopKujibiki() {
+            const finalIndex = Math.floor(Math.random() * membersData.length);
+            const winner = membersData[finalIndex];
+
+            RESULT_NAME.textContent = '🎉 ' + winner.nickname + ' 🎉';
+            updateResultImage(winner); // 当選者の画像を正しく表示
+            
+            BUTTON.disabled = false;
+        }
+
+        // ページロード時にメンバーリストを読み込む
+        window.onload = loadMembersForKujibiki;
+
+    </script>
+</body>
+</html>
