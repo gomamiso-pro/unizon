@@ -1,256 +1,379 @@
 // ============================================
-// UNIZON Softball Team - GAS 最終修正版 (編集機能対応)
+// UNIZON Softball Team - script.js (最終修正版 - 画像表示ロジック修正)
 // ============================================
 
-// ★ 以下の定数をあなたの環境に合わせて変更してください！
-const SPREADSHEET_ID = "1gfLm4brGVFpQBrSyIg9vpp9zAnvqyod-15FlQ1hbxX8"; 
-const SHEET_NAME = "member"; 
-const DRIVE_FOLDER_ID = "1nc6jpsP11egAAnx1BNnsP4vF0FhKxIpk"; // 画像保存先フォルダID
+// Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
+const API_URL = "https://script.google.com/macros/s/AKfycbzROz8hBY31FZB0cECHPXF6DJlX2t8t3rOAHaOBAfWE3M4jYiyw6u3TWG3N0WxPbGFM/exec";
 
-// スプレッドシートの列名を設定
-const HEADER_NICKNAME = "nickname";
-const HEADER_NUMBER = "number";
-const HEADER_POSITION = "position";
-const HEADER_IMAGE = "image"; 
-const HEADER_ORDER_NO = "orderNo"; 
+// ログイン状態を管理するための変数
+let isLoggedIn = false;
+// メンバーデータ全体を保持するグローバル変数 (編集時に必要)
+let teamMembers = []; 
+// dblclickがtouchend後に発生するのを防ぐフラグ
+let touchHandled = false;
 
-// ============================================
-// ヘルパー関数
-// ============================================
-function createJsonResponse(data) {
-    return ContentService
-        .createTextOutput(JSON.stringify(data))
-        .setMimeType(ContentService.MimeType.JSON);
-}
 
-/**
- * スプレッドシートのデータ全体とヘッダー、ターゲット列インデックスを取得
- */
-function getSheetData() {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName(SHEET_NAME);
-    if (!sheet) return null;
-
-    const dataRange = sheet.getDataRange();
-    const data = dataRange.getValues();
-    if (data.length === 0) return { sheet, data: [], headers: [], indices: {} };
+// ------------------------------------
+// ログイン処理
+// ------------------------------------
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
     
-    const headers = data.shift(); 
+    const api_url = API_URL;    
     
-    const indices = {
-        number: headers.indexOf(HEADER_NUMBER),
-        nickname: headers.indexOf(HEADER_NICKNAME),
-        position: headers.indexOf(HEADER_POSITION),
-        image: headers.indexOf(HEADER_IMAGE),
-        orderNo: headers.indexOf(HEADER_ORDER_NO)
-    };
+    const nickname = e.target.login_nickname.value;
+    const number = e.target.login_number.value;
+    const messageElement = document.getElementById("loginMessage");
+
+    const formData = new FormData();
+    formData.append("action", "login");    
+    formData.append("nickname", nickname);
+    formData.append("number", number);
     
-    if (indices.number === -1) {
-        throw new Error("スプレッドシートに 'number' 列がありません。");
-    }
+    messageElement.textContent = "認証中...";
 
-    return { sheet, data, headers, indices };
-}
-
-// ============================================
-// GETリクエスト（メンバー一覧取得）
-// ============================================
-function doGet(e) {
     try {
-        const sheetDataResult = getSheetData();
-        if (!sheetDataResult || !sheetDataResult.data) {
-            return createJsonResponse([]);
-        }
-        
-        const { data, headers } = sheetDataResult;
-
-        const members = data.map(row => {
-            const member = {};
-            headers.forEach((header, i) => {
-                const key = header.toLowerCase();
-                const value = row[i];
-                
-                // position列はカンマ区切りの文字列を配列に変換してフロントに渡す
-                if (key === HEADER_POSITION.toLowerCase() && typeof value === 'string' && value.trim()) {
-                    member[key] = value.split(',').map(p => p.trim());
-                } else {
-                    member[key] = value;
-                }
-            });
-            return member;
+        const res = await fetch(api_url, {
+            method: "POST",
+            body: formData
         });
 
-        return createJsonResponse(members);
-    } catch (e) {
-        Logger.log("doGetエラー: " + e.message + " スタック: " + e.stack); 
-        return createJsonResponse({ status: "error", message: "データ取得エラー: " + e.message });
-    }
-}
+        const text = await res.text();
+        console.log("GASからの応答:", text);
 
-// ============================================
-// POSTリクエスト（振り分け）
-// ============================================
-function doPost(e) {
-    const action = e.parameter.action; 
-
-    if (action === "login") {
-        return handleLogin(e);
-    } else if (action === "register" || action === "update") { 
-        return handleRegisterOrUpdate(e, action);
-    }
-
-    return createJsonResponse({ status: "error", message: "無効なアクション" });
-}
-
-// ============================================
-// ログイン認証処理
-// ============================================
-function handleLogin(e) {
-    try {
-        const sheetDataResult = getSheetData();
-        if (!sheetDataResult) throw new Error("シートが見つかりません。");
-        const { data, indices } = sheetDataResult;
-        
-        const inputNickname = String(e.parameter.nickname || '').trim();
-        const inputNumber = String(e.parameter.number || '').trim();
-
-        if (!inputNickname || !inputNumber) {
-            return createJsonResponse({ status: "error", message: "IDとパスワードを入力してください" });
+        let data = {};
+        try { data = JSON.parse(text); }    
+        catch {    
+            messageElement.textContent = `サーバーから不正な応答がありました。`;    
+            return;    
         }
 
-        const isAuthenticated = data.some(row => 
-            String(row[indices.nickname] || '').trim() === inputNickname && 
-            String(row[indices.number] || '').trim() === inputNumber
-        );
-
-        if (isAuthenticated) {
-            return createJsonResponse({ status: "success", message: "認証成功" });
-        } else {
-            return createJsonResponse({ status: "failure", message: "IDまたは背番号が間違っています" });
-        }
-    } catch (e) {
-        Logger.log("handleLoginエラー: " + e.message + " スタック: " + e.stack);
-        return createJsonResponse({ status: "error", message: "ログインエラー: " + e.message });
-    }
-}
-
-// ============================================
-// 登録/更新処理
-// ============================================
-function handleRegisterOrUpdate(e, action) {
-    // 更新時に使用する元の背番号を取得
-    const numberToIdentify = String(e.parameter.numberToIdentify || '').trim(); 
-    
-    // 登録/更新後の背番号
-    const rawNumber = String(e.parameter.number || '').trim(); 
-    const number = rawNumber.replace(/[^0-9]/g, ''); 
-
-    const nickname = String(e.parameter.nickname || '').trim();
-    // ポジションはカンマ区切り文字列としてそのまま受け取る
-    const position = String(e.parameter.position || '').trim(); 
-    
-    // 画像関連のパラメータ（今回の最終版では使用しないが、ロジックは残す）
-    const fileData = e.parameter.fileData || ''; 
-    const fileName = e.parameter.fileName || '';
-    const fileType = e.parameter.fileType || '';
-    
-    if (!number || !nickname) {
-        return createJsonResponse({ status: "error", message: "背番号とニックネームは必須です。" });
-    }
-
-    let image = '';
-    let targetRowIndex = -1;
-
-    try {
-        const sheetDataResult = getSheetData();
-        if (!sheetDataResult) throw new Error("シートが見つかりません。");
-        const { sheet, data, headers, indices } = sheetDataResult;
-
-        // 検索キーを決定 (更新時は numberToIdentify、登録時は number)
-        const searchNumber = action === 'update' ? numberToIdentify : number;
-        const dataStartIndex = 1; 
-
-        for (let i = 0; i < data.length; i++) {
-            if (String(data[i][indices.number] || '').trim() === searchNumber) { 
-                targetRowIndex = i + dataStartIndex + 1; // スプレッドシートの行番号 (1-based)
-                if (indices.image !== -1) image = data[i][indices.image] || ''; 
-                break;
-            }
-        }
-        
-        // --- 登録時の重複チェック ---
-        if (action === 'register' && targetRowIndex !== -1) {
-            return createJsonResponse({ status: "error", message: `背番号${number}は既に登録されています。編集する場合はメンバーリストから選択してください。` });
-        }
-        
-        // --- 更新時の対象チェック ---
-        if (action === 'update' && targetRowIndex === -1) {
-            return createJsonResponse({ status: "error", message: `更新対象の背番号${numberToIdentify}が見つかりません。` });
-        }
-
-        // --- 画像ファイルの保存 (ロジックは維持) ---
-        if (fileData) {
-            if (!DRIVE_FOLDER_ID) throw new Error("DRIVE_FOLDER_IDが設定されていません。");
-
-            const base64Data = fileData.split(',')[1]; 
-            const blob = Utilities.newBlob(Utilities.base64Decode(base64Data), fileType || 'image/png', fileName);
-
-            let ext = '.png';
-            if (fileType.includes('jpeg') || fileType.includes('jpg')) ext = '.jpg';
-            else if (fileType.includes('gif')) ext = '.gif';
-            const newFileName = `${number}${ext}`;
-
-            const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
-            const existingFiles = folder.getFilesByName(newFileName);
-            while (existingFiles.hasNext()) existingFiles.next().setTrashed(true);
-
-            const file = folder.createFile(blob.setName(newFileName));
-            try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch(err){ Logger.log("共有設定エラー: " + err); }
-
-            image = `https://drive.google.com/uc?id=${file.getId()}`;
-        }
-
-        // --- スプレッドシート書き込み ---
-        if (action === 'update') {
-            // 更新処理
-            const rowRange = sheet.getRange(targetRowIndex, 1, 1, headers.length);
-            const rowValues = rowRange.getValues()[0];
-
-            if (indices.nickname !== -1) rowValues[indices.nickname] = nickname;
-            if (indices.position !== -1) rowValues[indices.position] = position; // カンマ区切り文字列をそのまま保存
-            if (indices.image !== -1 && (fileData || image)) rowValues[indices.image] = image; 
+        if (data.status === "success") {
+            messageElement.textContent = "ログイン成功！";
+            e.target.reset();
             
-            rowRange.setValues([rowValues]);
-
-            return createJsonResponse({ status: "success", message: `${number}番 ${nickname}さんの情報を更新しました。` });
-
+            document.getElementById("hamburger").style.display = "block"; 
+            document.getElementById("menuRegister").style.display = "block"; 
+            
+            navigate("home"); 
+            localStorage.setItem("loggedIn", "true"); 
+            
         } else {
-            // 新規登録 (action === 'register')
-            const newRow = new Array(headers.length).fill('');
-
-            // orderNo 計算
-            let nextOrderNo = 1;
-            if (indices.orderNo !== -1) {
-                const maxOrderNo = data.reduce((max, row) => {
-                    const val = parseInt(row[indices.orderNo], 10);
-                    return isNaN(val) ? max : Math.max(max, val);
-                }, 0);
-                nextOrderNo = maxOrderNo + 1;
-                newRow[indices.orderNo] = nextOrderNo;
-            }
-
-            if (indices.number !== -1) newRow[indices.number] = number;
-            if (indices.nickname !== -1) newRow[indices.nickname] = nickname;
-            if (indices.position !== -1) newRow[indices.position] = position;
-            if (indices.image !== -1) newRow[indices.image] = image;
-
-            sheet.appendRow(newRow);
-
-            return createJsonResponse({ status: "success", message: `${number}番 ${nickname}さんを新規登録しました。` });
+            messageElement.textContent = data.message || "ログインIDまたは背番号が違います。";
         }
 
     } catch (err) {
-        Logger.log("登録/更新エラー: " + err.message + " スタック: " + err.stack);
-        return createJsonResponse({ status: "error", message: "登録/更新中に問題が発生しました: " + err.message });
+        messageElement.textContent = "通信エラーが発生しました。";
+        console.error("fetchエラー:", err);
+    }
+});
+
+
+// ------------------------------------
+// メンバー一覧取得・表示
+// ------------------------------------
+async function loadMembers(){
+    const api_url = API_URL;    
+    
+    try{
+        const res = await fetch(api_url);
+        const members = await res.json();
+        const tbody = document.getElementById("memberTable");
+        tbody.innerHTML = "";    
+        
+        const DEFAULT_IMAGE_PATH = 'images/member/00.png';
+
+        if (Array.isArray(members)) {
+            teamMembers = members;    
+            
+            // ソート処理（orderNoに基づく）
+            members.sort((a, b) => {
+                const aOrder = parseInt(a.orderNo, 10) || 0;
+                const bOrder = parseInt(b.orderNo, 10) || 0;
+                return aOrder - bOrder;
+            });
+            
+            // メンバーデータをテーブルに展開
+            members.forEach((m, i) => {
+                const memberNumber = String(m.number || '00').trim();    
+                
+                // 画像パスの設定（ローカルファイル用）
+                const primaryImagePath = `images/member/${memberNumber}.png`;
+                const secondaryImagePath = `images/member/${memberNumber}.jpg`;
+                
+                const tr = document.createElement("tr");
+                tr.dataset.number = memberNumber;
+
+                // 1. タッチイベントの処理 (ダブルタップ判定)
+                tr.addEventListener('touchend', (event) => {
+                    touchHandled = true; 
+                    
+                    const now = new Date().getTime();
+                    const lastTouch = tr.dataset.lastTouch || 0;
+                    const delta = now - lastTouch;
+                    
+                    if (delta > 20 && delta < 500) {    
+                        event.preventDefault();    
+                        loadEditForm(m);
+                    }
+                    tr.dataset.lastTouch = now;
+                    
+                    setTimeout(() => { touchHandled = false; }, 1000); 
+                });
+                
+                // 2. ダブルクリックイベントの処理 (タッチイベント後に発生するのを抑制)
+                tr.addEventListener('dblclick', (event) => {
+                    if (touchHandled) {
+                        event.preventDefault(); 
+                        return;
+                    }
+                    loadEditForm(m);
+                });
+                
+                // 守備データを配列からスラッシュ区切りの文字列に変換
+                const positionDisplay = Array.isArray(m.position) ? m.position.join(' / ') : m.position || '';
+
+                // 画像URLの優先順位設定
+                // m.image (GAS/外部URL) > primaryImagePath (.png)
+                let initialImageUrl = m.image || primaryImagePath;
+                
+                // HTMLを生成し、一時的に追加
+                tr.innerHTML = `
+                    <td>${i + 1}</td>    
+                    <td id="td-name-${memberNumber}">
+                        <img src="${initialImageUrl}"  
+                            class="member-img"      
+                            alt="${m.nickname || '画像'}"
+                            id="img-${memberNumber}"
+                            style="display: block; margin: 0 auto 5px;"    
+                        >
+                        <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
+                    </td>
+                    <td>${m.number || ''}</td>    
+                    <td>${positionDisplay}</td>    
+                `;
+                tbody.appendChild(tr);
+
+                // --- 画像エラー処理をイベントリスナーとして設定する ---
+                const imgElement = document.getElementById(`img-${memberNumber}`);
+                if (imgElement) {
+                    let errorCount = 0;
+                    imgElement.addEventListener('error', function errorHandler() {
+                        errorCount++;
+                        
+                        if (errorCount === 1) {
+                            // 1回目エラー: .png (またはGAS URL) が失敗した場合
+                            if (m.image && initialImageUrl === m.image) {
+                                // 最初にGASのURLを試していて失敗した場合
+                                this.src = primaryImagePath; // ローカルの.pngを試す
+                                initialImageUrl = primaryImagePath; // 次のエラーカウント用に更新
+
+                            } else {
+                                // primaryImagePath (.png) が失敗した場合
+                                this.src = secondaryImagePath; // ローカルの.jpgを試す
+                                initialImageUrl = secondaryImagePath; // 次のエラーカウント用に更新
+                            }
+                            
+                        } else if (errorCount === 2) {
+                            // 2回目エラー: .png または .jpg が失敗した場合
+                            // GAS URL -> .png -> .jpg のいずれかのパターンで、2回目の失敗
+                             this.src = DEFAULT_IMAGE_PATH; // デフォルト画像に切り替える
+                             
+                        } else if (errorCount >= 3) {
+                             // 3回目以降のエラー（デフォルト画像も失敗した場合など）は無視
+                             this.onerror = null; 
+                        }
+                    });
+                }
+                // --------------------------------------------------------
+            });
+        } else {
+            console.error("メンバー取得エラー（GAS側）:", members.message);
+            tbody.innerHTML = `<tr><td colspan="4">メンバーデータの取得に失敗しました: ${members.message || 'データ形式エラー'}</td></tr>`;
+        }
+    } catch(err){
+        console.error("メンバー取得通信エラー:", err);
+        const tbody = document.getElementById("memberTable");
+        tbody.innerHTML = `<tr><td colspan="4">ネットワーク通信エラーが発生しました。</td></tr>`;
     }
 }
+
+
+// ------------------------------------
+// メンバー登録・編集フォーム処理
+// ------------------------------------
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const originalNumber = form.elements.namedItem('originalNumber') ? form.elements.namedItem('originalNumber').value : '';
+    
+    let messageElement = document.getElementById("registerMessage");
+    if (!messageElement) {
+        messageElement = document.createElement('p');
+        messageElement.id = "registerMessage";
+        messageElement.className = "error-message"; 
+        form.parentNode.appendChild(messageElement); 
+    }
+    
+    messageElement.textContent = "処理中...";
+
+    if (!form.number.value || !form.nickname.value) {
+        messageElement.textContent = "エラー: 背番号とニックネームは必須です。";
+        return;
+    }
+    
+    // ポジションの複数選択値を取得
+    const positions = Array.from(form.querySelectorAll('input[name="position"]:checked')).map(cb => cb.value);
+
+    // フォーム送信ロジックの分岐
+    if (originalNumber) {
+        // 編集モード
+        await sendData(form, "update", originalNumber, positions, messageElement);
+    } else {
+        // 登録モード
+        await sendData(form, "register", form.number.value, positions, messageElement);
+    }
+});
+
+
+/**
+ * 登録・更新のデータ送信処理ヘルパー関数
+ */
+async function sendData(form, action, numberToIdentify, positions, messageElement) {
+    const formData = new FormData();
+    formData.append("action", action);
+    // 登録時は新規の背番号、更新時は元の背番号をGAS側に送る
+    formData.append("numberToIdentify", numberToIdentify);    
+    
+    formData.append("number", form.number.value); 
+    formData.append("nickname", form.nickname.value);
+    // ポジションは配列をカンマ区切り文字列にして送信
+    formData.append("position", positions.join(','));    
+
+    try {
+        const res = await fetch(API_URL, {
+            method: "POST",
+            body: formData
+        });
+
+        const text = await res.text();
+        
+        let data = {};
+        try { data = JSON.parse(text); }    
+        catch { data = { status: "error", message: text || "サーバーから不正な応答がありました。" }; }
+
+        if (data.status === "success") {
+            messageElement.textContent = data.message || (action === "update" ? "更新成功！" : "登録成功！");
+            resetRegisterForm(); 
+            navigate('members'); 
+        } else {
+            messageElement.textContent = data.message || (action === "update" ? "更新に失敗しました。" : "登録に失敗しました。");
+        }
+
+    } catch (err) {
+        messageElement.textContent = "通信エラーが発生しました。";
+        console.error("fetchエラー:", err);
+    }
+}
+
+
+/**
+ * メンバー編集フォームにデータをロードし、画面を編集モードに切り替える
+ */
+function loadEditForm(member) {
+    navigate('register');    
+    
+    document.getElementById('registerTitle').textContent = 'メンバー編集';
+    const form = document.getElementById('registerForm');
+    form.querySelector('button[type="submit"]').textContent = '更新';
+    
+    const originalNumberInput = document.getElementById('originalNumber');
+    if (originalNumberInput) {
+        originalNumberInput.value = member.number;
+    }
+    
+    form.elements.namedItem('number').value = member.number;
+    form.elements.namedItem('nickname').value = member.nickname;
+    
+    form.elements.namedItem('number').disabled = true;    
+    
+    // ポジションのチェックボックスを設定
+    const memberPositions = Array.isArray(member.position) ? member.position : (member.position ? member.position.split(',').map(p => p.trim()) : []);
+
+    const checkboxes = form.querySelectorAll('input[name="position"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+        
+        if (memberPositions.includes(checkbox.value)) {
+            checkbox.checked = true;
+        }
+    });
+}
+
+/**
+ * フォームを初期状態（メンバー登録モード）に戻す
+ */
+function resetRegisterForm() {
+    const form = document.getElementById('registerForm');
+    form.reset();
+    document.getElementById('registerTitle').textContent = 'メンバー登録';
+    form.querySelector('button[type="submit"]').textContent = '登録';
+    form.elements.namedItem('number').disabled = false; 
+    
+    const originalNumberInput = document.getElementById('originalNumber');
+    if (originalNumberInput) {
+        originalNumberInput.value = ''; 
+    }
+    
+    const messageElement = document.getElementById("registerMessage");
+    if (messageElement) {
+        messageElement.textContent = '';
+    }
+}
+
+
+// ------------------------------------
+// ページ切り替え・メニュー操作
+// ------------------------------------
+function navigate(page){
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(page).classList.add("active");
+    
+    if (page === 'members') {
+        loadMembers();
+    }
+    if (page === 'register') {
+        resetRegisterForm();    
+    }
+    
+    closeMenu();        
+}
+
+function toggleMenu(){
+    document.getElementById("sideMenu").classList.toggle("open");
+    document.getElementById("overlay").classList.toggle("open");        
+}
+function closeMenu(){
+    document.getElementById("sideMenu").classList.remove("open");
+    document.getElementById("overlay").classList.remove("open");        
+}
+
+// ログアウト
+function logout(){
+    navigate("login");
+    document.getElementById("hamburger").style.display = "none";
+    document.getElementById("menuRegister").style.display = "none";        
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("role"); 
+}
+
+// ページロード時にログイン状態確認
+window.addEventListener("load", () => {
+    if(localStorage.getItem("loggedIn") === "true"){
+        document.getElementById("login").classList.remove("active");
+        document.getElementById("home").classList.add("active");
+        document.getElementById("hamburger").style.display = "block";
+        document.getElementById("menuRegister").style.display = "block";
+    }
+});
