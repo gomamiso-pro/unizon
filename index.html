@@ -1,111 +1,112 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNIZON Softball Team</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNIZON Softball Team</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 
-  <!--<link rel="icon" type="image/x-icon" href="/favicon.ico">-->
-  
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/teams-b.jpg">
+    
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/teams-b.jpg">
 
-  <link rel="icon" type="image/png" sizes="192x192" href="/images/teams-b.jpg">
+  <link rel="icon" type="image/png" sizes="192x192" href="/images/teams-b.jpg">
 
-  <meta name="msapplication-TileColor" content="#001f44"> <meta name="msapplication-TileImage" content="/images/teams-b.jpg">
+  <meta name="msapplication-TileColor" content="#001f44"> <meta name="msapplication-TileImage" content="/images/teams-b.jpg">
 
-  <meta name="theme-color" content="#001f44">
+  <meta name="theme-color" content="#001f44">
 </head>
 <body>
 
 <nav id="sideMenu">
-  <h2>MENU</h2>
-  <button class="menu-item" onclick="navigate('home')">HOME</button>
-  <button class="menu-item" onclick="navigate('members')">MEMBER</button>
-  <button id="menuRegister" class="menu-item" onclick="navigate('register')" style="display:none;">
-    メンバー登録
-  </button>  <button class="menu-item" onclick="logout()">LOG-OUT</button>
+  <h2>MENU</h2>
+  <button class="menu-item" onclick="navigate('home')">HOME</button>
+  <button class="menu-item" onclick="navigate('members')">MEMBER</button>
+  <button id="menuRegister" class="menu-item" onclick="navigate('register')" style="display:none;">
+    メンバー登録
+  </button>  <button class="menu-item" onclick="logout()">LOG-OUT</button>
 
 </nav>
 
 <div id="overlay" onclick="closeMenu()"></div>
 
 <div id="app">
-  <header>
-    <button id="hamburger" onclick="toggleMenu()" style="display:none;">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-    </button>
-    <h1> 
-      <img src="images/teams-r.jpg" alt="Team Logo" class="header-logo"><p>&nbsp; UNIZON　47</p>
-    </h1>
-  </header>
+  <header>
+    <button id="hamburger" onclick="toggleMenu()" style="display:none;">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </button>
+    <h1> 
+      <img src="images/teams-r.jpg" alt="Team Logo" class="header-logo"><p>&nbsp; UNIZON　48</p>
+    </h1>
+  </header>
 
-  <main>
-    <div id="login" class="page active">
-      <h2>LOG-IN</h2>
-      <form id="loginForm" class="form-container">
-        <label>LOG-IN ID (ニックネーム):
-          <input type="text" name="login_nickname" required 
-            placeholder="ニックネーム" 
-            pattern="[a-zA-Z0-9\-\_]*" 
-            title="半角英数字とハイフン、アンダースコアのみ使用できます"
-          >
-        </label>
-        <label>PASSWORD (背番号):
-          <input type="password" name="login_number" required
-            placeholder="背番号"
-            inputmode="numeric"
-            pattern="[0-9]*" 
-            title="半角数字のみ使用できます"
-          >
-        </label>
-        <button type="submit">LOG-IN</button>
-        <p id="loginMessage" class="error-message"></p>
-      </form>
-    </div>
-    
-    <div id="home" class="page">
-      <h2>ようこそ！</h2>
-      <p>UNIZONソフトボールチームの公式ページへ。最新情報はこちらでご確認ください。</p>
-    </div>
+  <main>
+    <div id="login" class="page active">
+      <h2>LOG-IN</h2>
+      <form id="loginForm" class="form-container">
+        <label>LOG-IN ID (ニックネーム):
+          <input type="text" name="login_nickname" required 
+            placeholder="ニックネーム" 
+            pattern="[a-zA-Z0-9\-\_]*" 
+            title="半角英数字とハイフン、アンダースコアのみ使用できます"
+          >
+        </label>
+        <label>PASSWORD (背番号):
+          <input type="password" name="login_number" required
+            placeholder="背番号"
+            inputmode="numeric"
+            pattern="[0-9]*" 
+            title="半角数字のみ使用できます"
+          >
+        </label>
+        <button type="submit">LOG-IN</button>
+        <p id="loginMessage" class="error-message"></p>
+      </form>
+    </div>
+    
+    <div id="home" class="page">
+      <h2>ようこそ！</h2>
+      <p>UNIZONソフトボールチームの公式ページへ。最新情報はこちらでご確認ください。</p>
+    </div>
 
-    <div id="members" class="page">
-      <h2>MEMBER LIST</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>名前</th>
-            <th>背番号</th>
-            <th>守備</th>
-          </tr>
-        </thead>
-        <tbody id="memberTable"></tbody>
-      </table>
-    </div>
+    <div id="members" class="page">
+      <h2>MEMBER LIST</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>名前</th>
+            <th>背番号</th>
+            <th>守備</th>
+          </tr>
+        </thead>
+        <tbody id="memberTable"></tbody>
+      </table>
+    </div>
 
-    <div id="register" class="page">
-      <h2>メンバー登録</h2>
-      <form id="registerForm" class="form-container">
-        <label>背番号:
-          <input type="number" name="number" required>
-        </label>
-        <label>ニックネーム:
-          <input type="text" name="nickname" required>
-        </label>
-        <label>ポジション:
-          <input type="text" name="position" >
-        </label>
-        <label>画像:
-          <input type="file" id="fileInput" accept="image/*" >
-        </label>
-        <button type="submit">登録</button>
-      </form>
-    </div>
-  </main>
+    <div id="register" class="page">
+      <h2 id="registerTitle">メンバー登録</h2>
+      <form id="registerForm" class="form-container">
+        <input type="hidden" name="actionType" id="actionType" value="register">
+        <label>背番号:
+          <input type="number" name="number" id="registerNumber" required>
+        </label>
+        <label>ニックネーム:
+          <input type="text" name="nickname" id="registerNickname" required>
+        </label>
+        <label>ポジション:
+          <input type="text" name="position" id="registerPosition" >
+        </label>
+        <label>画像:
+          <input type="file" id="fileInput" accept="image/*" >
+        </label>
+        <button type="submit" id="registerButton">登録</button>
+      </form>
+      <p id="registerMessage" class="error-message"></p>
+    </div>
+  </main>
 </div>
 
 <footer>&copy; 2025 UNISON Softball Team</footer>
