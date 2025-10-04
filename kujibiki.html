@@ -1,8 +1,4 @@
-          
-            <p id="loading-message">メンバーリストを読み込み中...</p>
-            
-            <h3>① 商品の写真を選択</h3>
-            <div id="prize-area" onclick="document.getElementById('prizeInput').click()">
+click="document.getElementById('prizeInput').click()">
                 <input type="file" id="prizeInput" accept="image/*" style="display:none;">
                 <img id="prize-image" src="" alt="商品画像" style="display: none;">
                 <p id="prize-prompt">タップして商品写真を選ぶ（カメラ/ライブラリ）</p>
@@ -34,9 +30,10 @@
         // ★ メンバーリストアプリと同じAPI URLを設定 ★
         const API_URL = "https://script.google.com/macros/s/AKfycbzROz8hBY31FZB0cECHPXF6DJlX2t8t3rOAHaOBAfWE3M4jYiyw6u3TWG3N0WxPbGFM/exec";
         
-        // 画像URLがGAS側で提供されない場合のローカルパス
-        const BASE_IMAGE_PATH = "images/member/"; 
-        const DEFAULT_IMAGE_PATH = BASE_IMAGE_PATH + '00.png';
+        // ★★★ GitHubの画像保存フォルダのURL ★★★
+        const GITHUB_BASE_URL = "https://raw.githubusercontent.com/gomamiso-pro/unizon/main/images/member/";
+        
+        const DEFAULT_IMAGE_PATH = GITHUB_BASE_URL + '00.png';
 
         let membersData = []; // 全メンバーデータを格納
         let selectedMembers = []; // 抽選に参加するメンバーを格納
@@ -69,13 +66,17 @@
                     membersData = members.map(m => {
                         const memberNumber = String(m.number || '00').trim();
                         
+                        // 画像パスをGitHub URLに設定
+                        const imagePngUrl = GITHUB_BASE_URL + `${memberNumber}.png`;
+                        const imageJpgUrl = GITHUB_BASE_URL + `${memberNumber}.jpg`;
+
                         return {
                             nickname: m.nickname,
-                            // GASから来る画像URLを最優先（GASで画像URLをJSONに含めて返す場合）
+                            // GASから来る画像URLを最優先
                             image_gas: m.image,
-                            // ローカルパス（フォールバック）
-                            image_png: BASE_IMAGE_PATH + `${memberNumber}.png`,
-                            image_jpg: BASE_IMAGE_PATH + `${memberNumber}.jpg`,
+                            // GitHubパス（フォールバック）
+                            image_png: imagePngUrl,
+                            image_jpg: imageJpgUrl,
                             number: memberNumber
                         };
                     });
@@ -115,8 +116,8 @@
                     errorCount++;
                     
                     if (errorCount === 1) {
-                        // 1回目エラー: GASのURL または ローカルの.png が失敗
-                        // 次に ローカルの.jpg を試す
+                        // 1回目エラー: GASのURL または .png が失敗
+                        // 次に .jpg を試す
                         this.src = member.image_jpg; 
                     } else if (errorCount === 2) {
                         // 2回目エラー: .jpg も失敗
@@ -127,8 +128,7 @@
                     }
                 };
 
-                // 初期ソースの設定（GAS/外部URLを優先、なければローカルの.pngを試す）
-                // .pngファイルが存在すれば、エラーは発生せずここで表示されます。
+                // 初期ソースの設定（GAS/外部URLを優先、なければGitHubの.pngを試す）
                 img.src = member.image_gas || member.image_png;
 
                 card.appendChild(img);
@@ -216,7 +216,7 @@
                 }
             };
             
-            // 初期ソースの設定（GAS/外部URLを優先、なければローカルの.pngを試す）
+            // 初期ソースの設定（GAS/外部URLを優先、なければGitHubの.pngを試す）
             RESULT_IMAGE.src = member.image_gas || member.image_png;
         }
 
