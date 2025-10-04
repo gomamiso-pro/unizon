@@ -14,6 +14,38 @@
   <meta name="msapplication-TileColor" content="#001f44"> <meta name="msapplication-TileImage" content="/images/teams-b.jpg">
 
   <meta name="theme-color" content="#001f44">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    /* QRコード表示エリアのCSS */
+    #qrCodeDisplay {
+        display: none; /* 初期状態では非表示 */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: white;
+        text-align: center;
+    }
+    #qrcode {
+        padding: 15px;
+        background-color: white;
+        border-radius: 8px;
+    }
+    #qrCodeDisplay p {
+        margin-top: 15px;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+  </style>
+
 </head>
 <body>
 
@@ -23,9 +55,11 @@
   <button class="menu-item" onclick="navigate('members')">MEMBER</button>
   <button id="menuRegister" class="menu-item" onclick="navigate('register')" style="display:none;">
     メンバー登録
-　
   </button>  
   <button class="menu-item" onclick="navigate('kujibiki')">★ くじ引き ★</button>
+  
+  <button class="menu-item" onclick="toggleQRCode()">QR</button>
+
   <button class="menu-item" onclick="logout()">LOG-OUT</button>
 
 </nav>
@@ -123,6 +157,11 @@
   </main>
 </div>
 
+<div id="qrCodeDisplay" onclick="toggleQRCode()">
+    <div id="qrcode"></div>
+    <p>このQRコードを読み取ってアクセスしてください</p>
+    <p style="font-size: 0.9rem; margin-top: 5px;">（タップで閉じます）</p>
+</div>
 <footer>&copy; 2025 UNISON Softball Team</footer>
 
 <script src="script.js"></script>
