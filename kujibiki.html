@@ -23,7 +23,8 @@
         }
         header h1 {
             text-align: center;
-            flex-grow: 1; /* 中央を占有 */
+            /* flex-grow: 1; は残すことで、余白を広げ、中央寄せの安定性を向上 */
+            flex-grow: 1;
             margin: 0;
             padding: 0 50px; /* 戻るボタンとの被りを防ぐ */
         }
@@ -37,6 +38,7 @@
             border-radius: 5px;
             background-color: var(--primary-color);
             color: var(--secondary-color);
+            line-height: 1; /* ボタン内の縦方向のズレを調整 */
         }
 
         /* くじ引き専用のCSS */
@@ -165,7 +167,7 @@
     
     <header>
         <button class="menu-item" onclick="window.location.href='index.html'">
-            &larr;
+            &lt;&lt;
         </button>
         <h1>
             <span>くじ引き大会！</span>
@@ -214,8 +216,10 @@
         
         // ★★★ GitHubの画像保存フォルダのURL（キャッシュ対策のため、バージョン番号をクエリとして付与） ★★★
         const GITHUB_BASE_URL = "https://raw.githubusercontent.com/gomamiso-pro/unizon/main/images/member/";
-        const CACHE_BUST = '?v=' + new Date().getTime(); // キャッシュ回避用のクエリ
+        // CACHE_BUSTは毎回異なる値を生成
+        const CACHE_BUST = '?v=' + new Date().getTime(); 
 
+        // DEFAULT_IMAGE_PATHにもクエリを付与
         const DEFAULT_IMAGE_PATH = GITHUB_BASE_URL + '00.png' + CACHE_BUST;
 
         let membersData = []; // 全メンバーデータを格納
@@ -249,15 +253,16 @@
                     membersData = members.map(m => {
                         const memberNumber = String(m.number || '00').trim();
                         
-                        // 画像パスをGitHub URLに設定 (キャッシュ回避クエリを付与)
+                        // 修正: すべてのGitHub URLとGAS画像URLにキャッシュ回避クエリを付与
+                        const gasImageUrl = m.image ? m.image.split('?')[0] + CACHE_BUST : null;
                         const imagePngUrl = GITHUB_BASE_URL + `${memberNumber}.png` + CACHE_BUST;
                         const imageJpgUrl = GITHUB_BASE_URL + `${memberNumber}.jpg` + CACHE_BUST;
 
                         return {
                             nickname: m.nickname,
-                            // GASから来る画像URLを最優先 (GAS側でキャッシュ回避できている前提)
-                            image_gas: m.image,
-                            // GitHubパス（フォールバック）
+                            // GASから来る画像URLを最優先 (クエリ付与済み)
+                            image_gas: gasImageUrl,
+                            // GitHubパス（フォールバック） (クエリ付与済み)
                             image_png: imagePngUrl,
                             image_jpg: imageJpgUrl,
                             number: memberNumber
@@ -295,7 +300,167 @@
                 
                 // ★ 画像エラーハンドラの設定 (GAS/PNG/JPG/00.pngの順に試す) ★
                 let errorCount = 0;
-                let currentSource = member.image_gas || member.image_png; // 最初に試すURL
+                // 最初に試すURLを決定 (GAS優先、なければPNG)
+                let initialSource = member.image_gas || member.image_png; 
+
+                img.onerror = function() {
+                    errorCount++;
+                    
+                    // 1回目エラー: GASのURL または .png が失敗 -> .jpg を試す
+                    if (errorCount === 1) {
+                        this.src = member.image_jpg; 
+                    // 2回目エラー: .jpg も失敗 -> デフォルト 00.png を試す
+                    } else if (errorCount === 2) {
+                        this.src = DEFAULT_IMAGE_PATH; 
+                    // 3回目以降のエラーは無視
+                    } else {
+                        this.onerror = null; 
+                    }
+                };
+
+                // 初期ソースを設定
+                img.src = initialSource;
+
+                card.appendChild(img);
+                
+                const p = document.createElement('p');
+                p.textContent = member.nickname;
+                card.appendChild(p);
+
+                // タップで選択/解除
+                card.addEventListener('click', () => toggleMemberSelection(member, card));
+                
+                MEMBER_GRID.appendChild(card);
+            });
+            
+            const loadingMsgElement = document.getElementById('loading-members');
+            if(loadingMsgElement) loadingMsgElement.style.display = 'none'; 
+        }
+
+        // メンバーの選択/解除
+        function toggleMemberSelection(member, cardElement) {
+            const index = selectedMembers.findIndex(m => m.number === member.number);
+            
+            if (index === -1) {
+                selectedMembers.push(member);
+                cardElement.classList.add('selected');
+            } else {
+                selectedMembers.splice(index, 1);
+                cardElement.classList.remove('selected');
+            }
+
+            SELECTED_COUNT.textContent = selectedMembers.length;
+            checkButtonState();
+        }
+        
+        // ------------------------------------
+        // C. 商品画像機能
+        // ------------------------------------
+        
+        PRIZE_INPUT.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    PRIZE_IMAGE.src = e.target.result;
+                    PRIZE_IMAGE.style.display = 'block';
+                    PRIZE_PROMPT.textContent = '商品画像を設定しました';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                PRIZE_IMAGE.style.display = 'none';
+                PRIZE_PROMPT.textContent = 'タップして商品写真を選ぶ（カメラ/ライブラリ）';
+            }
+        });
+
+        // ------------------------------------
+        // D. 抽選機能
+        // ------------------------------------
+        
+        // くじ引きボタンの有効/無効をチェック
+        function checkButtonState() {
+            if (selectedMembers.length > 0) {
+                BUTTON.disabled = false;
+            } else {
+                BUTTON.disabled = true;
+            }
+        }
+
+        // 最終結果の画像処理 (当選者)
+        function updateResultImage(member) {
+            RESULT_IMAGE.style.display = 'block';
+            
+            RESULT_IMAGE.onerror = null; // エラー処理をリセット
+            
+            // ★ 画像エラーハンドラの設定 (GAS/PNG/JPG/00.pngの順に試す) ★
+            let errorCount = 0;
+            
+            RESULT_IMAGE.onerror = function() {
+                errorCount++;
+
+                if (errorCount === 1) {
+                    // 1回目エラー: GASのURL または .png が失敗
+                    this.src = member.image_jpg; 
+                } else if (errorCount === 2) {
+                    // 2回目エラー: .jpg も失敗
+                    this.src = DEFAULT_IMAGE_PATH; 
+                } else {
+                    this.onerror = null; 
+                }
+            };
+            
+            // 初期ソースの設定（GAS/外部URLを優先、なければGitHubの.pngを試す）
+            RESULT_IMAGE.src = member.image_gas || member.image_png;
+        }
+
+        // くじ引き開始
+        function startKujibiki() {
+            if (BUTTON.disabled || selectedMembers.length === 0) return;
+            
+            BUTTON.disabled = true;
+            RESULT_NAME.textContent = "シャッフル中...";
+            RESULT_IMAGE.style.display = 'none';
+
+            let count = 0;
+            
+            // 抽選のアニメーション（高速で名前を切り替える）
+            intervalId = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * selectedMembers.length);
+                const currentMember = selectedMembers[randomIndex];
+                
+                RESULT_NAME.textContent = currentMember.nickname;
+                
+                count++;
+                
+                // 1.5秒後に停止
+                if (count > 20) {
+                    clearInterval(intervalId);
+                    
+                    // 最終結果を決定
+                    setTimeout(stopKujibiki, 500); 
+                }
+            }, 75); 
+        }
+
+        // くじ引き停止・結果表示
+        function stopKujibiki() {
+            const finalIndex = Math.floor(Math.random() * selectedMembers.length);
+            const winner = selectedMembers[finalIndex];
+
+            RESULT_NAME.textContent = '🎉 ' + winner.nickname + ' が当選！ 🎉';
+            updateResultImage(winner); // 当選者の画像を正しく表示
+            
+            // 抽選が終わったらボタンを再度有効にする
+            BUTTON.disabled = false;
+        }
+
+        // ページロード時にメンバーリストを読み込む
+        window.onload = loadMembersForKujibiki;
+
+    </script>
+</body>
+</html>
+               let currentSource = member.image_gas || member.image_png; // 最初に試すURL
 
                 img.onerror = function() {
                     errorCount++;
