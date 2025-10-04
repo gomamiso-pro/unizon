@@ -1,5 +1,5 @@
 // ============================================
-// UNIZON Softball Team - script.js (最終修正版 - HTML文字列結合の再修正)
+// UNIZON Softball Team - script.js (最終修正版 - 画像表示ロジック修正)
 // ============================================
 
 // Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
@@ -103,7 +103,7 @@ async function loadMembers(){
                 
                 const tr = document.createElement("tr");
                 tr.dataset.number = memberNumber;
-                
+
                 // 1. タッチイベントの処理 (ダブルタップ判定)
                 tr.addEventListener('touchend', (event) => {
                     touchHandled = true; 
@@ -136,17 +136,16 @@ async function loadMembers(){
                 // 画像URLの優先順位設定
                 const imageUrl = m.image || primaryImagePath;
                 
-                // ★ 修正点: onerror属性の値を通常の文字列結合で定義し、改行が入るのを防ぐ
-                const onerrorLogic = "this.onerror=null; if (!'" + (m.image || '') + "'.includes('google.com')) { this.src='" + secondaryImagePath + "'; } this.onerror=function(){this.src='" + DEFAULT_IMAGE_PATH + "';};";
+                // ★ 修正点: tr.innerHTMLで画像タグ全体を組み立て、画像のエラー処理をDOM側で安全に行う
 
-
+                // 画像表示とエラー処理をインラインHTMLから削除し、純粋なimgタグにする
                 tr.innerHTML = `
                     <td>${i + 1}</td>    
-                    <td>
+                    <td id="td-name-${memberNumber}">
                         <img src="${imageUrl}"  
                             class="member-img"      
                             alt="${m.nickname || '画像'}"
-                            onerror="${onerrorLogic}"
+                            id="img-${memberNumber}"
                             style="display: block; margin: 0 auto 5px;"    
                         >
                         <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
@@ -155,6 +154,36 @@ async function loadMembers(){
                     <td>${positionDisplay}</td>    
                 `;
                 tbody.appendChild(tr);
+
+                // --- 画像エラー処理をイベントリスナーとして設定する ---
+                const imgElement = document.getElementById(`img-${memberNumber}`);
+                if (imgElement) {
+                    // エラー処理関数を定義
+                    let errorCount = 0;
+                    imgElement.addEventListener('error', function errorHandler() {
+                        errorCount++;
+                        this.onerror = null; // 再度エラーが起きないようにリスナーを解除
+                        
+                        if (errorCount === 1) {
+                            // 1回目：ローカルのjpgに切り替え
+                            if (!imageUrl.includes('google.com')) {
+                                this.src = secondaryImagePath;
+                            } else {
+                                // GASからの画像URLがエラーの場合、直接デフォルトへ
+                                this.src = DEFAULT_IMAGE_PATH;
+                            }
+                            // 2回目に備えて新しいエラー処理を設定
+                            this.onerror = function(){
+                                this.src = DEFAULT_IMAGE_PATH; // 2回目エラーでデフォルト画像
+                            };
+
+                        } else if (errorCount === 2) {
+                            // 2回目エラー：デフォルト画像に切り替える
+                            this.src = DEFAULT_IMAGE_PATH;
+                        }
+                    });
+                }
+                // --------------------------------------------------------
             });
         } else {
             console.error("メンバー取得エラー（GAS側）:", members.message);
