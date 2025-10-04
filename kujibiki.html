@@ -186,7 +186,10 @@
         
         // ★ メンバーリストアプリと同じAPI URLを設定 ★
         const API_URL = "https://script.google.com/macros/s/AKfycbzROz8hBY31FZB0cECHPXF6DJlX2t8t3rOAHaOBAfWE3M4jYiyw6u3TWG3N0WxPbGFM/exec";
-        const DEFAULT_IMAGE_PATH = 'images/member/00.png';
+        
+        // 画像URLがGAS側で提供されない場合のローカルパス
+        const BASE_IMAGE_PATH = "images/member/"; 
+        const DEFAULT_IMAGE_PATH = BASE_IMAGE_PATH + '00.png';
 
         let membersData = []; // 全メンバーデータを格納
         let selectedMembers = []; // 抽選に参加するメンバーを格納
@@ -218,18 +221,20 @@
                 if (Array.isArray(members) && members.length > 0) {
                     membersData = members.map(m => {
                         const memberNumber = String(m.number || '00').trim();
+                        
                         return {
                             nickname: m.nickname,
-                            // 画像パスを整理 (GAS/外部URLを最優先)
+                            // GASから来る画像URLを最優先（GASで画像URLをJSONに含めて返す場合）
                             image_gas: m.image,
-                            image_png: `images/member/${memberNumber}.png`,
-                            image_jpg: `images/member/${memberNumber}.jpg`,
+                            // ローカルパス（フォールバック）
+                            image_png: BASE_IMAGE_PATH + `${memberNumber}.png`,
+                            image_jpg: BASE_IMAGE_PATH + `${memberNumber}.jpg`,
                             number: memberNumber
                         };
                     });
                     
                     displayMemberSelection(); // メンバー選択グリッドを表示
-                    LOADING_MESSAGE.textContent = ""; // メッセージ非表示
+                    LOADING_MESSAGE.textContent = ""; 
                     
                 } else {
                     LOADING_MESSAGE.textContent = "エラー: メンバーがいません。";
@@ -257,14 +262,14 @@
                 const img = document.createElement('img');
                 img.alt = member.nickname;
                 
-                // ★ 画像エラーハンドラの設定 (PNG/JPG/00.pngの順に試す) ★
+                // ★ 画像エラーハンドラの設定 (GAS/PNG/JPG/00.pngの順に試す) ★
                 let errorCount = 0;
                 img.onerror = function() {
                     errorCount++;
                     
                     if (errorCount === 1) {
-                        // 1回目エラー: GAS/外部URL または .png が失敗
-                        // 次に .jpg を試す
+                        // 1回目エラー: GASのURL または ローカルの.png が失敗
+                        // 次に ローカルの.jpg を試す
                         this.src = member.image_jpg; 
                     } else if (errorCount === 2) {
                         // 2回目エラー: .jpg も失敗
@@ -275,7 +280,8 @@
                     }
                 };
 
-                // 初期ソースの設定（GAS/外部URLを優先、なければ.pngを試す）
+                // 初期ソースの設定（GAS/外部URLを優先、なければローカルの.pngを試す）
+                // .pngファイルが存在すれば、エラーは発生せずここで表示されます。
                 img.src = member.image_gas || member.image_png;
 
                 card.appendChild(img);
@@ -290,7 +296,6 @@
                 MEMBER_GRID.appendChild(card);
             });
             
-            // メンバーが多すぎて読み込みメッセージが残るのを防ぐ
             const loadingMsgElement = document.getElementById('loading-members');
             if(loadingMsgElement) loadingMsgElement.style.display = 'none'; 
         }
@@ -300,11 +305,9 @@
             const index = selectedMembers.findIndex(m => m.number === member.number);
             
             if (index === -1) {
-                // 未選択 -> 選択
                 selectedMembers.push(member);
                 cardElement.classList.add('selected');
             } else {
-                // 選択済み -> 解除
                 selectedMembers.splice(index, 1);
                 cardElement.classList.remove('selected');
             }
@@ -352,23 +355,21 @@
             
             RESULT_IMAGE.onerror = null; // エラー処理をリセット
             
-            // ★ 画像エラーハンドラの設定 (PNG/JPG/00.pngの順に試す) ★
+            // ★ 画像エラーハンドラの設定 (GAS/PNG/JPG/00.pngの順に試す) ★
             let errorCount = 0;
             RESULT_IMAGE.onerror = function() {
                 errorCount++;
 
                 if (errorCount === 1) {
-                    // 1回目エラー: GAS/外部URL または .png が失敗
                     this.src = member.image_jpg; 
                 } else if (errorCount === 2) {
-                    // 2回目エラー: .jpg も失敗
-                    this.src = DEFAULT_IMAGE_PATH; // デフォルト 00.png を試す
+                    this.src = DEFAULT_IMAGE_PATH; 
                 } else {
                     this.onerror = null; 
                 }
             };
             
-            // 初期ソースの設定（GAS/外部URLを優先、なければ.pngを試す）
+            // 初期ソースの設定（GAS/外部URLを優先、なければローカルの.pngを試す）
             RESULT_IMAGE.src = member.image_gas || member.image_png;
         }
 
