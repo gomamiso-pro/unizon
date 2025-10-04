@@ -1,5 +1,5 @@
 // ============================================
-// UNIZON Softball Team - script.js (最終修正版 - タッチイベント強化)
+// UNIZON Softball Team - script.js (最終修正版 - HTML文字列結合の再修正)
 // ============================================
 
 // Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
@@ -59,7 +59,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             localStorage.setItem("loggedIn", "true"); 
             
         } else {
-            messageElement.textContent = data.message || "ログインIDまたはパスワードが違います。";
+            messageElement.textContent = data.message || "ログインIDまたは背番号が違います。";
         }
 
     } catch (err) {
@@ -135,6 +135,10 @@ async function loadMembers(){
 
                 // 画像URLの優先順位設定
                 const imageUrl = m.image || primaryImagePath;
+                
+                // ★ 修正点: onerror属性の値を通常の文字列結合で定義し、改行が入るのを防ぐ
+                const onerrorLogic = "this.onerror=null; if (!'" + (m.image || '') + "'.includes('google.com')) { this.src='" + secondaryImagePath + "'; } this.onerror=function(){this.src='" + DEFAULT_IMAGE_PATH + "';};";
+
 
                 tr.innerHTML = `
                     <td>${i + 1}</td>    
@@ -142,14 +146,7 @@ async function loadMembers(){
                         <img src="${imageUrl}"  
                             class="member-img"      
                             alt="${m.nickname || '画像'}"
-                            // onerrorで、GAS画像がなければローカルPNG->ローカルJPG->デフォルトの順に試す
-                            onerror="
-                                this.onerror=null; 
-                                if (!'${m.image || ''}'.includes('google.com')) {
-                                    this.src='${secondaryImagePath}'; 
-                                }
-                                this.onerror=function(){this.src='${DEFAULT_IMAGE_PATH}';};
-                            "
+                            onerror="${onerrorLogic}"
                             style="display: block; margin: 0 auto 5px;"    
                         >
                         <p style="text-align: center; margin: 0;">${m.nickname || ''}</p>
