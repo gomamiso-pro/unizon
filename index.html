@@ -15,8 +15,6 @@
 
   <meta name="theme-color" content="#001f44">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.0.0/qrcode.min.js"></script>
-
   <style>
     /* QRコード表示エリアのCSS */
     #qrCodeDisplay {
@@ -28,6 +26,8 @@
         height: 100%;
         background-color: rgba(0, 0, 0, 0.8);
         z-index: 1000;
+        /* flexを使うことで、#qrcodeDisplayのclickイベントが発火しやすくなる */
+        display: flex; 
         justify-content: center;
         align-items: center;
         flex-direction: column;
