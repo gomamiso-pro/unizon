@@ -14,6 +14,31 @@
             --selection-color: #f39c12; /* 選択時の色 */
         }
 
+        /* ヘッダーの中央寄せと戻るボタンの調整 */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* タイトルを中央に寄せる */
+            position: relative; /* 戻るボタン配置の基準 */
+        }
+        header h1 {
+            text-align: center;
+            flex-grow: 1; /* 中央を占有 */
+            margin: 0;
+            padding: 0 50px; /* 戻るボタンとの被りを防ぐ */
+        }
+        header .menu-item {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 5px 10px;
+            font-size: 1.5rem; /* 矢印を大きく見やすく */
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
         /* くじ引き専用のCSS */
         #kujibiki-page {
             text-align: center;
@@ -138,9 +163,9 @@
 </head>
 <body>
     
-    <header style="justify-content: flex-start;">
-        <button class="menu-item" style="margin-right: 15px;" onclick="window.location.href='index.html'">
-            メニューに戻る
+    <header>
+        <button class="menu-item" onclick="window.location.href='index.html'">
+            &larr;
         </button>
         <h1>
             <span>くじ引き大会！</span>
@@ -187,10 +212,11 @@
         // ★ メンバーリストアプリと同じAPI URLを設定 ★
         const API_URL = "https://script.google.com/macros/s/AKfycbzROz8hBY31FZB0cECHPXF6DJlX2t8t3rOAHaOBAfWE3M4jYiyw6u3TWG3N0WxPbGFM/exec";
         
-        // ★★★ GitHubの画像保存フォルダのURL ★★★
+        // ★★★ GitHubの画像保存フォルダのURL（キャッシュ対策のため、バージョン番号をクエリとして付与） ★★★
         const GITHUB_BASE_URL = "https://raw.githubusercontent.com/gomamiso-pro/unizon/main/images/member/";
-        
-        const DEFAULT_IMAGE_PATH = GITHUB_BASE_URL + '00.png';
+        const CACHE_BUST = '?v=' + new Date().getTime(); // キャッシュ回避用のクエリ
+
+        const DEFAULT_IMAGE_PATH = GITHUB_BASE_URL + '00.png' + CACHE_BUST;
 
         let membersData = []; // 全メンバーデータを格納
         let selectedMembers = []; // 抽選に参加するメンバーを格納
@@ -223,13 +249,13 @@
                     membersData = members.map(m => {
                         const memberNumber = String(m.number || '00').trim();
                         
-                        // 画像パスをGitHub URLに設定
-                        const imagePngUrl = GITHUB_BASE_URL + `${memberNumber}.png`;
-                        const imageJpgUrl = GITHUB_BASE_URL + `${memberNumber}.jpg`;
+                        // 画像パスをGitHub URLに設定 (キャッシュ回避クエリを付与)
+                        const imagePngUrl = GITHUB_BASE_URL + `${memberNumber}.png` + CACHE_BUST;
+                        const imageJpgUrl = GITHUB_BASE_URL + `${memberNumber}.jpg` + CACHE_BUST;
 
                         return {
                             nickname: m.nickname,
-                            // GASから来る画像URLを最優先
+                            // GASから来る画像URLを最優先 (GAS側でキャッシュ回避できている前提)
                             image_gas: m.image,
                             // GitHubパス（フォールバック）
                             image_png: imagePngUrl,
@@ -269,6 +295,8 @@
                 
                 // ★ 画像エラーハンドラの設定 (GAS/PNG/JPG/00.pngの順に試す) ★
                 let errorCount = 0;
+                let currentSource = member.image_gas || member.image_png; // 最初に試すURL
+
                 img.onerror = function() {
                     errorCount++;
                     
@@ -276,9 +304,11 @@
                         // 1回目エラー: GASのURL または .png が失敗
                         // 次に .jpg を試す
                         this.src = member.image_jpg; 
+                        currentSource = member.image_jpg;
                     } else if (errorCount === 2) {
                         // 2回目エラー: .jpg も失敗
                         this.src = DEFAULT_IMAGE_PATH; // デフォルト 00.png を試す
+                        currentSource = DEFAULT_IMAGE_PATH;
                     } else {
                         // 3回目以降のエラーは無視
                         this.onerror = null; 
@@ -286,7 +316,7 @@
                 };
 
                 // 初期ソースの設定（GAS/外部URLを優先、なければGitHubの.pngを試す）
-                img.src = member.image_gas || member.image_png;
+                img.src = currentSource;
 
                 card.appendChild(img);
                 
@@ -361,12 +391,15 @@
             
             // ★ 画像エラーハンドラの設定 (GAS/PNG/JPG/00.pngの順に試す) ★
             let errorCount = 0;
+            
             RESULT_IMAGE.onerror = function() {
                 errorCount++;
 
                 if (errorCount === 1) {
+                    // 1回目エラー: GASのURL または .png が失敗
                     this.src = member.image_jpg; 
                 } else if (errorCount === 2) {
+                    // 2回目エラー: .jpg も失敗
                     this.src = DEFAULT_IMAGE_PATH; 
                 } else {
                     this.onerror = null; 
