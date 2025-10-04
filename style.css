@@ -1,5 +1,5 @@
 /*
- * UNIZON Softball Team - style.css (最終調整版 - 横スクロールなし対応)
+ * UNIZON Softball Team - style.css (最終調整版 - 堅牢性強化)
  */
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
 
@@ -308,8 +308,8 @@ button[type="submit"]:hover,
  * メンバーリストのテーブル
  */
 #members {
-    /* ★ 修正: 横スクロールを非表示にする ★ */
-    overflow-x: hidden; 
+    /* テーブルが画面幅を超えた場合、横スクロールできるようにする */
+    overflow-x: auto; 
     padding-bottom: 10px;
 }
 
@@ -317,14 +317,13 @@ button[type="submit"]:hover,
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0 10px;
-    /* ★ 修正: レイアウトを自動調整に戻し、幅に収まるようにする ★ */
-    table-layout: auto; 
-    min-width: 100%;
+    table-layout: fixed; 
+    min-width: 480px;
 }
 
 #members th,
 #members td {
-    padding: 8px 5px; /* パディングを少し減らす */
+    padding: 12px;
     text-align: center; 
     vertical-align: middle; 
     border: none; 
@@ -352,6 +351,7 @@ button[type="submit"]:hover,
 #members thead th:first-child {
     writing-mode: horizontal-tb;
     height: auto; 
+    width: 10%; 
     padding: 10px 5px;
     text-align: center;
     letter-spacing: -1px; 
@@ -359,9 +359,20 @@ button[type="submit"]:hover,
 }
 
 
+/* 列幅の調整 */
+#members thead th:nth-child(1),
+#members tbody td:nth-child(1) { width: 10%; } /* No. */
+#members thead th:nth-child(2),
+#members tbody td:nth-child(2) { width: 45%; } /* 画像/ニックネーム */
+#members thead th:nth-child(3),
+#members tbody td:nth-child(3) { width: 30%; } /* 背番号 */
+#members thead th:nth-child(4),
+#members tbody td:nth-child(4) { width: 15%; } /* 守備 */
+
+
 /* 背番号のスタイル (3列目) */
 #members td:nth-child(3) { 
-    font-size: 30px; /* フォントサイズを少し小さく */
+    font-size: 35px;
     font-weight: bold; 
     text-align: center;
     background-image: url('images/uniform.jpg'); 
@@ -411,8 +422,8 @@ button[type="submit"]:hover,
 
 /* 画像の枠線色の修正 */
 #members img {
-    width: 60px; /* ★ 修正: 画像サイズを縮小 ★ */
-    height: 60px;
+    width: 70px;
+    height: 70px;
     object-fit: cover;
     border-radius: 50%; 
     border: 2px solid var(--secondary-color); 
