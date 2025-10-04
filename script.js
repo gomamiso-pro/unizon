@@ -381,46 +381,49 @@ function logout(){
     localStorage.removeItem("loggedIn");
     localStorage.removeItem("role"); 
 }
-// --- QRコード表示機能 ---
 
-// QRコードのインスタンスを格納する変数
+// ------------------------------------
+// ★★★ QRコード表示機能（最終確定版） ★★★
+// ------------------------------------
+
 let qrcodeInstance = null;
 const QR_CODE_CONTAINER = document.getElementById('qrcode');
 const QR_DISPLAY = document.getElementById('qrCodeDisplay');
 
+// QRコードに埋め込むサイトURLを固定で指定
+// URL: https://gomamiso-pro.github.io/unizon/
+const SITE_URL = "https://gomamiso-pro.github.io/unizon/";
+
 /**
- * サイトのURLをQRコードとして生成し、表示/非表示を切り替えます。
+ * サイトのURLをQRコードとして表示/非表示を切り替えます。
  */
 function toggleQRCode() {
-    // 現在非表示なら表示する
+    closeMenu(); // メニューを閉じる
+
+    // 初回実行時のみQRコードを生成する
+    if (!qrcodeInstance && typeof QRCode !== 'undefined') {
+        
+        // QRコードの生成
+        // NOTE: qrcode.jsライブラリが<head>で読み込まれていることが前提です
+        qrcodeInstance = new QRCode(QR_CODE_CONTAINER, {
+            text: SITE_URL,
+            width: 200,
+            height: 200,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+        console.log("QRコードを生成しました。URL:", SITE_URL);
+    }
+    
+    // 表示・非表示を切り替える
     if (QR_DISPLAY.style.display === 'none' || QR_DISPLAY.style.display === '') {
-        closeMenu(); // メニューを閉じる
-
-        // 初回実行時のみQRコードを生成する
-        if (!qrcodeInstance) {
-            // QRコードに埋め込むURLを取得
-            // サイトのルートURLを使用 (例: https://gomamiso-pro.github.io/unizon/)
-            const siteUrl = window.location.origin + window.location.pathname;
-
-            // QRコードの生成
-            qrcodeInstance = new QRCode(QR_CODE_CONTAINER, {
-                text: siteUrl,
-                width: 200,
-                height: 200,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-            // 既存のコンテンツをクリアして、新しいQRコードのみを表示
-            // qrcode.jsがコンテナ内にCanvas/Img要素を追加するため、通常はこの操作は不要
-        }
-
         QR_DISPLAY.style.display = 'flex'; // 表示
     } else {
-        // 表示中なら非表示にする
         QR_DISPLAY.style.display = 'none'; // 非表示
     }
 }
+// ------------------------------------------
 
 // ページロード時にログイン状態確認
 window.addEventListener("load", () => {
