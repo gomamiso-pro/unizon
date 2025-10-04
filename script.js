@@ -368,6 +368,31 @@ function logout(){
     localStorage.removeItem("role"); 
 }
 
+// script.js の navigate 関数
+function navigate(page){
+    // 個別のHTMLファイルに遷移する場合
+    if (page === 'kujibiki') {
+        window.location.href = 'kujibiki.html';
+        return;
+    }
+    
+    // 単一ページ内のセクション遷移の場合
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    const targetPage = document.getElementById(page);
+    if (targetPage) {
+        targetPage.classList.add("active");
+    }
+
+    if (page === 'members') {
+        loadMembers();
+    }
+    if (page === 'register') {
+        resetRegisterForm();    
+    }
+    
+    closeMenu();        
+}
+
 // ページロード時にログイン状態確認
 window.addEventListener("load", () => {
     if(localStorage.getItem("loggedIn") === "true"){
