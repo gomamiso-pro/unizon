@@ -113,13 +113,11 @@
                     membersData = members.map(m => {
                         const memberNumber = String(m.number || '00').trim();
                         // 画像URLの優先順位を設定（GAS/外部URL > .png > .jpg）
-                        const primaryImagePath = `images/member/${memberNumber}.png`;
-                        const secondaryImagePath = `images/member/${memberNumber}.jpg`;
-                        
                         return {
                             nickname: m.nickname,
-                            image: m.image || primaryImagePath,
-                            secondaryImage: secondaryImagePath,
+                            // メンバーオブジェクトに現在の状態を保持させる
+                            image_path: m.image || `images/member/${memberNumber}.png`,
+                            secondary_path: `images/member/${memberNumber}.jpg`,
                             number: memberNumber
                         };
                     });
@@ -139,29 +137,32 @@
         // 画像を表示・更新する関数（エラー処理含む）
         function updateResultImage(member) {
             RESULT_IMAGE.style.display = 'block';
-            let initialImageUrl = member.image;
-            RESULT_IMAGE.src = initialImageUrl;
             
-            // エラー処理 (DOM Element Listener)
+            // エラー処理をリセット
+            RESULT_IMAGE.onerror = null; 
+            
+            // エラー処理を設定
+            let errorAttempts = 0;
             RESULT_IMAGE.onerror = function() {
-                // 1回目エラー: .png (またはGAS URL) が失敗した場合
-                if (initialImageUrl === member.image) {
-                    // GAS URLを試していて失敗した場合、ローカル.pngを試す
-                    this.src = member.image.includes('google.com') ? member.image : member.secondaryImage;
-                    
-                } else if (initialImageUrl === member.secondaryImage) {
-                    // .jpgも失敗した場合
+                errorAttempts++;
+
+                if (errorAttempts === 1) {
+                    // 1回目エラー: GAS URL または primary .png が失敗
+                    // primary .png が失敗したと仮定し、secondary .jpg を試す
+                    this.src = member.secondary_path;
+
+                } else if (errorAttempts === 2) {
+                    // 2回目エラー: secondary .jpg も失敗
                     this.src = DEFAULT_IMAGE_PATH; // デフォルト画像へ
-                    
+
                 } else {
-                    // 予期せぬエラー、またはデフォルトも失敗
-                    this.onerror = null; // リスナー解除
-                    this.src = DEFAULT_IMAGE_PATH; // 安全策として再設定
+                    // 3回目以降のエラーは無視
+                    this.onerror = null; 
                 }
-                
-                // 次の段階のURLをinitialImageUrlに設定してループさせる
-                initialImageUrl = this.src;
             };
+            
+            // 初期の画像ソースを設定（ここでエラーが発生すればonerrorが呼ばれる）
+            RESULT_IMAGE.src = member.image_path;
         }
 
 
@@ -181,9 +182,6 @@
                 const currentMember = membersData[randomIndex];
                 
                 RESULT_NAME.textContent = currentMember.nickname;
-                
-                // 画像も高速で切り替える (頻繁な画像ロードは重いので、今回は名前のみ高速切り替え)
-                // updateResultImage(currentMember); 
                 
                 count++;
                 
