@@ -383,7 +383,7 @@ function logout(){
 }
 
 // ------------------------------------
-// ★★★ QRコード表示機能（最終確定版） ★★★
+// ★★★ QRコード表示機能（再生成ロジック追加版） ★★★
 // ------------------------------------
 
 let qrcodeInstance = null;
@@ -400,27 +400,36 @@ const SITE_URL = "https://gomamiso-pro.github.io/unizon/";
 function toggleQRCode() {
     closeMenu(); // メニューを閉じる
 
-    // 初回実行時のみQRコードを生成する
-    if (!qrcodeInstance && typeof QRCode !== 'undefined') {
-        
-        // QRコードの生成
-        // NOTE: qrcode.jsライブラリが<head>で読み込まれていることが前提です
-        qrcodeInstance = new QRCode(QR_CODE_CONTAINER, {
-            text: SITE_URL,
-            width: 200,
-            height: 200,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
-        console.log("QRコードを生成しました。URL:", SITE_URL);
-    }
-    
-    // 表示・非表示を切り替える
+    // 表示する際にのみ、QRコードを確実に生成/再生成する
     if (QR_DISPLAY.style.display === 'none' || QR_DISPLAY.style.display === '') {
+        
+        // 【重要】既存のQRコードとコンテナをクリーンアップ
+        if (qrcodeInstance) {
+             // コンテナの内容をクリアしてリセット
+             QR_CODE_CONTAINER.innerHTML = ''; 
+             qrcodeInstance = null;
+        }
+
+        // ライブラリが読み込まれていることを確認し、QRコードを生成
+        if (typeof QRCode !== 'undefined') {
+            qrcodeInstance = new QRCode(QR_CODE_CONTAINER, {
+                text: SITE_URL,
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+            console.log("QRコードを生成しました。URL:", SITE_URL);
+        } else {
+            console.error("エラー: QRコードライブラリ (qrcode.js) が読み込まれていません。index.htmlの<head>を確認してください。");
+        }
+        
         QR_DISPLAY.style.display = 'flex'; // 表示
+
     } else {
-        QR_DISPLAY.style.display = 'none'; // 非表示
+        // 非表示にする
+        QR_DISPLAY.style.display = 'none';
     }
 }
 // ------------------------------------------
