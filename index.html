@@ -7,8 +7,6 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!--<link rel="icon" type="image/x-icon" href="/favicon.ico">-->
-  
   <link rel="apple-touch-icon" sizes="180x180" href="/images/teams-b.jpg">
 
   <link rel="icon" type="image/png" sizes="192x192" href="/images/teams-b.jpg">
@@ -39,7 +37,7 @@
       <div class="bar"></div>
     </button>
     <h1> 
-      <img src="images/teams-r.jpg" alt="Team Logo" class="header-logo"><p>&nbsp; UNIZON　47</p>
+      <img src="images/teams-r.jpg" alt="Team Logo" class="header-logo"><p>&nbsp; UNIZON　48</p>
     </h1>
   </header>
 
@@ -83,7 +81,8 @@
             <th>守備</th>
           </tr>
         </thead>
-        <tbody id="memberTable"></tbody>
+        <tbody id="memberTable">
+          </tbody>
       </table>
     </div>
 
@@ -96,12 +95,23 @@
         <label>ニックネーム:
           <input type="text" name="nickname" required>
         </label>
-        <label>ポジション:
-          <input type="text" name="position" >
-        </label>
-        <label>画像:
-          <input type="file" id="fileInput" accept="image/*" >
-        </label>
+        
+        <div class="position-selection">
+          <label style="font-weight: 700; margin-bottom: 5px;">ポジション (複数選択可):</label>
+          <div class="checkbox-group" style="display: flex; flex-wrap: wrap; gap: 10px;">
+            <label><input type="checkbox" name="position" value="投"> 投</label>
+            <label><input type="checkbox" name="position" value="捕"> 捕</label>
+            <label><input type="checkbox" name="position" value="一"> 一</label>
+            <label><input type="checkbox" name="position" value="二"> 二</label>
+            <label><input type="checkbox" name="position" value="三"> 三</label>
+            <label><input type="checkbox" name="position" value="遊"> 遊</label>
+            <label><input type="checkbox" name="position" value="左"> 左</label>
+            <label><input type="checkbox" name="position" value="中"> 中</label>
+            <label><input type="checkbox" name="position" value="右"> 右</label>
+            <label><input type="checkbox" name="position" value="内"> 内</label>
+            <label><input type="checkbox" name="position" value="外"> 外</label>
+          </div>
+        </div>
         <button type="submit">登録</button>
       </form>
     </div>
