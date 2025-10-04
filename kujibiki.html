@@ -1,157 +1,4 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>くじ引き - UNIZON Softball Team</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <style>
-        :root {
-            --primary-color: #001f44;
-            --secondary-color: #ffffff;
-            --accent-color: #e74c3c;
-            --selection-color: #f39c12; /* 選択時の色 */
-        }
-
-        /* くじ引き専用のCSS */
-        #kujibiki-page {
-            text-align: center;
-        }
-        
-        /* 1. 商品画像エリア */
-        #prize-area {
-            border: 2px dashed #ccc;
-            padding: 10px;
-            margin: 20px auto;
-            width: 90%;
-            max-width: 300px;
-            cursor: pointer;
-            border-radius: 8px;
-        }
-        #prize-image {
-            width: 100%;
-            height: 150px;
-            object-fit: contain; /* 画像全体を表示 */
-            border-radius: 4px;
-            display: block;
-            margin: 5px auto;
-        }
-        
-        /* 2. 参加者選択エリア */
-        #member-selection-area {
-            margin-top: 30px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        #member-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            max-height: 250px;
-            overflow-y: auto;
-            padding: 5px;
-            border-top: 1px solid #eee;
-            margin-top: 10px;
-        }
-        .member-card {
-            width: 65px;
-            padding: 5px;
-            border: 2px solid transparent;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            background-color: #f9f9f9;
-        }
-        .member-card.selected {
-            border-color: var(--selection-color);
-            background-color: #fffbe6;
-            transform: scale(1.05);
-        }
-        .member-card img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 50%;
-            display: block;
-            margin: 0 auto;
-        }
-        .member-card p {
-            font-size: 0.7rem;
-            margin: 3px 0 0;
-            font-weight: bold;
-            color: var(--primary-color);
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-        
-        /* 3. 結果表示エリア */
-        #result-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 30px 0;
-            min-height: 150px; /* 結果表示エリアを確保 */
-        }
-        #result-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 4px solid var(--accent-color);
-            margin-bottom: 10px;
-            background-color: #ccc; 
-            display: none; 
-        }
-        #result-name {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--accent-color);
-            min-height: 50px;
-        }
-        
-        /* 4. ボタン */
-        #kujibiki-button {
-            padding: 15px 40px;
-            font-size: 1.5rem;
-            background-color: var(--primary-color);
-            color: var(--secondary-color);
-            border-radius: 10px;
-            transition: background-color 0.3s;
-        }
-        #kujibiki-button:hover:not(:disabled) {
-            background-color: #003366;
-        }
-        #kujibiki-button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-    </style>
-</head>
-<body>
-    
-    <header style="justify-content: flex-start;">
-        <button class="menu-item" style="margin-right: 15px;" onclick="window.location.href='index.html'">
-            メニューに戻る
-        </button>
-        <h1>
-            <span>くじ引き大会！</span>
-        </h1>
-    </header>
-
-    <main id="app">
-        <section id="kujibiki-page" class="page active" style="display: flex; flex-direction: column; align-items: center;">
-            
-            <h2>🎉 商品と参加者を設定 🎉</h2>
-            
+          
             <p id="loading-message">メンバーリストを読み込み中...</p>
             
             <h3>① 商品の写真を選択</h3>
@@ -370,6 +217,432 @@
             };
             
             // 初期ソースの設定（GAS/外部URLを優先、なければローカルの.pngを試す）
+            RESULT_IMAGE.src = member.image_gas || member.image_png;
+        }
+
+        // くじ引き開始
+        function startKujibiki() {
+            if (BUTTON.disabled || selectedMembers.length === 0) return;
+            
+            BUTTON.disabled = true;
+            RESULT_NAME.textContent = "シャッフル中...";
+            RESULT_IMAGE.style.display = 'none';
+
+            let count = 0;
+            
+            // 抽選のアニメーション（高速で名前を切り替える）
+            intervalId = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * selectedMembers.length);
+                const currentMember = selectedMembers[randomIndex];
+                
+                RESULT_NAME.textContent = currentMember.nickname;
+                
+                count++;
+                
+                // 1.5秒後に停止
+                if (count > 20) {
+                    clearInterval(intervalId);
+                    
+                    // 最終結果を決定
+                    setTimeout(stopKujibiki, 500); 
+                }
+            }, 75); 
+        }
+
+        // くじ引き停止・結果表示
+        function stopKujibiki() {
+            const finalIndex = Math.floor(Math.random() * selectedMembers.length);
+            const winner = selectedMembers[finalIndex];
+
+            RESULT_NAME.textContent = '🎉 ' + winner.nickname + ' が当選！ 🎉';
+            updateResultImage(winner); // 当選者の画像を正しく表示
+            
+            // 抽選が終わったらボタンを再度有効にする
+            BUTTON.disabled = false;
+        }
+
+        // ページロード時にメンバーリストを読み込む
+        window.onload = loadMembersForKujibiki;
+
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>くじ引き - UNIZON Softball Team</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        :root {
+            --primary-color: #001f44;
+            --secondary-color: #ffffff;
+            --accent-color: #e74c3c;
+            --selection-color: #f39c12; /* 選択時の色 */
+        }
+
+        /* くじ引き専用のCSS */
+        #kujibiki-page {
+            text-align: center;
+        }
+        
+        /* 1. 商品画像エリア */
+        #prize-area {
+            border: 2px dashed #ccc;
+            padding: 10px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 300px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        #prize-image {
+            width: 100%;
+            height: 150px;
+            object-fit: contain; /* 画像全体を表示 */
+            border-radius: 4px;
+            display: block;
+            margin: 5px auto;
+        }
+        
+        /* 2. 参加者選択エリア */
+        #member-selection-area {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #member-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 5px;
+            border-top: 1px solid #eee;
+            margin-top: 10px;
+        }
+        .member-card {
+            width: 65px;
+            padding: 5px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #f9f9f9;
+        }
+        .member-card.selected {
+            border-color: var(--selection-color);
+            background-color: #fffbe6;
+            transform: scale(1.05);
+        }
+        .member-card img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+        }
+        .member-card p {
+            font-size: 0.7rem;
+            margin: 3px 0 0;
+            font-weight: bold;
+            color: var(--primary-color);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        
+        /* 3. 結果表示エリア */
+        #result-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            min-height: 150px; /* 結果表示エリアを確保 */
+        }
+        #result-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--accent-color);
+            margin-bottom: 10px;
+            background-color: #ccc; 
+            display: none; 
+        }
+        #result-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            min-height: 50px;
+        }
+        
+        /* 4. ボタン */
+        #kujibiki-button {
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        #kujibiki-button:hover:not(:disabled) {
+            background-color: #003366;
+        }
+        #kujibiki-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    
+    <header style="justify-content: flex-start;">
+        <button class="menu-item" style="margin-right: 15px;" onclick="window.location.href='index.html'">
+            メニューに戻る
+        </button>
+        <h1>
+            <span>くじ引き大会！</span>
+        </h1>
+    </header>
+
+    <main id="app">
+        <section id="kujibiki-page" class="page active" style="display: flex; flex-direction: column; align-items: center;">
+            
+            <h2>🎉 商品と参加者を設定 🎉</h2>
+            
+            <p id="loading-message">メンバーリストを読み込み中...</p>
+            
+            <h3>① 商品の写真を選択</h3>
+            <div id="prize-area" onclick="document.getElementById('prizeInput').click()">
+                <input type="file" id="prizeInput" accept="image/*" style="display:none;">
+                <img id="prize-image" src="" alt="商品画像" style="display: none;">
+                <p id="prize-prompt">タップして商品写真を選ぶ（カメラ/ライブラリ）</p>
+            </div>
+
+            <h3>② 参加者をピックアップ（タップで選択）</h3>
+            <div id="member-selection-area">
+                <p>参加メンバー：<span id="selected-count">0</span>人</p>
+                <div id="member-grid">
+                    <p id="loading-members">メンバーを読み込み中...</p>
+                </div>
+            </div>
+            
+            <div id="result-container">
+                <img id="result-image" src="" alt="当選者画像">
+                <div id="result-name">---</div>
+            </div>
+            
+            <button id="kujibiki-button" onclick="startKujibiki()" disabled>くじを引く！</button>
+
+            <p style="margin-top: 20px;">※ 参加者を1人以上選んでください。</p>
+
+        </section>
+    </main>
+
+    <script>
+        // --- くじ引きのロジック ---
+        
+        // ★ メンバーリストアプリと同じAPI URLを設定 ★
+        const API_URL = "https://script.google.com/macros/s/AKfycbzROz8hBY31FZB0cECHPXF6DJlX2t8t3rOAHaOBAfWE3M4jYiyw6u3TWG3N0WxPbGFM/exec";
+        
+        // ★★★ GitHubの画像保存フォルダのURL ★★★
+        const GITHUB_BASE_URL = "https://raw.githubusercontent.com/gomamiso-pro/unizon/main/images/member/";
+        
+        const DEFAULT_IMAGE_PATH = GITHUB_BASE_URL + '00.png';
+
+        let membersData = []; // 全メンバーデータを格納
+        let selectedMembers = []; // 抽選に参加するメンバーを格納
+        
+        // DOM要素の取得
+        const RESULT_IMAGE = document.getElementById('result-image');
+        const RESULT_NAME = document.getElementById('result-name');
+        const BUTTON = document.getElementById('kujibiki-button');
+        const LOADING_MESSAGE = document.getElementById('loading-message');
+        const MEMBER_GRID = document.getElementById('member-grid');
+        const SELECTED_COUNT = document.getElementById('selected-count');
+        const PRIZE_INPUT = document.getElementById('prizeInput');
+        const PRIZE_IMAGE = document.getElementById('prize-image');
+        const PRIZE_PROMPT = document.getElementById('prize-prompt');
+        
+        let intervalId;
+
+        // ------------------------------------
+        // A. メンバーデータ読み込み
+        // ------------------------------------
+
+        // メンバーデータを非同期で読み込む関数
+        async function loadMembersForKujibiki() {
+            LOADING_MESSAGE.textContent = "メンバーリストを読み込み中...";
+            try {
+                const res = await fetch(API_URL);
+                const members = await res.json();
+
+                if (Array.isArray(members) && members.length > 0) {
+                    membersData = members.map(m => {
+                        const memberNumber = String(m.number || '00').trim();
+                        
+                        // 画像パスをGitHub URLに設定
+                        const imagePngUrl = GITHUB_BASE_URL + `${memberNumber}.png`;
+                        const imageJpgUrl = GITHUB_BASE_URL + `${memberNumber}.jpg`;
+
+                        return {
+                            nickname: m.nickname,
+                            // GASから来る画像URLを最優先
+                            image_gas: m.image,
+                            // GitHubパス（フォールバック）
+                            image_png: imagePngUrl,
+                            image_jpg: imageJpgUrl,
+                            number: memberNumber
+                        };
+                    });
+                    
+                    displayMemberSelection(); // メンバー選択グリッドを表示
+                    LOADING_MESSAGE.textContent = ""; 
+                    
+                } else {
+                    LOADING_MESSAGE.textContent = "エラー: メンバーがいません。";
+                }
+            } catch (err) {
+                LOADING_MESSAGE.textContent = "エラー: メンバーリストの取得に失敗しました。";
+                console.error("メンバー取得通信エラー:", err);
+            }
+        }
+        
+        // ------------------------------------
+        // B. メンバー選択機能
+        // ------------------------------------
+
+        // メンバー選択グリッドをDOMに表示
+        function displayMemberSelection() {
+            MEMBER_GRID.innerHTML = '';
+            
+            membersData.forEach(member => {
+                const card = document.createElement('div');
+                card.className = 'member-card';
+                card.dataset.number = member.number;
+                
+                // 画像要素の生成
+                const img = document.createElement('img');
+                img.alt = member.nickname;
+                
+                // ★ 画像エラーハンドラの設定 (GAS/PNG/JPG/00.pngの順に試す) ★
+                let errorCount = 0;
+                img.onerror = function() {
+                    errorCount++;
+                    
+                    if (errorCount === 1) {
+                        // 1回目エラー: GASのURL または .png が失敗
+                        // 次に .jpg を試す
+                        this.src = member.image_jpg; 
+                    } else if (errorCount === 2) {
+                        // 2回目エラー: .jpg も失敗
+                        this.src = DEFAULT_IMAGE_PATH; // デフォルト 00.png を試す
+                    } else {
+                        // 3回目以降のエラーは無視
+                        this.onerror = null; 
+                    }
+                };
+
+                // 初期ソースの設定（GAS/外部URLを優先、なければGitHubの.pngを試す）
+                img.src = member.image_gas || member.image_png;
+
+                card.appendChild(img);
+                
+                const p = document.createElement('p');
+                p.textContent = member.nickname;
+                card.appendChild(p);
+
+                // タップで選択/解除
+                card.addEventListener('click', () => toggleMemberSelection(member, card));
+                
+                MEMBER_GRID.appendChild(card);
+            });
+            
+            const loadingMsgElement = document.getElementById('loading-members');
+            if(loadingMsgElement) loadingMsgElement.style.display = 'none'; 
+        }
+
+        // メンバーの選択/解除
+        function toggleMemberSelection(member, cardElement) {
+            const index = selectedMembers.findIndex(m => m.number === member.number);
+            
+            if (index === -1) {
+                selectedMembers.push(member);
+                cardElement.classList.add('selected');
+            } else {
+                selectedMembers.splice(index, 1);
+                cardElement.classList.remove('selected');
+            }
+
+            SELECTED_COUNT.textContent = selectedMembers.length;
+            checkButtonState();
+        }
+        
+        // ------------------------------------
+        // C. 商品画像機能
+        // ------------------------------------
+        
+        PRIZE_INPUT.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    PRIZE_IMAGE.src = e.target.result;
+                    PRIZE_IMAGE.style.display = 'block';
+                    PRIZE_PROMPT.textContent = '商品画像を設定しました';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                PRIZE_IMAGE.style.display = 'none';
+                PRIZE_PROMPT.textContent = 'タップして商品写真を選ぶ（カメラ/ライブラリ）';
+            }
+        });
+
+        // ------------------------------------
+        // D. 抽選機能
+        // ------------------------------------
+        
+        // くじ引きボタンの有効/無効をチェック
+        function checkButtonState() {
+            if (selectedMembers.length > 0) {
+                BUTTON.disabled = false;
+            } else {
+                BUTTON.disabled = true;
+            }
+        }
+
+        // 最終結果の画像処理 (当選者)
+        function updateResultImage(member) {
+            RESULT_IMAGE.style.display = 'block';
+            
+            RESULT_IMAGE.onerror = null; // エラー処理をリセット
+            
+            // ★ 画像エラーハンドラの設定 (GAS/PNG/JPG/00.pngの順に試す) ★
+            let errorCount = 0;
+            RESULT_IMAGE.onerror = function() {
+                errorCount++;
+
+                if (errorCount === 1) {
+                    this.src = member.image_jpg; 
+                } else if (errorCount === 2) {
+                    this.src = DEFAULT_IMAGE_PATH; 
+                } else {
+                    this.onerror = null; 
+                }
+            };
+            
+            // 初期ソースの設定（GAS/外部URLを優先、なければGitHubの.pngを試す）
             RESULT_IMAGE.src = member.image_gas || member.image_png;
         }
 
