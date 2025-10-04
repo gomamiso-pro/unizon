@@ -1,11 +1,7 @@
+
 /*
- * UNIZON Softball Team - style.css (最終強化版)
+ * UNIZON Softball Team - style.css (最終調整版)
  * サイドメニュー開閉機能対応
- *
- * 【レイアウト安定化の強化ポイント】
- * 1. ヘッダー: スクロールやサイズ変更に強く、ロゴとテキストが絶対に重ならないように保証 (white-space: nowrap;)。
- * 2. テーブル: 縦書き要素の崩れ防止、長いテキストへの柔軟な対応 (word-break: break-word;)、スマホでの横スクロール保証 (#membersに overflow-x: auto;)。
- * 3. ページ全体の横スクロールを禁止し、テーブル領域でのみ横スクロールを許可 (bodyに overflow-x: hidden;)。
  */
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
 
@@ -25,7 +21,7 @@
 }
 
 body {
-    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-family: 'M PLUS Rounded 1c', sans-serif; /* 丸文字系のフォント */
     line-height: 1.6;
     background-color: var(--light-gray);
     color: var(--primary-color);
@@ -33,12 +29,10 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    /* 🌟 強化: ページのオーバーフロー（横方向）を禁止し、テーブル側でのみ許可 🌟 */
-    overflow-x: hidden; 
 }
 
 /*
- * ヘッダーとロゴ (安定性強化)
+ * ヘッダーとロゴ
  */
 header {
     background-color: var(--primary-color);
@@ -59,21 +53,15 @@ header h1 {
     display: flex;
     align-items: center;
     font-weight: 700;
+    /* ハンバーガーボタンと被らないようパディングを調整 */
     padding-left: 65px; 
-    /* 🌟 強化: ロゴとテキストの重なりを防ぐため、折り返しを禁止 🌟 */
-    white-space: nowrap; 
-    min-width: 0; 
-    flex-grow: 1; 
 }
 
 .header-logo {
-    height: 50px;
+    height: 50px; /* ロゴの高さ */
     margin-left: 10px;
     border-radius: 5px;
-    /* 🌟 強化: 画像が flex-grow で拡大されるのを防ぐ 🌟 */
-    flex-shrink: 0; 
 }
-
 /*
  * ハンバーガーメニューボタン 
  */
@@ -82,12 +70,16 @@ header h1 {
     top: 15px; 
     left: 15px; 
     z-index: 210; 
+    
     background: none;
     border: none;
     padding: 0;
     width: 30px;
-    height: 40px;
+    height: 40px; /* 高さの指定は残す */
+    
+    /* Flexboxを解除し、ブロック要素としてマージンで制御 */
     display: block; 
+    
     cursor: pointer;
 }
 
@@ -97,15 +89,19 @@ header h1 {
     background-color: var(--secondary-color);
     border-radius: 5px;
     transition: transform 0.3s, opacity 0.3s;
+    
+    /* 上下に8pxのマージンを設定し、線を引き離す */
     margin: 8px 0; 
 }
 
+/* 最初の線と最後の線は、ボタンの端に合わせるためマージンを解除 */
 #hamburger .bar:first-child {
     margin-top: 0;
 }
 #hamburger .bar:last-child {
     margin-bottom: 0;
 }
+
 
 /*
  * メインコンテンツエリア
@@ -223,7 +219,7 @@ button[type="submit"]:hover,
 }
 
 /*
- * サイドメニュー (ナビゲーション)
+ * サイドメニュー (ナビゲーション) - 開閉ロジックの核となる部分
  */
 #sideMenu {
     position: fixed;
@@ -288,23 +284,13 @@ button[type="submit"]:hover,
 }
 
 /*
- * メンバーリストのテーブル (レイアウト修正済み)
+ * メンバーリストのテーブル (最終修正版)
  */
-
-/* メンバーリストの親要素に横スクロールを設定 */
-#members {
-    /* 🌟 強化: テーブルが画面幅を超えた場合、横スクロールできるようにする 🌟 */
-    overflow-x: auto; 
-    padding-bottom: 10px;
-}
-
 #members table {
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0 10px; /* 行の間の隙間を空ける */
-    table-layout: fixed; /* レイアウトを固定幅に */
-    /* 小さすぎる画面での崩れ防止のため、最小幅を設定 */
-    min-width: 480px; 
+    table-layout: fixed; 
 }
 
 #members th,
@@ -313,11 +299,46 @@ button[type="submit"]:hover,
     text-align: center; 
     vertical-align: middle; 
     border: none; 
-    /* 🌟 強化: 長いニックネームなどがあっても、セル内で適切に折り返させる 🌟 */
-    word-break: break-word; 
-    letter-spacing: -0.5px;
+    word-wrap: break-word; 
 }
 
+/* ★★★ 共通設定: 全てのヘッダー/本文セルに文字幅調整と折り返し禁止を適用 ★★★ */
+#members th,
+#members td {
+    letter-spacing: -0.5px;
+    white-space: nowrap; 
+}
+
+
+/* ★★★ 背番号のスタイル (3列目) - 変更箇所のみ抜粋 ★★★ */
+#members td:nth-child(3) { 
+    font-size: 35px; /* 大きなサイズを維持 */
+    font-weight: bold; 
+    text-align: center; /* 数字（テキスト）の位置を維持 */
+    
+    background-image: url('images/uniform.jpg'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    
+    /* 🌟 修正点: 垂直方向の位置を '20%' に指定し、背景画像を上にずらします 🌟 */
+    background-position: center 45%; 
+    
+    color: white; 
+    padding: 10px 5px; 
+    
+    font-family: 'Impact', 'Arial Black', sans-serif; 
+
+    text-shadow: 
+        1px 1px 0 red,
+        -1px -1px 0 red,
+        1px -1px 0 red,
+        -1px 1px 0 red;
+    
+    /* 背番号はより狭く-1pxを適用 */
+    letter-spacing: -1px; 
+    
+    white-space: nowrap; 
+}
 
 /* ★★★ 見出し (th) のスタイル修正 - 縦書き適用 ★★★ */
 #members thead th {
@@ -327,10 +348,9 @@ button[type="submit"]:hover,
     
     /* 縦書きの適用 */
     writing-mode: vertical-rl; /* 右から左へ縦書き */
-    /* 縦書き要素として高さを確保し、縦中央揃えになるように調整 */
-    height: 100px; 
+    height: 100px; /* 縦書きで高さを確保 */
+    padding: 5px 10px; /* 縦書きに合わせてパディングを調整 */
     
-    padding: 5px 10px;
     border-radius: 8px; 
     
     /* stickyの設定 */
@@ -340,65 +360,52 @@ button[type="submit"]:hover,
     box-shadow: 0 2px 4px var(--shadow-color); /* 影をつけて浮いているように見せる */
 }
 
-/* 1項目目の<th>（No.）を横書きに戻す */
+/* 1項目目の<th>（No.）を横書きに戻すCSSに文字幅調整を適用 */
 #members thead th:first-child {
     writing-mode: horizontal-tb; /* 標準の横書きに戻す */
-    height: auto; 
-    /* width で列幅を確実に制御 */
-    width: 10%; 
-    padding: 10px 5px;
-    text-align: center;
+    height: auto;               /* 縦書きで指定した高さを解除 */
+    min-width: 50px;            /* No.列のための最小幅を確保（適宜調整してください） */
+    padding: 10px 5px;          /* 横書きに合わせてパディングを調整 */
+    text-align: center;         /* 中央揃えにするなど */
+    
+    /* No.列はさらに狭く-1pxを適用 */
     letter-spacing: -1px; 
-    /* No.は短いため、折り返し禁止で幅を安定させる */
-    white-space: nowrap; 
+    white-space: nowrap; /* 折り返し禁止を適用 */
 }
+
+/* No.列に合わせた微調整 (必要に応じて) */
+#members thead th:first-child:not([style*="text-align"]) {
+    text-align: center; /* 中央揃えにするなど */
+}
+
 
 /* ★★★ 列幅の調整 - 4列構造（1:No, 2:ニックネーム, 3:背番号, 4:守備）に合わせて修正 ★★★ */
 
 /* 1列目: No */
 #members thead th:nth-child(1),
-#members tbody td:nth-child(1) { width: 10%; }
+#members tbody td:nth-child(1) {
+    width: 10%; 
+}
 
 /* 2列目: 画像/ニックネーム */
 #members thead th:nth-child(2),
-#members tbody td:nth-child(2) { width: 45%; }
-
-/* 3列目: 背番号 */
-#members thead th:nth-child(3),
-#members tbody td:nth-child(3) { width: 30%; }
-
-/* 4列目: 守備 */
-#members thead th:nth-child(4),
-#members tbody td:nth-child(4) { width: 15%; }
-
-/* ★★★ 背番号のスタイル (3列目) ★★★ */
-#members td:nth-child(3) { 
-    font-size: 35px;
-    font-weight: bold; 
-    text-align: center;
-    
-    background-image: url('images/uniform.jpg'); 
-    background-size: contain;
-    background-repeat: no-repeat;
-    
-    /* 🌟 強化: 背景画像を上下中央より少し上 (45%) に確実に配置 🌟 */
-    background-position: center 45%; 
-    
-    color: white; 
-    padding: 10px 5px; 
-    
-    font-family: 'Impact', 'Arial Black', sans-serif; 
-    
-    text-shadow: 
-        1px 1px 0 red,
-        -1px -1px 0 red,
-        1px -1px 0 red,
-        -1px 1px 0 red;
-    
-    letter-spacing: -1px; 
+#members tbody td:nth-child(2) {
+    width: 45%; 
 }
 
-/* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル ★★★ */
+/* 3列目: 背番号 - 幅を拡大 */
+#members thead th:nth-child(3),
+#members tbody td:nth-child(3) {
+    width: 30%; 
+}
+
+/* 4列目: 守備 - 幅を縮小 */
+#members thead th:nth-child(4),
+#members tbody td:nth-child(4) {
+    width: 15%; 
+}
+
+/* ★★★ 行 (tr) とセル (td) のスタイル修正 - 影付きセル (変更なし) ★★★ */
 #members tbody tr {
     background-color: var(--secondary-color); /* セルの背景色を白に統一 */
     transition: background-color 0.2s;
@@ -428,7 +435,7 @@ button[type="submit"]:hover,
     box-shadow: 2px 0 0 0 var(--secondary-color), 0 0 0 0 var(--secondary-color); 
 }
 
-/* ★★★ 画像の枠線色の修正 ★★★ */
+/* ★★★ 画像の枠線色の修正 (変更なし) ★★★ */
 #members img {
     width: 70px;
     height: 70px;
@@ -459,4 +466,15 @@ footer {
     color: var(--secondary-color);
     font-size: 0.8rem;
     flex-shrink: 0;
-}
+    }
+/*
+ * フッター
+ */
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}}
