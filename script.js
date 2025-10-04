@@ -1,5 +1,5 @@
 // ============================================
-// UNIZON Softball Team - script.js (最終修正版 - 画像表示ロジック修正)
+// UNIZON Softball Team - script.js (最終修正版 - kujibiki対応、関数重複解消)
 // ============================================
 
 // Google Apps Script のURL (★ こちらのURLを実際のGASのデプロイURLに置き換えてください)
@@ -336,10 +336,24 @@ function resetRegisterForm() {
 // ------------------------------------
 // ページ切り替え・メニュー操作
 // ------------------------------------
+
+/**
+ * ページ遷移/切り替え関数
+ */
 function navigate(page){
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById(page).classList.add("active");
+    // 個別のHTMLファイルに遷移する場合
+    if (page === 'kujibiki') {
+        window.location.href = 'kujibiki.html';
+        return;
+    }
     
+    // 単一ページ内のセクション遷移の場合
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    const targetPage = document.getElementById(page);
+    if (targetPage) {
+        targetPage.classList.add("active");
+    }
+
     if (page === 'members') {
         loadMembers();
     }
@@ -366,31 +380,6 @@ function logout(){
     document.getElementById("menuRegister").style.display = "none";        
     localStorage.removeItem("loggedIn");
     localStorage.removeItem("role"); 
-}
-
-// script.js の navigate 関数
-function navigate(page){
-    // 個別のHTMLファイルに遷移する場合
-    if (page === 'kujibiki') {
-        window.location.href = 'kujibiki.html';
-        return;
-    }
-    
-    // 単一ページ内のセクション遷移の場合
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    const targetPage = document.getElementById(page);
-    if (targetPage) {
-        targetPage.classList.add("active");
-    }
-
-    if (page === 'members') {
-        loadMembers();
-    }
-    if (page === 'register') {
-        resetRegisterForm();    
-    }
-    
-    closeMenu();        
 }
 
 // ページロード時にログイン状態確認
