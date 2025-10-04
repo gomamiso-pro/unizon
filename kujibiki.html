@@ -220,9 +220,10 @@
                         const memberNumber = String(m.number || '00').trim();
                         return {
                             nickname: m.nickname,
-                            // 画像パスを整理
-                            image_path: m.image || `images/member/${memberNumber}.png`,
-                            secondary_path: `images/member/${memberNumber}.jpg`,
+                            // 画像パスを整理 (GAS/外部URLを最優先)
+                            image_gas: m.image,
+                            image_png: `images/member/${memberNumber}.png`,
+                            image_jpg: `images/member/${memberNumber}.jpg`,
                             number: memberNumber
                         };
                     });
@@ -252,19 +253,24 @@
                 card.className = 'member-card';
                 card.dataset.number = member.number;
                 
-                // 画像要素の生成とエラー処理の設定（くじ引き.html専用の簡易版）
+                // 画像要素の生成とエラー処理の設定
                 const img = document.createElement('img');
-                img.src = member.image_path;
                 img.alt = member.nickname;
-                
-                let errorAttempts = 0;
+                img.src = member.image_gas || member.image_png; // GAS/外部URLを優先、なければ.pngを試す
+
+                // 画像エラーハンドラ (PNG/JPG/デフォルトの順に試す)
+                let errorCount = 0;
                 img.onerror = function() {
-                    errorAttempts++;
-                    if (errorAttempts === 1) {
-                        this.src = member.secondary_path; // .jpgを試す
-                    } else if (errorAttempts === 2) {
+                    errorCount++;
+                    if (errorCount === 1) {
+                        // 1回目エラー: GAS/外部URL または .png が失敗
+                        // 次に .jpg を試す
+                        this.src = member.image_jpg; 
+                    } else if (errorCount === 2) {
+                        // 2回目エラー: .jpg も失敗
                         this.src = DEFAULT_IMAGE_PATH; // デフォルトを試す
                     } else {
+                        // 3回目以降のエラーは無視
                         this.onerror = null; 
                     }
                 };
@@ -282,7 +288,8 @@
             });
             
             // メンバーが多すぎて読み込みメッセージが残るのを防ぐ
-            document.getElementById('loading-members').style.display = 'none'; 
+            const loadingMsgElement = document.getElementById('loading-members');
+            if(loadingMsgElement) loadingMsgElement.style.display = 'none'; 
         }
 
         // メンバーの選択/解除
@@ -340,20 +347,26 @@
         function updateResultImage(member) {
             RESULT_IMAGE.style.display = 'block';
             
-            RESULT_IMAGE.onerror = null; 
-            let errorAttempts = 0;
+            RESULT_IMAGE.onerror = null; // エラー処理をリセット
+            
+            // 画像エラーハンドラ (PNG/JPG/デフォルトの順に試す)
+            let errorCount = 0;
             RESULT_IMAGE.onerror = function() {
-                errorAttempts++;
-                if (errorAttempts === 1) {
-                    this.src = member.secondary_path; 
-                } else if (errorAttempts === 2) {
-                    this.src = DEFAULT_IMAGE_PATH; 
+                errorCount++;
+
+                if (errorCount === 1) {
+                    // 1回目エラー: GAS/外部URL または .png が失敗
+                    this.src = member.image_jpg; 
+                } else if (errorCount === 2) {
+                    // 2回目エラー: .jpg も失敗
+                    this.src = DEFAULT_IMAGE_PATH; // デフォルトを試す
                 } else {
                     this.onerror = null; 
                 }
             };
             
-            RESULT_IMAGE.src = member.image_path;
+            // 初期ソースの設定（GAS/外部URLを優先、なければ.pngを試す）
+            RESULT_IMAGE.src = member.image_gas || member.image_png;
         }
 
         // くじ引き開始
@@ -393,12 +406,6 @@
             RESULT_NAME.textContent = '🎉 ' + winner.nickname + ' が当選！ 🎉';
             updateResultImage(winner); // 当選者の画像を正しく表示
             
-            // 当選者を抽選対象から除外（オプション）
-            // const winnerIndex = selectedMembers.findIndex(m => m.number === winner.number);
-            // if (winnerIndex !== -1) {
-            //     selectedMembers.splice(winnerIndex, 1);
-            // }
-
             // 抽選が終わったらボタンを再度有効にする
             BUTTON.disabled = false;
         }
