@@ -7,13 +7,11 @@
 
   <link rel="stylesheet" href="style.css">
 
-    
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/teams-b.jpg">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/teams-b.jpg">
 
-  <link rel="icon" type="image/png" sizes="192x192" href="/images/teams-b.jpg">
+  <link rel="icon" type="image/png" sizes="192x192" href="images/teams-b.jpg">
 
-  <meta name="msapplication-TileColor" content="#001f44"> <meta name="msapplication-TileImage" content="/images/teams-b.jpg">
-
+  <meta name="msapplication-TileColor" content="#001f44"> <meta name="msapplication-TileImage" content="images/teams-b.jpg">
   <meta name="theme-color" content="#001f44">
 </head>
 <body>
@@ -38,7 +36,7 @@
       <div class="bar"></div>
     </button>
     <h1> 
-      <img src="images/teams-r.jpg" alt="Team Logo" class="header-logo"><p>&nbsp; UNIZON　48</p>
+            <img src="images/teams-r.jpg" alt="Team Logo" class="header-logo" id="headerLogo"><p>&nbsp; UNIZON　66</p>
     </h1>
   </header>
 
@@ -49,7 +47,7 @@
         <label>LOG-IN ID (ニックネーム):
           <input type="text" name="login_nickname" required 
             placeholder="ニックネーム" 
-            pattern="[a-zA-Z0-9\-\_]*" 
+            pattern="[a-zA-Z0-9\_]*" 
             title="半角英数字とハイフン、アンダースコアのみ使用できます"
           >
         </label>
@@ -87,24 +85,24 @@
     </div>
 
     <div id="register" class="page">
-      <h2 **id="registerTitle"**>メンバー登録</h2>
+      <h2 id="registerHeader">メンバー登録</h2> 
+      
       <form id="registerForm" class="form-container">
-        <input type="hidden" name="actionType" **id="actionType"** value="register">
         <label>背番号:
-          <input type="number" name="number" **id="registerNumber"** required>
+          <input type="number" name="number" id="numberInput" required> 
         </label>
         <label>ニックネーム:
-          <input type="text" name="nickname" **id="registerNickname"** required>
+          <input type="text" name="nickname" required>
         </label>
         <label>ポジション:
-          <input type="text" name="position" **id="registerPosition"** >
+          <input type="text" name="position" >
         </label>
         <label>画像:
           <input type="file" id="fileInput" accept="image/*" >
         </label>
-        <button type="submit" **id="registerButton"**>登録</button>
+        <button type="submit">登録</button>
+        <p id="registerMessage" class="error-message"></p> 
       </form>
-      <p **id="registerMessage"** class="error-message"></p>
     </div>
   </main>
 </div>
